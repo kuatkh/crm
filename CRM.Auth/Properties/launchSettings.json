@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "BigProject.Auth": {
+    "CRM.Auth": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api/Values/Get",

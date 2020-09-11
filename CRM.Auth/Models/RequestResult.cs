@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BigProject.Auth.Models
+namespace CRM.Auth.Models
 {
     public class RequestResult
     {

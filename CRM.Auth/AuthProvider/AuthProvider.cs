@@ -1,8 +1,8 @@
-﻿using BigProject.Auth.Configuration;
-using BigProject.Auth.Models;
-using BigProject.Auth.Responses;
-using BigProject.DataModel.Data;
-using BigProject.DataModel.Models;
+﻿using CRM.Auth.Configuration;
+using CRM.Auth.Models;
+using CRM.Auth.Responses;
+using CRM.DataModel.Data;
+using CRM.DataModel.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,20 +12,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BigProject.Auth.AuthProvider
+namespace CRM.Auth.AuthProvider
 {
     public class AuthProvider : IAuthProvider
     {
         private readonly ILogger<AuthProvider> _logger;
-        private readonly SignInManager<BpUsers> _signInManager;
-        private readonly UserManager<BpUsers> _userManager;
-        private readonly RoleManager<BpRoles> _roleManager;
-        private readonly BpAuthConfiguration _configuration;
-        private BpDbContext _abContext;
+        private readonly SignInManager<CrmUsers> _signInManager;
+        private readonly UserManager<CrmUsers> _userManager;
+        private readonly RoleManager<CrmRoles> _roleManager;
+        private readonly CrmAuthConfiguration _configuration;
+        private CrmDbContext _abContext;
 
         public AuthProvider(ILogger<AuthProvider> logger,
-            SignInManager<BpUsers> signInManager, UserManager<BpUsers> userManager,
-            RoleManager<BpRoles> roleManager, BpAuthConfiguration configuration, BpDbContext abContext)
+            SignInManager<CrmUsers> signInManager, UserManager<CrmUsers> userManager,
+            RoleManager<CrmRoles> roleManager, CrmAuthConfiguration configuration, CrmDbContext abContext)
         {
             _logger = logger;
             _signInManager = signInManager;
@@ -83,7 +83,7 @@ namespace BigProject.Auth.AuthProvider
         {
             try
             {
-                var user = new BpUsers { UserName = username, Email = !string.IsNullOrEmpty(email) ? email : username, BirthDate = DateTime.Now, CreatedDateTime = DateTime.Now };
+                var user = new CrmUsers { UserName = username, Email = !string.IsNullOrEmpty(email) ? email : username, BirthDate = DateTime.Now, CreatedDateTime = DateTime.Now };
 
                 var checking = await _userManager.FindByNameAsync(username);
                 if (checking == null)
@@ -206,7 +206,7 @@ namespace BigProject.Auth.AuthProvider
         {
             try
             {
-                BpUsers user = await _userManager.FindByNameAsync(username);
+                CrmUsers user = await _userManager.FindByNameAsync(username);
                 if (user != null)
                 {
                     var result = await _userManager.RemovePasswordAsync(user);

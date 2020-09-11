@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BigProject.Auth
+namespace CRM.Auth
 {
     public class Program
     {
@@ -22,7 +22,6 @@ namespace BigProject.Auth
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                    //.UseKestrel()
                     .UseContentRoot(Directory.GetCurrentDirectory())
                     .UseStartup<Startup>()
                     .UseIISIntegration()

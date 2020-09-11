@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BigProject.DataModel\BigProject.DataModel.csproj" />
+    <ProjectReference Include="..\CRM.DataModel\CRM.DataModel.csproj" />
   </ItemGroup>
 
 

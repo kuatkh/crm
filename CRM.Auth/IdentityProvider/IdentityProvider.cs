@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BigProject.Auth.IdentityProvider
+namespace CRM.Auth.IdentityProvider
 {
     public class IdentityProvider : IIdentityProvider
     {

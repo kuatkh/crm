@@ -1,5 +1,5 @@
-﻿using BigProject.Auth.Auth;
-using BigProject.Auth.Configuration;
+﻿using CRM.Auth.Auth;
+using CRM.Auth.Configuration;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
@@ -9,11 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BigProject.Auth
+namespace CRM.Auth
 {
     public static class StartupExtension
     {
-        public static IIdentityServerBuilder AddClients(this IIdentityServerBuilder builder, BpAuthConfiguration configuration)
+        public static IIdentityServerBuilder AddClients(this IIdentityServerBuilder builder, CrmAuthConfiguration configuration)
         {
             var clients = configuration.Clients.Select(
                 source => new Client
@@ -37,7 +37,7 @@ namespace BigProject.Auth
         {
             return new List<IdentityResource>
             {
-                new IdentityResource("bigproject.v1.full", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" })
+                new IdentityResource("crm.v1.full", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" })
             };
         }
 
@@ -45,10 +45,10 @@ namespace BigProject.Auth
         {
             return new List<ApiScope>
             {
-                new ApiScope("bigproject.v0.full", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" }),
-                new ApiScope("bigproject.v0", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" }),
-                new ApiScope("bigproject.v1.full", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" }),
-                new ApiScope("bigproject.v1", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" })
+                new ApiScope("crm.v0.full", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" }),
+                new ApiScope("crm.v0", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" }),
+                new ApiScope("crm.v1.full", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" }),
+                new ApiScope("crm.v1", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Audience, JwtClaimTypes.Role, "role" })
             };
         }
 
@@ -59,11 +59,11 @@ namespace BigProject.Auth
                 new ApiResource("api1"),
                 new ApiResource
                 {
-                    Name = "bigproject.full",
+                    Name = "crm.full",
                     Scopes =
                     {
-                        "bigproject.v1",
-                        "bigproject.v1.full"
+                        "crm.v1",
+                        "crm.v1.full"
                     },
                     UserClaims =
                     {
@@ -77,11 +77,11 @@ namespace BigProject.Auth
                 },
                 new ApiResource
                 {
-                    Name = "bigproject.adm.full",
+                    Name = "crm.adm.full",
                     Scopes =
                     {
-                        "BigProject.v0",
-                        "BigProject.v0.full"
+                        "crm.v0",
+                        "crm.v0.full"
                     },
                     UserClaims =
                     {

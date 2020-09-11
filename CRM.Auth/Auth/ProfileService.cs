@@ -1,4 +1,4 @@
-﻿using BigProject.DataModel.Models;
+﻿using CRM.DataModel.Models;
 using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -9,13 +9,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace BigProject.Auth.Auth
+namespace CRM.Auth.Auth
 {
     public class ProfileService : IProfileService
     {
-        private readonly UserManager<BpUsers> _userManager;
+        private readonly UserManager<CrmUsers> _userManager;
 
-        public ProfileService(UserManager<BpUsers> userManager)
+        public ProfileService(UserManager<CrmUsers> userManager)
         {
             _userManager = userManager;
         }
@@ -68,7 +68,7 @@ namespace BigProject.Auth.Auth
                 claims.Add(new Claim(JwtClaimTypes.Role, context.Subject.FindFirst("role")?.Value));
             }
 
-            claims.Add(new Claim(JwtClaimTypes.Audience, context.Subject.FindFirst("aud")?.Value ?? "BigProject.full"));
+            claims.Add(new Claim(JwtClaimTypes.Audience, context.Subject.FindFirst("aud")?.Value ?? "CRM.full"));
 
             context.IssuedClaims = claims;
 

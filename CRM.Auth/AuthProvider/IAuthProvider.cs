@@ -1,11 +1,11 @@
-﻿using BigProject.Auth.Models;
+﻿using CRM.Auth.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BigProject.Auth.AuthProvider
+namespace CRM.Auth.AuthProvider
 {
     public interface IAuthProvider
     {

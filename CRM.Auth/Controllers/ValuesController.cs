@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BigProject.Auth.Controllers
+namespace CRM.Auth.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -14,7 +14,7 @@ namespace BigProject.Auth.Controllers
         [Route("Get")]
         public IActionResult Get()
         {
-            return Ok("BigProject.Auth started!");
+            return Ok("CRM.Auth started!");
         }
     }
 }

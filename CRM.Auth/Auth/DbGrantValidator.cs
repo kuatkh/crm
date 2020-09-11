@@ -1,4 +1,4 @@
-﻿using BigProject.Auth.AuthProvider;
+﻿using CRM.Auth.AuthProvider;
 using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace BigProject.Auth.Auth
+namespace CRM.Auth.Auth
 {
     public class DbGrantValidator : IExtensionGrantValidator
     {
@@ -118,7 +118,7 @@ namespace BigProject.Auth.Auth
                                     claims.Add(new Claim(role, role));
                                 }
                             }
-                            claims.Add(new Claim(JwtClaimTypes.Audience, "BigProject.full"));
+                            claims.Add(new Claim(JwtClaimTypes.Audience, "CRM.full"));
 
                             context.Result = new GrantValidationResult(result.Message, "db", claims);
                         }

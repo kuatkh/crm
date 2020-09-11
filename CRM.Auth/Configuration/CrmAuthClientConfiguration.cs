@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BigProject.Auth.Configuration
+namespace CRM.Auth.Configuration
 {
-    public class BpAuthClientConfiguration
+    public class CrmAuthClientConfiguration
     {
         public string Id { get; set; }
         public string Secret { get; set; }
