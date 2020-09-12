@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CRM.DataModel.Models
 {
-    public class DictPositions
+    public class DictServices
     {
         public long Id { get; set; }
         public string NameRu { get; set; }
@@ -14,18 +14,18 @@ namespace CRM.DataModel.Models
         public string DescriptionRu { get; set; }
         public string DescriptionKz { get; set; }
         public string DescriptionEn { get; set; }
-        public string Category { get; set; }
-        public long? DictEnterprisesId { get; set; }
-        public long? DictEnterpriseBranchesId { get; set; }
+        public float Price { get; set; }
+        public long? DictDepartmentsId { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public DateTime? EditedDateTime { get; set; }
         public DateTime? DeletedDateTime { get; set; }
 
-        [ForeignKey("DictEnterprisesId")]
-        [InverseProperty("DictPositions")]
-        public virtual DictEnterprises DictEnterprise { get; set; }
+        [ForeignKey("DictDepartmentsId")]
+        [InverseProperty("DictServices")]
+        public virtual DictDepartments DictDepartment { get; set; }
 
-        [InverseProperty("DictPosition")]
-        public virtual ICollection<CrmEmployees> CrmEmployees { get; set; }
+        [InverseProperty("DictService")]
+        public virtual ICollection<CrmPatientsAppointmentsServices> CrmPatientsAppointmentsServices { get; set; }
+
     }
 }

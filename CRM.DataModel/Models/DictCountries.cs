@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CRM.DataModel.Models
 {
-    public class DictGenders
+    public class DictCountries
     {
         public long Id { get; set; }
         public string NameRu { get; set; }
@@ -15,10 +15,7 @@ namespace CRM.DataModel.Models
         public DateTime? EditedDateTime { get; set; }
         public DateTime? DeletedDateTime { get; set; }
 
-        [InverseProperty("DictGender")]
-        public virtual ICollection<CrmEmployees> CrmEmployees { get; set; }
-
-        [InverseProperty("DictGender")]
-        public virtual ICollection<CrmPatients> CrmPatients { get; set; }
+        [InverseProperty("DictCountry")]
+        public virtual ICollection<DictCities> DictCities { get; set; }
     }
 }

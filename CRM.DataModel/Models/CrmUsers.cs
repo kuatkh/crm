@@ -8,26 +8,8 @@ namespace CRM.DataModel.Models
 {
     public class CrmUsers : IdentityUser<long>
     {
-        public string Iin { get; set; }
-        public string NameRu { get; set; }
-        public string NameKz { get; set; }
-        public string NameEn { get; set; }
-        public string SurnameRu { get; set; }
-        public string SurnameKz { get; set; }
-        public string SurnameEn { get; set; }
-        public string MiddlenameRu { get; set; }
-        public string MiddlenameKz { get; set; }
-        public string MiddlenameEn { get; set; }
-        public string AboutMe { get; set; }
-        public string JobPlace { get; set; }
-        public long? DictGendersId { get; set; }
-        public long? DictEnterprisesId { get; set; }
-        public long? DictEnterpriseBranchesId { get; set; }
-        public long? DictDepartmentsId { get; set; }
-        public long? DictPositionsId { get; set; }
-        public DateTime? BirthDate { get; set; }
-        public string PhotoB64 { get; set; }
-        public string PhotoPath { get; set; }
+        public long? CrmEmployeesId { get; set; }
+        public long? CrmPatientsId { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public DateTime? EditedDateTime { get; set; }
         public DateTime? DeletedDateTime { get; set; }
@@ -36,44 +18,34 @@ namespace CRM.DataModel.Models
         public virtual ICollection<CrmUserTokens> Tokens { get; set; }
         public virtual ICollection<CrmUserRoles> UserRoles { get; set; }
 
-        [ForeignKey("DictGendersId")]
-        [InverseProperty("Users")]
-        public virtual DictGenders DictGender { get; set; }
+        [ForeignKey("CrmEmployeesId")]
+        [InverseProperty("CrmUser")]
+        public virtual CrmEmployees CrmEmployee { get; set; }
 
-        [ForeignKey("DictEnterpriseBranchesId")]
-        [InverseProperty("Users")]
-        public virtual DictEnterpriseBranches DictEnterpriseBranche { get; set; }
-
-        [ForeignKey("DictEnterprisesId")]
-        [InverseProperty("Users")]
-        public virtual DictEnterpirses DictEnterpirse { get; set; }
-
-        [ForeignKey("DictDepartmentsId")]
-        [InverseProperty("Users")]
-        public virtual DictDepartments DictDepartment { get; set; }
-
-        [ForeignKey("DictPositionsId")]
-        [InverseProperty("Users")]
-        public virtual DictPositions DictPosition { get; set; }
+        [ForeignKey("CrmPatientsId")]
+        [InverseProperty("CrmUser")]
+        public virtual CrmPatients CrmPatient { get; set; }
 
         [InverseProperty("NotificationReceiver")]
         public virtual ICollection<Notifications> Notifications { get; set; }
 
-        [InverseProperty("CrmUser")]
-        public virtual ICollection<CrmClients> CrmClients { get; set; }
-
         [InverseProperty("Author")]
-        public virtual ICollection<CrmClients> CrmClientsAuthors { get; set; }
+        public virtual ICollection<CrmPatients> CrmPatientsAuthors { get; set; }
 
         [InverseProperty("Editor")]
-        public virtual ICollection<CrmClients> CrmClientsEditors { get; set; }
+        public virtual ICollection<CrmPatients> CrmPatientsEditors { get; set; }
 
         [InverseProperty("Author")]
-        public virtual ICollection<Cards> CardsAuthors { get; set; }
+        public virtual ICollection<CrmEmployeesWorkPlans> CrmSystemSettingsAuthors { get; set; }
 
         [InverseProperty("Editor")]
-        public virtual ICollection<Cards> CardsEditors { get; set; }
+        public virtual ICollection<CrmEmployeesWorkPlans> CrmSystemSettingsEditors { get; set; }
 
+        [InverseProperty("Author")]
+        public virtual ICollection<CrmHolidays> CrmHolidaysAuthors { get; set; }
+
+        [InverseProperty("Editor")]
+        public virtual ICollection<CrmHolidays> CrmHolidaysEditors { get; set; }
     }
 
     public class CrmRoles : IdentityRole<long>

@@ -19,13 +19,12 @@ namespace CRM.DataModel.Models
 
         [ForeignKey("DictEnterprisesId")]
         [InverseProperty("DictDepartments")]
-        public virtual DictEnterpirses DictEnterpirse { get; set; }
-
-        [ForeignKey("DictEnterpriseBranchesId")]
-        [InverseProperty("DictDepartments")]
-        public virtual DictEnterpriseBranches DictEnterpriseBranche { get; set; }
+        public virtual DictEnterprises DictEnterprise { get; set; }
 
         [InverseProperty("DictDepartment")]
-        public virtual ICollection<CrmUsers> Users { get; set; }
+        public virtual ICollection<CrmEmployees> CrmEmployees { get; set; }
+
+        [InverseProperty("DictDepartment")]
+        public virtual ICollection<DictServices> DictServices { get; set; }
     }
 }

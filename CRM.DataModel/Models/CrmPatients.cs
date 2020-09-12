@@ -5,11 +5,12 @@ using System.Text;
 
 namespace CRM.DataModel.Models
 {
-    public class CrmClients
+    public class CrmPatients
     {
         public long Id { get; set; }
         public long? CrmUsersId { get; set; }
         public string Iin { get; set; }
+        public string DocumentNumber { get; set; }
         public string NameRu { get; set; }
         public string NameKz { get; set; }
         public string NameEn { get; set; }
@@ -19,11 +20,17 @@ namespace CRM.DataModel.Models
         public string MiddlenameRu { get; set; }
         public string MiddlenameKz { get; set; }
         public string MiddlenameEn { get; set; }
+        public string AboutMe { get; set; }
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
         public string JobPlace { get; set; }
         public long? DictGendersId { get; set; }
+        public long? DictCitiesId { get; set; }
+        [Column("BirthDate", TypeName = "date")]
         public DateTime? BirthDate { get; set; }
         public string PhotoB64 { get; set; }
         public string PhotoPath { get; set; }
+        public bool IsActive { get; set; } = true;
         public long? AuthorId { get; set; }
         public long? EditorId { get; set; }
         public DateTime CreatedDateTime { get; set; }
@@ -31,18 +38,32 @@ namespace CRM.DataModel.Models
         public DateTime? DeletedDateTime { get; set; }
 
         [ForeignKey("CrmUsersId")]
-        [InverseProperty("CrmClients")]
+        [InverseProperty("CrmPatient")]
         public virtual CrmUsers CrmUser { get; set; }
 
+        [ForeignKey("DictGendersId")]
+        [InverseProperty("CrmPatients")]
+        public virtual DictGenders DictGender { get; set; }
+
+        [ForeignKey("DictCitiesId")]
+        [InverseProperty("CrmPatients")]
+        public virtual DictCities DictCity { get; set; }
+
         [ForeignKey("AuthorId")]
-        [InverseProperty("CrmClientsAuthors")]
+        [InverseProperty("CrmPatientsAuthors")]
         public virtual CrmUsers Author { get; set; }
 
         [ForeignKey("EditorId")]
-        [InverseProperty("CrmClientsEditors")]
+        [InverseProperty("CrmPatientsEditors")]
         public virtual CrmUsers Editor { get; set; }
 
-        [InverseProperty("CrmClient")]
-        public virtual ICollection<Cards> Cards { get; set; }
+        [InverseProperty("CrmPatient")]
+        public virtual ICollection<CrmPatientsIntolerances> CrmPatientsIntolerances { get; set; }
+
+        [InverseProperty("CrmPatient")]
+        public virtual ICollection<CrmPatientsLoyaltyPrograms> CrmPatientsLoyaltyPrograms { get; set; }
+
+        [InverseProperty("CrmPatient")]
+        public virtual ICollection<CrmPatientsAppointments> CrmPatientsAppointments { get; set; }
     }
 }
