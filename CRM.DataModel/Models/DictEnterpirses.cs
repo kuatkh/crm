@@ -23,5 +23,8 @@ namespace CRM.DataModel.Models
 
         [InverseProperty("DictEnterpirse")]
         public virtual ICollection<DictPositions> DictPositions { get; set; }
+
+        [InverseProperty("DictEnterpirse")]
+        public virtual ICollection<DictEnterpriseBranches> DictEnterpriseBranches { get; set; }
     }
 }

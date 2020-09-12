@@ -5,27 +5,28 @@ using System.Text;
 
 namespace CRM.DataModel.Models
 {
-    public class DictDepartments
+    public class DictEnterpriseBranches
     {
         public long Id { get; set; }
         public string NameRu { get; set; }
         public string NameKz { get; set; }
         public string NameEn { get; set; }
-        public long? DictEnterprisesId { get; set; }
-        public long? DictEnterpriseBranchesId { get; set; }
+        public long DictEnterprisesId { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public DateTime? EditedDateTime { get; set; }
         public DateTime? DeletedDateTime { get; set; }
 
         [ForeignKey("DictEnterprisesId")]
-        [InverseProperty("DictDepartments")]
+        [InverseProperty("DictEnterpriseBranches")]
         public virtual DictEnterpirses DictEnterpirse { get; set; }
 
-        [ForeignKey("DictEnterpriseBranchesId")]
-        [InverseProperty("DictDepartments")]
-        public virtual DictEnterpriseBranches DictEnterpriseBranche { get; set; }
+        [InverseProperty("DictEnterpriseBranche")]
+        public virtual ICollection<DictDepartments> DictDepartments { get; set; }
 
-        [InverseProperty("DictDepartment")]
+        [InverseProperty("DictEnterpriseBranche")]
+        public virtual ICollection<DictPositions> DictPositions { get; set; }
+
+        [InverseProperty("DictEnterpriseBranche")]
         public virtual ICollection<CrmUsers> Users { get; set; }
     }
 }

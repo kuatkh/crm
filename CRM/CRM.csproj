@@ -22,5 +22,9 @@
     <ProjectReference Include="..\CRM.Services\CRM.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 
 </Project>

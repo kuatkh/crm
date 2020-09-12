@@ -22,6 +22,7 @@ namespace CRM.DataModel.Models
         public string JobPlace { get; set; }
         public long? DictGendersId { get; set; }
         public long? DictEnterprisesId { get; set; }
+        public long? DictEnterpriseBranchesId { get; set; }
         public long? DictDepartmentsId { get; set; }
         public long? DictPositionsId { get; set; }
         public DateTime? BirthDate { get; set; }
@@ -39,6 +40,10 @@ namespace CRM.DataModel.Models
         [InverseProperty("Users")]
         public virtual DictGenders DictGender { get; set; }
 
+        [ForeignKey("DictEnterpriseBranchesId")]
+        [InverseProperty("Users")]
+        public virtual DictEnterpriseBranches DictEnterpriseBranche { get; set; }
+
         [ForeignKey("DictEnterprisesId")]
         [InverseProperty("Users")]
         public virtual DictEnterpirses DictEnterpirse { get; set; }
@@ -53,6 +58,21 @@ namespace CRM.DataModel.Models
 
         [InverseProperty("NotificationReceiver")]
         public virtual ICollection<Notifications> Notifications { get; set; }
+
+        [InverseProperty("CrmUser")]
+        public virtual ICollection<CrmClients> CrmClients { get; set; }
+
+        [InverseProperty("Author")]
+        public virtual ICollection<CrmClients> CrmClientsAuthors { get; set; }
+
+        [InverseProperty("Editor")]
+        public virtual ICollection<CrmClients> CrmClientsEditors { get; set; }
+
+        [InverseProperty("Author")]
+        public virtual ICollection<Cards> CardsAuthors { get; set; }
+
+        [InverseProperty("Editor")]
+        public virtual ICollection<Cards> CardsEditors { get; set; }
 
     }
 

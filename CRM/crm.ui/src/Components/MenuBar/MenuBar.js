@@ -270,7 +270,7 @@ render() {
 							</Tooltip>
 							<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Главная страница'} />
 						</ListItem>
-						<ListItem button onClick={() => { this.openRoute('/add-card') }}>
+						{/* <ListItem button onClick={() => { this.openRoute('/add-card') }}>
 							<Tooltip title='Создать пропуск'>
 								<ListItemIcon><AddBoxIcon /></ListItemIcon>
 							</Tooltip>
@@ -293,7 +293,7 @@ render() {
 								<ListItemIcon><PeopleIcon /></ListItemIcon>
 							</Tooltip>
 							<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Посетители'} />
-						</ListItem>
+						</ListItem> */}
 					</List>
 				</Drawer>
 			)}

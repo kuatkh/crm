@@ -12,9 +12,9 @@ import Zoom from '@material-ui/core/Zoom'
 import MenuBar from '../MenuBar'
 import LogIn from '../LogIn'
 import Home from '../Home'
-import AddCard from '../AddCard'
-import CardsList from '../CardsList'
-import VisitorsList from '../VisitorsList'
+// import AddCard from '../AddCard'
+// import CardsList from '../CardsList'
+// import VisitorsList from '../VisitorsList'
 import {allActions} from '../../Actions/AllActions'
 import {allConstants} from '../../Constants/AllConstants.js'
 import {getRequest} from '../../Services/RequestsServices.js'
@@ -45,7 +45,7 @@ const styles = theme => ({
 
 const WithMediaQuery = props => React.cloneElement(props.children, {isDesktop: useMediaQuery('(min-width:600px)')})
 
-const ScrollTop = ({props}) => {
+const ScrollTop = (props) => {
 	const {children, classes} = props
 	/* eslint-disable */
 	const trigger = useScrollTrigger({
@@ -130,10 +130,10 @@ class App extends Component {
 					{isAuthorized
 						? <Router history={history}>
 							<Route exact path='/' component={Home} />
-							<Route path='/add-card' component={() => <WithMediaQuery><AddCard currentUser={currentUser} token={token} /></WithMediaQuery>} />
+							{/* <Route path='/add-card' component={() => <WithMediaQuery><AddCard currentUser={currentUser} token={token} /></WithMediaQuery>} />
 							<Route path='/cards-list' component={() => <WithMediaQuery><CardsList token={token} /></WithMediaQuery>} />
 							<Route path='/agreement-cards-list' component={() => <WithMediaQuery><CardsList token={token} toAgreement={true} /></WithMediaQuery>} />
-							<Route path='/visitors-list' component={() => <WithMediaQuery><VisitorsList token={token} /></WithMediaQuery>} />
+							<Route path='/visitors-list' component={() => <WithMediaQuery><VisitorsList token={token} /></WithMediaQuery>} /> */}
 						</Router>
 						: <LogIn logInSuccess={this.logInSuccess}/>
 					}
