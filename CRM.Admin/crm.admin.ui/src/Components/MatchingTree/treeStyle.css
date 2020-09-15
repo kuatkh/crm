@@ -1,0 +1,32 @@
+.wrapper {
+    height: 60vh;
+    width: 100%;
+    margin: 0;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.bar-wrapper {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+.tree-wrapper {
+    height: calc(100% - 25px);
+}
+
+.previous {
+    margin-left: 10px;
+}
+
+.next, .collapse {
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+.rst__rowTitleWithSubtitle {
+    height: 100% !important;
+}

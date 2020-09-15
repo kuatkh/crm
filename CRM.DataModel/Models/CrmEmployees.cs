@@ -52,7 +52,7 @@ namespace CRM.DataModel.Models
 
         [ForeignKey("DictEnterpriseBranchesId")]
         [InverseProperty("BranchesCrmEmployees")]
-        public virtual DictEnterprises DictEnterpriseBranches { get; set; }
+        public virtual DictEnterprises DictEnterpriseBranche { get; set; }
 
         [ForeignKey("DictDepartmentsId")]
         [InverseProperty("CrmEmployees")]

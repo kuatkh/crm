@@ -1,0 +1,95 @@
+export const visitorsTableColumns = [
+	{id: 'iin', label: 'ИИН', minWidth: 100},
+	{id: 'documentNumber', label: 'Номер\u00a0документа', minWidth: 100},
+	{
+		id: 'surnameRu',
+		label: 'Фамилия',
+		// minWidth: 170,
+		align: 'center',
+		// format: (value) => value.toLocaleString('en-US'),
+		canSort: true,
+	},
+	{
+		id: 'nameRu',
+		label: 'Имя',
+		// minWidth: 170,
+		align: 'center',
+		// format: (value) => value.toLocaleString('en-US'),
+	},
+	{
+		id: 'middlenameRu',
+		label: 'Отчество',
+		// minWidth: 170,
+		align: 'center',
+		// format: (value) => value.toFixed(2),
+	},
+	{id: 'jobPlaceName', label: 'Место\u00a0работы', minWidth: 100},
+	{id: 'positionName', label: 'Должность', minWidth: 100},
+]
+
+export const cardsTableColumns = [
+	{id: 'id', label: 'Номер пропуска', minWidth: 100, canSort: true},
+	{id: 'authorName', label: 'Автор', minWidth: 100},
+	{id: 'createdDateTimeStr', label: 'Дата\u00a0создания', minWidth: 100},
+	{
+		id: 'inviterName',
+		label: 'Приглашающий',
+		// minWidth: 170,
+		align: 'center',
+		// format: (value) => value.toLocaleString('en-US'),
+		canSort: true,
+	},
+	{
+		id: 'justification',
+		label: 'Обоснование',
+		// minWidth: 170,
+		align: 'center',
+		// format: (value) => value.toLocaleString('en-US'),
+		canSort: true,
+	},
+	{
+		id: 'visitorsCount',
+		label: 'Количество\u00a0посетителей',
+		// minWidth: 170,
+		align: 'center',
+		// format: (value) => value.toFixed(2),
+	},
+	{
+		id: 'status',
+		label: 'Статус',
+		// minWidth: 170,
+		align: 'center',
+		// format: (value) => value.toFixed(2),
+	},
+]
+
+export const usersColumns = [
+	{id: 'userName', label: 'Логин', minWidth: 100},
+	{
+		id: 'surnameRu',
+		label: 'Фамилия',
+		align: 'center',
+		canSort: true,
+		noWrap: true,
+	},
+	{
+		id: 'nameRu',
+		label: 'Имя',
+		align: 'center',
+		canSort: true,
+		noWrap: true,
+	},
+	{
+		id: 'middlenameRu',
+		label: 'Отчество',
+		align: 'center',
+		canSort: true,
+		noWrap: true,
+	},
+	{id: 'iin', label: 'ИИН', minWidth: 100, canSort: true},
+	{id: 'departmentNameRu', label: 'Сруктурное подразделение', minWidth: 100, align: 'center', noWrap: true},
+	{id: 'positionNameRu', label: 'Должность', minWidth: 100, align: 'center', noWrap: true},
+	{id: 'email', label: 'Email', minWidth: 100, canSort: true, noWrap: true},
+	{id: 'birthDateStr', label: 'Дата рождения', minWidth: 100, noWrap: true},
+	{id: 'roleName', label: 'Роль', minWidth: 100, maxWidth: 150, align: 'center', noWrap: true},
+]

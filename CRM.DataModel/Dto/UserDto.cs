@@ -8,6 +8,8 @@ namespace CRM.DataModel.Dto
     public class UserDto
     {
         public long Id { get; set; }
+        public long? CrmEmployeesId { get; set; }
+        public long? CrmPatientsId { get; set; }
         public string UserName { get; set; }
         public string Iin { get; set; }
         public string NameRu { get; set; }
@@ -37,5 +39,11 @@ namespace CRM.DataModel.Dto
         public string BirthDateStr { get; set; }
         public string PhotoB64 { get; set; }
         public string PhotoPath { get; set; }
+        public bool IsActive { get; set; } = true;
+        public DictPositions DictPosition { get; set; }
+        public DictDepartments DictDepartment { get; set; }
+        public DictEnterprises DictEnterprise { get; set; }
+        public DictEnterprises DictEnterpriseBranches { get; set; }
+        public DictCities DictCity { get; set; }
     }
 }

@@ -15,10 +15,25 @@ namespace CRM.DataModel.Data
         {
         }
 
+        public DbSet<CrmEmployees> CrmEmployees { get; set; }
+        public DbSet<CrmEmployeesWorkPlans> CrmEmployeesWorkPlans { get; set; }
+        public DbSet<CrmHolidays> CrmHolidays { get; set; }
+        public DbSet<CrmPatients> CrmPatients { get; set; }
+        public DbSet<CrmPatientsAppointments> CrmPatientsAppointments { get; set; }
+        public DbSet<CrmPatientsAppointmentsFiles> CrmPatientsAppointmentsFiles { get; set; }
+        public DbSet<CrmPatientsAppointmentsServices> CrmPatientsAppointmentsServices { get; set; }
+        public DbSet<CrmPatientsIntolerances> CrmPatientsIntolerances { get; set; }
+        public DbSet<CrmPatientsLoyaltyPrograms> CrmPatientsLoyaltyPrograms { get; set; }
+        public DbSet<DictCities> DictCities { get; set; }
+        public DbSet<DictCountries> DictCountries { get; set; }
         public DbSet<DictDepartments> DictDepartments { get; set; }
         public DbSet<DictEnterprises> DictEnterprises { get; set; }
-        public DbSet<DictPositions> DictPositions { get; set; }
         public DbSet<DictGenders> DictGenders { get; set; }
+        public DbSet<DictIntolerances> DictIntolerances { get; set; }
+        public DbSet<DictLoyaltyPrograms> DictLoyaltyPrograms { get; set; }
+        public DbSet<DictPositions> DictPositions { get; set; }
+        public DbSet<DictServices> DictServices { get; set; }
+        public DbSet<DictStatuses> DictStatuses { get; set; }
         public DbSet<Notifications> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -86,7 +101,7 @@ namespace CRM.DataModel.Data
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CrmEmployees_DictEnterprises");
 
-                entity.HasOne(c => c.DictEnterpriseBranches)
+                entity.HasOne(c => c.DictEnterpriseBranche)
                 .WithMany(d => d.BranchesCrmEmployees)
                 .HasForeignKey(e => e.DictEnterpriseBranchesId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

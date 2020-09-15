@@ -1,0 +1,29 @@
+{
+  "presets": [
+    [
+      "@babel/env",
+      // "@babel/preset-env",
+      // "@babel/preset-react",
+      {
+        "targets": {
+          "browsers": [
+            "last 2 Chrome versions",
+            "last 2 Firefox versions",
+            "last 2 Edge versions",
+            "last 2 Opera versions",
+            "ie 11"
+          ]
+        }
+      }
+    ], 
+    "@babel/react"
+  ],
+	"plugins": [
+    // ["transform-object-rest-spread", { "useBuiltIns": true }],
+    "react-hot-loader/babel",
+    ["transform-class-properties", { "spec": true }],
+    "lodash"
+    // ,
+    // "@babel/plugin-proposal-object-rest-spread"
+	]
+}

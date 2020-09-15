@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.DataModel", "CRM.DataMo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.Services", "CRM.Services\CRM.Services.csproj", "{996E7361-1771-40E5-B126-5DD534AD744E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.Admin", "CRM.Admin\CRM.Admin.csproj", "{358B35EE-6DF7-4882-95F5-BD64730E3A79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{996E7361-1771-40E5-B126-5DD534AD744E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{996E7361-1771-40E5-B126-5DD534AD744E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{996E7361-1771-40E5-B126-5DD534AD744E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{358B35EE-6DF7-4882-95F5-BD64730E3A79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{358B35EE-6DF7-4882-95F5-BD64730E3A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{358B35EE-6DF7-4882-95F5-BD64730E3A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{358B35EE-6DF7-4882-95F5-BD64730E3A79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -45,7 +45,7 @@ const styles = theme => ({
 
 const WithMediaQuery = props => React.cloneElement(props.children, {isDesktop: useMediaQuery('(min-width:600px)')})
 
-const ScrollTop = (props) => {
+const ScrollTop = props => {
 	const {children, classes} = props
 	/* eslint-disable */
 	const trigger = useScrollTrigger({
@@ -121,7 +121,7 @@ class App extends Component {
 	render() {
 		const {classes, currentUser, token} = this.props
 		const {isAuthorized} = this.state
-		
+
 		return (
 			<div className='App'>
 				<MenuBar isAuthorized={isAuthorized} currentUser={currentUser}/>

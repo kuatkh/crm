@@ -22,19 +22,19 @@ namespace CRM.Controllers
     public class UsersController : ControllerBase
     {
         private static CrmConfiguration _configuration;
-        private CrmDbContext _abContext;
+        private CrmDbContext _crmContext;
         private static ICacheManager _cacheManager;
         private static ILogger<UsersController> _logger;
 
         public UsersController(CrmConfiguration configuration,
             ILogger<UsersController> logger,
             ICacheManager cacheManager,
-            CrmDbContext abContext)
+            CrmDbContext crmContext)
         {
             _configuration = configuration;
             _logger = logger;
             _cacheManager = cacheManager;
-            _abContext = abContext;
+            _crmContext = crmContext;
         }
 
         [HttpGet("GetCurrentUserData")]
@@ -47,36 +47,15 @@ namespace CRM.Controllers
 
                 if (currentUser == null)
                 {
-                    currentUser = await _abContext.Users
-                        .Where(u => u.UserName == username)
-                        .AsNoTracking()
-                        .Select(u => new UserDto()
-                        {
-                            Id = u.Id,
-                            Iin = u.Iin,
-                            UserName = u.UserName,
-                            BirthDate = u.BirthDate,
-                            MiddlenameKz = u.MiddlenameKz,
-                            MiddlenameRu = u.MiddlenameRu,
-                            NameKz = u.NameKz,
-                            NameRu = u.NameRu,
-                            SurnameKz = u.SurnameKz,
-                            SurnameRu = u.SurnameRu,
-                            PhotoB64 = u.PhotoB64,
-                            PhotoPath = u.PhotoPath
-                        })
-                        .FirstOrDefaultAsync();
+                    currentUser = await UserHelper.GetCurrentUser(_crmContext, username);
 
-                    currentUser.ShortNameRu = UserHelper.GetUserShortName(currentUser.SurnameRu, currentUser.NameRu, currentUser.MiddlenameRu);
-                    currentUser.ShortNameKz = UserHelper.GetUserShortName(currentUser.SurnameKz, currentUser.NameKz, currentUser.MiddlenameKz);
+                    _cacheManager.Set($"CrmUser_{username}", currentUser, new TimeSpan(1, 0, 0, 0));
 
                     if (!string.IsNullOrEmpty(currentUser.PhotoPath) && System.IO.File.Exists(currentUser.PhotoPath))
                     {
                         var content = await System.IO.File.ReadAllBytesAsync(currentUser.PhotoPath);
                         currentUser.PhotoB64 = Convert.ToBase64String(content);
                     }
-
-                    _cacheManager.Set($"AbUser_{username}", currentUser, new TimeSpan(1, 0, 0, 0));
                 }
 
                 return Ok(currentUser);
@@ -88,7 +67,47 @@ namespace CRM.Controllers
             }
             finally
             {
-                await _abContext.DisposeAsync();
+                await _crmContext.DisposeAsync();
+            }
+        }
+
+        [HttpGet("GetCurrentUserPhoto")]
+        public async Task<IActionResult> GetCurrentUserPhoto()
+        {
+            try
+            {
+                UserHelper.TryGetCurrentName(this.User, out string username);
+                UserDto currentUser = (UserDto)_cacheManager.Get($"CrmUser_{username}");
+
+                var result = new ResultDto<string>()
+                {
+                    IsSuccess = false
+                };
+
+                if (currentUser == null)
+                {
+                    currentUser = await UserHelper.GetCurrentUser(_crmContext, username);
+
+                    _cacheManager.Set($"CrmUser_{username}", currentUser, new TimeSpan(1, 0, 0, 0));
+
+                    if (!string.IsNullOrEmpty(currentUser.PhotoPath) && System.IO.File.Exists(currentUser.PhotoPath))
+                    {
+                        var content = await System.IO.File.ReadAllBytesAsync(currentUser.PhotoPath);
+                        result.Data = Convert.ToBase64String(content);
+                        result.IsSuccess = true;
+                    }
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ERROR GetCurrentUserPhoto. MSG: {JsonConvert.SerializeObject(ex)}");
+                return BadRequest();
+            }
+            finally
+            {
+                await _crmContext.DisposeAsync();
             }
         }
 

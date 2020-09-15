@@ -63,9 +63,18 @@ namespace CRM.Services.Common
                 {
                     UserName = "super_admin",
                     Email = "super_admin@CRM.kz",
-                    SurnameRu = "СуперАдмин",
-                    NameRu = "СуперАдмин",
-                    BirthDate = DateTime.Now,
+                    CrmEmployee = new CrmEmployees()
+                    {
+                        SurnameRu = "СуперАдмин",
+                        SurnameKz = "СуперАдмин",
+                        SurnameEn = "SuperAdmin",
+                        NameRu = "СуперАдмин",
+                        NameKz = "СуперАдмин",
+                        NameEn = "SuperAdmin",
+                        BirthDate = DateTime.Now,
+                        IsActive = true,
+                        CreatedDateTime = DateTime.Now
+                    },
                     CreatedDateTime = DateTime.Now
                 };
                 var supadmresult = _userManager.CreateAsync(supadm, "1q@W3e$R").GetAwaiter().GetResult();
@@ -92,10 +101,19 @@ namespace CRM.Services.Common
                 var user = new CrmUsers
                 {
                     UserName = "admin",
-                    Email = "admin@CRM.kz",
-                    SurnameRu = "Администратор",
-                    NameRu = "Администратор",
-                    BirthDate = DateTime.Now,
+                    Email = "admin@crm.kz",
+                    CrmEmployee = new CrmEmployees()
+                    {
+                        SurnameRu = "Администратор",
+                        SurnameKz = "Администратор",
+                        SurnameEn = "Administrator",
+                        NameRu = "Администратор",
+                        NameKz = "Администратор",
+                        NameEn = "Administrator",
+                        BirthDate = DateTime.Now,
+                        IsActive = true,
+                        CreatedDateTime = DateTime.Now
+                    },
                     CreatedDateTime = DateTime.Now
                 };
                 var result = _userManager.CreateAsync(user, "1q@W3e$R").GetAwaiter().GetResult();
@@ -116,23 +134,32 @@ namespace CRM.Services.Common
                 }
                 else
                 {
-                    _logger.LogError($"SMTH WENT WRONG WHILE ADDING ab_admin!");
+                    _logger.LogError($"SMTH WENT WRONG WHILE ADDING admin!");
                 }
 
                 var user2 = new CrmUsers
                 {
                     UserName = "user",
-                    Email = "user@CRM.kz",
-                    SurnameRu = "АдминистраторРуко",
-                    NameRu = "АдминистраторРуко",
-                    BirthDate = DateTime.Now,
+                    Email = "user@crm.kz",
+                    CrmEmployee = new CrmEmployees()
+                    {
+                        SurnameRu = "Пользователь",
+                        SurnameKz = "Пользователь",
+                        SurnameEn = "User",
+                        NameRu = "Пользователь",
+                        NameKz = "Пользователь",
+                        NameEn = "User",
+                        BirthDate = DateTime.Now,
+                        IsActive = true,
+                        CreatedDateTime = DateTime.Now
+                    },
                     CreatedDateTime = DateTime.Now
                 };
                 var result2 = _userManager.CreateAsync(user2, "1q@W3e$R").GetAwaiter().GetResult();
 
                 if (result2.Succeeded)
                 {
-                    _logger.LogWarning($"ab_admin_head SUCCESSFULLY ADDED!");
+                    _logger.LogWarning($"user SUCCESSFULLY ADDED!");
 
                     var userrole2 = _userManager.AddToRoleAsync(user2, "user").GetAwaiter().GetResult();
                     if (userrole2.Succeeded)

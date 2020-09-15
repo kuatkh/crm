@@ -16,7 +16,6 @@ namespace CRM.DataModel.Models
         public string DescriptionEn { get; set; }
         public string Category { get; set; }
         public long? DictEnterprisesId { get; set; }
-        public long? DictEnterpriseBranchesId { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public DateTime? EditedDateTime { get; set; }
         public DateTime? DeletedDateTime { get; set; }
