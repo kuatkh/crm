@@ -83,6 +83,27 @@ namespace CRM.Services.Common
                 {
                     _logger.LogWarning($"super_admin SUCCESSFULLY ADDED!");
 
+                    if (supadm.Id > 0 && supadm.CrmEmployeesId > 0)
+                    {
+                        var crmEmployee = _context.CrmEmployees.FirstOrDefault(e => e.Id == supadm.CrmEmployeesId && e.CrmUsersId == null);
+                        if (crmEmployee != null)
+                        {
+                            crmEmployee.CrmUsersId = supadm.Id;
+                            _context.CrmEmployees.Update(crmEmployee);
+                            _context.SaveChanges();
+                        }
+                    }
+                    if (supadm.Id > 0 && supadm.CrmPatientsId > 0)
+                    {
+                        var crmPatient = _context.CrmPatients.FirstOrDefault(e => e.Id == supadm.CrmPatientsId && e.CrmUsersId == null);
+                        if (crmPatient != null)
+                        {
+                            crmPatient.CrmUsersId = supadm.Id;
+                            _context.CrmPatients.Update(crmPatient);
+                            _context.SaveChanges();
+                        }
+                    }
+
                     var userrole = _userManager.AddToRoleAsync(supadm, "superadmin").GetAwaiter().GetResult();
                     if (userrole.Succeeded)
                     {
@@ -121,6 +142,27 @@ namespace CRM.Services.Common
                 if (result.Succeeded)
                 {
                     _logger.LogWarning($"admin SUCCESSFULLY ADDED!");
+
+                    if (user.Id > 0 && user.CrmEmployeesId > 0)
+                    {
+                        var crmEmployee = _context.CrmEmployees.FirstOrDefault(e => e.Id == user.CrmEmployeesId && e.CrmUsersId == null);
+                        if (crmEmployee != null)
+                        {
+                            crmEmployee.CrmUsersId = user.Id;
+                            _context.CrmEmployees.Update(crmEmployee);
+                            _context.SaveChanges();
+                        }
+                    }
+                    if (user.Id > 0 && user.CrmPatientsId > 0)
+                    {
+                        var crmPatient = _context.CrmPatients.FirstOrDefault(e => e.Id == user.CrmPatientsId && e.CrmUsersId == null);
+                        if (crmPatient != null)
+                        {
+                            crmPatient.CrmUsersId = user.Id;
+                            _context.CrmPatients.Update(crmPatient);
+                            _context.SaveChanges();
+                        }
+                    }
 
                     var userrole = _userManager.AddToRoleAsync(user, "admin").GetAwaiter().GetResult();
                     if (userrole.Succeeded)
@@ -161,6 +203,27 @@ namespace CRM.Services.Common
                 {
                     _logger.LogWarning($"user SUCCESSFULLY ADDED!");
 
+                    if (user2.Id > 0 && user2.CrmEmployeesId > 0)
+                    {
+                        var crmEmployee = _context.CrmEmployees.FirstOrDefault(e => e.Id == user2.CrmEmployeesId && e.CrmUsersId == null);
+                        if (crmEmployee != null)
+                        {
+                            crmEmployee.CrmUsersId = user2.Id;
+                            _context.CrmEmployees.Update(crmEmployee);
+                            _context.SaveChanges();
+                        }
+                    }
+                    if (user2.Id > 0 && user2.CrmPatientsId > 0)
+                    {
+                        var crmPatient = _context.CrmPatients.FirstOrDefault(e => e.Id == user2.CrmPatientsId && e.CrmUsersId == null);
+                        if (crmPatient != null)
+                        {
+                            crmPatient.CrmUsersId = user2.Id;
+                            _context.CrmPatients.Update(crmPatient);
+                            _context.SaveChanges();
+                        }
+                    }
+
                     var userrole2 = _userManager.AddToRoleAsync(user2, "user").GetAwaiter().GetResult();
                     if (userrole2.Succeeded)
                     {
@@ -175,6 +238,94 @@ namespace CRM.Services.Common
                 {
                     _logger.LogError($"SMTH WENT WRONG WHILE ADDING user!");
                 }
+
+                var user3 = new CrmUsers
+                {
+                    UserName = "user_patient",
+                    Email = "user_patient@crm.kz",
+                    CrmPatient = new CrmPatients()
+                    {
+                        SurnameRu = "Пациент2",
+                        SurnameKz = "Пациент2",
+                        SurnameEn = "Patient2",
+                        NameRu = "Пациент2",
+                        NameKz = "Пациент2",
+                        NameEn = "Patient2",
+                        BirthDate = DateTime.Now,
+                        IsActive = true,
+                        CreatedDateTime = DateTime.Now
+                    },
+                    CreatedDateTime = DateTime.Now
+                };
+                var result3 = _userManager.CreateAsync(user3, "1q@W3e$R").GetAwaiter().GetResult();
+
+                if (result3.Succeeded)
+                {
+                    _logger.LogWarning($"user_patient SUCCESSFULLY ADDED!");
+
+                    if (user3.Id > 0 && user3.CrmEmployeesId > 0)
+                    {
+                        var crmEmployee = _context.CrmEmployees.FirstOrDefault(e => e.Id == user3.CrmEmployeesId && e.CrmUsersId == null);
+                        if (crmEmployee != null)
+                        {
+                            crmEmployee.CrmUsersId = user3.Id;
+                            _context.CrmEmployees.Update(crmEmployee);
+                            _context.SaveChanges();
+                        }
+                    }
+                    if (user3.Id > 0 && user3.CrmPatientsId > 0)
+                    {
+                        var crmPatient = _context.CrmPatients.FirstOrDefault(e => e.Id == user3.CrmPatientsId && e.CrmUsersId == null);
+                        if (crmPatient != null)
+                        {
+                            crmPatient.CrmUsersId = user3.Id;
+                            _context.CrmPatients.Update(crmPatient);
+                            _context.SaveChanges();
+                        }
+                    }
+                }
+                else
+                {
+                    _logger.LogError($"SMTH WENT WRONG WHILE ADDING user_patient!");
+                }
+            }
+
+            if (!_context.DictCountries.Any())
+            {
+                _context.DictCountries.Add(new DictCountries()
+                {
+                    NameEn = "Kazakhstan",
+                    NameRu = "Казахстан",
+                    NameKz = "Казахстан",
+                    CreatedDateTime = DateTime.Now
+                });
+                _context.SaveChanges();
+            }
+
+            if (!_context.DictGenders.Any())
+            {
+                _context.DictGenders.Add(new DictGenders()
+                {
+                    NameEn = "Male",
+                    NameRu = "Муж",
+                    NameKz = "Муж",
+                    CreatedDateTime = DateTime.Now
+                });
+                _context.DictGenders.Add(new DictGenders()
+                {
+                    NameEn = "Female",
+                    NameRu = "Жен",
+                    NameKz = "Жен",
+                    CreatedDateTime = DateTime.Now
+                });
+                _context.DictGenders.Add(new DictGenders()
+                {
+                    NameEn = "Anonim",
+                    NameRu = "Анонимно",
+                    NameKz = "Анонимно",
+                    CreatedDateTime = DateTime.Now
+                });
+                _context.SaveChanges();
             }
         }
 

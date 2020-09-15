@@ -83,7 +83,7 @@ namespace CRM.Auth.AuthProvider
         {
             try
             {
-                var user = new CrmUsers { UserName = username, Email = !string.IsNullOrEmpty(email) ? email : username, BirthDate = DateTime.Now, CreatedDateTime = DateTime.Now };
+                var user = new CrmUsers { UserName = username, Email = !string.IsNullOrEmpty(email) ? email : username, CreatedDateTime = DateTime.Now };
 
                 var checking = await _userManager.FindByNameAsync(username);
                 if (checking == null)

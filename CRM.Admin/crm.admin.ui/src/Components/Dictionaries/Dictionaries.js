@@ -50,7 +50,7 @@ const styles = theme => ({
 		margin: theme.spacing.unit,
 	},
 	gapSmall: {
-		marginTop:50,
+		marginTop: 50,
 	},
 	paper: {
 		paddingRight: theme.spacing(1),
@@ -65,7 +65,7 @@ const styles = theme => ({
 		fontWeight: 'normal',
 	},
 	backdrop: {
-		zIndex: theme.zIndex.drawer + 1,
+		zIndex: theme.zIndex.drawer + 3,
 		color: '#fff',
 	},
 	typography: {
@@ -85,11 +85,14 @@ class Dictionaries extends React.Component {
 		super(props)
 		this.state = {
 			openEditDictionaryDialog: false,
+			editDictionaryData: null,
 			openSnackbar: false,
 			snackbarMsg: '',
 			snackbarSeverity: 'success',
 			loading: false,
 		}
+
+		this._abTableGetData = null
 	}
 
 handleSnackbarOpen = (msg, severity) => {
@@ -109,21 +112,33 @@ handleSnackbarClose = () => {
 handleEditDictionaryDialogOpen = () => {
 	this.setState({
 		openEditDictionaryDialog: true,
+		editDictionaryData: null,
 	})
 }
 
 handleEditDictionaryDialogClose = isSuccess => {
 	this.setState({
 		openEditDictionaryDialog: false,
+		editDictionaryData: null,
 	})
 	if (isSuccess) {
 		this.handleSnackbarOpen('Изменения успешно сохранены!', 'success')
+		if (this._abTableGetData) {
+			this._abTableGetData()
+		}
 	}
 }
 
 isLoaded = loading => {
 	this.setState({
 		loading: !loading,
+	})
+}
+
+handleEditClick = row => {
+	this.setState({
+		openEditDictionaryDialog: true,
+		editDictionaryData: row,
 	})
 }
 
@@ -135,6 +150,7 @@ render() {
 		snackbarSeverity,
 		loading,
 		openEditDictionaryDialog,
+		editDictionaryData,
 	} = this.state
 
 	return (
@@ -166,10 +182,16 @@ render() {
 							filterData={{
 								dictionaryName,
 							}}
+							setGetDataFunc={func => this._abTableGetData = func}
 							tableStyle={{tableLayout: 'fixed'}}
 							defaultOrderByColumn='nameRu'
 							columns={dictionariesColumns[dictionaryName]}
+							childrenColumns={dictionariesColumns[dictionaryName]}
+							handleEditClick={this.handleEditClick}
+							childrenHeader='Филиалы'
 							isLoaded={this.isLoaded}
+							canEdit={true}
+							canExpand={true}
 							tableContainerStyles={{display: 'flex', flexWrap: 'wrap', minHeight: '10vh', maxHeight: '30vh'}}
 							handleSnackbarOpen={this.handleSnackbarOpen}
 						/>
@@ -197,6 +219,7 @@ render() {
 					<AddDictionaryData
 						handleEditDictionaryDialogClose={this.handleEditDictionaryDialogClose}
 						isLoaded={this.isLoaded}
+						editDictionaryData={editDictionaryData}
 						token={token}
 						dictionaryName={dictionaryName}
 						pageTitle={pageTitle}

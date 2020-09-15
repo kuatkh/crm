@@ -346,28 +346,27 @@ namespace CRM.Admin.Controllers
                 {
                     if (userData != null)
                     {
-                        DictDepartments department = null;
-                        DictPositions position = null;
-                        if (userData.SelectedDepartment != null)
+                        if (userData.RoleId <= 0)
                         {
-                            if (userData.SelectedDepartment.Id > 0)
+                            var emptyRole = new ResultDto<string>()
                             {
-                                department = new DictDepartments() {
-                                    Id = userData.SelectedDepartment.Id
-                                };
-                            }
-                            else
-                            {
-                                department = new DictDepartments()
-                                {
-                                    NameRu = userData.SelectedDepartment.NameRu,
-                                    CreatedDateTime = DateTime.Now
-                                };
-                                await _crmContext.DictDepartments.AddAsync(department);
-                                await _crmContext.SaveChangesAsync();
-                            }
+                                IsSuccess = false,
+                                Msg = "empty_role"
+                            };
+                            return Ok(emptyRole);
                         }
-                        else
+
+                        if (userData.RoleId > 1 && (userData.SelectedEnterprise == null || userData.SelectedEnterprise.Id <= 0))
+                        {
+                            var emptyEnterprise = new ResultDto<string>()
+                            {
+                                IsSuccess = false,
+                                Msg = "empty_enterprise"
+                            };
+                            return Ok(emptyEnterprise);
+                        }
+
+                        if (userData.RoleId > 2 && (userData.SelectedDepartment == null || userData.SelectedDepartment.Id <= 0))
                         {
                             var emptyDepartment = new ResultDto<string>()
                             {
@@ -377,27 +376,7 @@ namespace CRM.Admin.Controllers
                             return Ok(emptyDepartment);
                         }
 
-                        if (userData.SelectedPosition != null)
-                        {
-                            if (userData.SelectedPosition.Id > 0)
-                            {
-                                position = new DictPositions()
-                                {
-                                    Id = userData.SelectedPosition.Id
-                                };
-                            }
-                            else
-                            {
-                                position = new DictPositions()
-                                {
-                                    NameRu = userData.SelectedPosition.NameRu,
-                                    CreatedDateTime = DateTime.Now
-                                };
-                                await _crmContext.DictPositions.AddAsync(position);
-                                await _crmContext.SaveChangesAsync();
-                            }
-                        }
-                        else
+                        if (userData.RoleId > 2 && (userData.SelectedPosition == null || userData.SelectedPosition.Id <= 0))
                         {
                             var emptyPosition = new ResultDto<string>()
                             {
@@ -436,8 +415,9 @@ namespace CRM.Admin.Controllers
                                 MiddlenameRu = userData.MiddlenameRu,
                                 MiddlenameKz = userData.MiddlenameKz,
                                 MiddlenameEn = userData.MiddlenameEn,
-                                DictDepartmentsId = department.Id,
-                                DictPositionsId = position.Id,
+                                DictEnterprisesId = userData.SelectedEnterprise.Id,
+                                DictDepartmentsId = userData.SelectedDepartment.Id,
+                                DictPositionsId = userData.SelectedPosition.Id,
                                 Iin = userData.Iin,
                                 IsActive = userData.IsActive,
                                 BirthDate = userData.BirthDate,
@@ -478,6 +458,29 @@ namespace CRM.Admin.Controllers
                                     Msg = JsonConvert.SerializeObject(addUserResult.Errors)
                                 };
                                 return Ok(addErr);
+                            }
+                            else
+                            {
+                                if (user.Id > 0 && user.CrmEmployeesId > 0)
+                                {
+                                    var crmEmployee = await _crmContext.CrmEmployees.FirstOrDefaultAsync(e => e.Id == user.CrmEmployeesId && e.CrmUsersId == null);
+                                    if (crmEmployee != null)
+                                    {
+                                        crmEmployee.CrmUsersId = user.Id;
+                                        _crmContext.CrmEmployees.Update(crmEmployee);
+                                        await _crmContext.SaveChangesAsync();
+                                    }
+                                }
+                                if (user.Id > 0 && user.CrmPatientsId > 0)
+                                {
+                                    var crmPatient = await _crmContext.CrmPatients.FirstOrDefaultAsync(e => e.Id == user.CrmPatientsId && e.CrmUsersId == null);
+                                    if (crmPatient != null)
+                                    {
+                                        crmPatient.CrmUsersId = user.Id;
+                                        _crmContext.CrmPatients.Update(crmPatient);
+                                        await _crmContext.SaveChangesAsync();
+                                    }
+                                }
                             }
                         }
 

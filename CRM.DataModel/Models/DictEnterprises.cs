@@ -28,9 +28,6 @@ namespace CRM.DataModel.Models
         [InverseProperty("DictEnterprise")]
         public virtual ICollection<CrmEmployees> CrmEmployees { get; set; }
 
-        [InverseProperty("DictEnterpriseBranche")]
-        public virtual ICollection<CrmEmployees> BranchesCrmEmployees { get; set; }
-
         [InverseProperty("DictEnterprise")]
         public virtual ICollection<DictDepartments> DictDepartments { get; set; }
 

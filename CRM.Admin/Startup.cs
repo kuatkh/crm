@@ -153,6 +153,8 @@ namespace CRM.Admin
 
             services.AddMemoryCache();
             services.AddSingleton<ICacheManager, CacheManager>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<ISeedDefaultData, SeedDefaultData>();
 
             services.AddMvc().AddNewtonsoftJson();
 
@@ -229,6 +231,21 @@ namespace CRM.Admin
                     await next();
                 }
             });
+
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetService<CrmDbContext>())
+                {
+                    context.Database.Migrate();
+
+                    using (var seedService = serviceScope.ServiceProvider.GetService<ISeedDefaultData>())
+                    {
+                        seedService.Seed();
+                    }
+                }
+            }
         }
     }
 }

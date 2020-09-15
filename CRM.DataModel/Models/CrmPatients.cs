@@ -38,7 +38,6 @@ namespace CRM.DataModel.Models
         public DateTime? DeletedDateTime { get; set; }
 
         [ForeignKey("CrmUsersId")]
-        [InverseProperty("CrmPatient")]
         public virtual CrmUsers CrmUser { get; set; }
 
         [ForeignKey("DictGendersId")]

@@ -7,10 +7,10 @@ namespace CRM.DataModel.Dto
 {
     public class UserEditDto: UserDto
     {
+        public string Iin { get; set; }
         public string Email { get; set; }
         public string UserSecret { get; set; }
         public string UserSecretConfirmation { get; set; }
-        public long RoleId { get; set; }
         public string RoleName { get; set; }
         public string DepartmentNameRu { get; set; }
         public string DepartmentNameKz { get; set; }
@@ -19,6 +19,7 @@ namespace CRM.DataModel.Dto
         public string PositionNameKz { get; set; }
         public string PositionNameEn { get; set; }
         public string CreatedDateTimeStr { get; set; }
+        public virtual DictEnterprises SelectedEnterprise { get; set; }
         public virtual DictDepartments SelectedDepartment { get; set; }
         public virtual DictPositions SelectedPosition { get; set; }
     }

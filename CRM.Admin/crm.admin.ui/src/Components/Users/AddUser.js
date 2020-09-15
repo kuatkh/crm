@@ -140,6 +140,8 @@ class AddUser extends React.Component {
 				var enterprise = null
 				if (this.state.enterprisesId && this.state.enterprisesId > 0 && result.length > 0 && result.some(r => r.id == this.state.enterprisesId)) {
 					enterprise = result.filter(r => r.id == this.state.enterprisesId)[0]
+				} else if (result.length == 1) {
+					enterprise = result[0]
 				}
 				this.setState({
 					enterprisesOptions: result,
@@ -173,6 +175,8 @@ class AddUser extends React.Component {
 				var department = null
 				if (this.state.departmentsId && this.state.departmentsId > 0 && result.length > 0 && result.some(r => r.id == this.state.departmentsId)) {
 					department = result.filter(r => r.id == this.state.departmentsId)[0]
+				} else if (result.length == 1) {
+					department = result[0]
 				}
 				this.setState({
 					departmentsOptions: result,
@@ -207,6 +211,8 @@ class AddUser extends React.Component {
 				var position = null
 				if (this.state.positionsId && this.state.positionsId > 0 && result.length > 0 && result.some(r => r.id == this.state.positionsId)) {
 					position = result.filter(r => r.id == this.state.positionsId)[0]
+				} else if (result.length == 1) {
+					position = result[0]
 				}
 				this.setState({
 					positionsOptions: result,
@@ -386,6 +392,7 @@ handleSaveClick = () => {
 		departmentsId,
 		positionsId,
 		selectedRole,
+		selectedEnterprise,
 		selectedDepartment,
 		selectedPosition,
 	} = this.state
@@ -437,6 +444,12 @@ handleSaveClick = () => {
 		}
 		return
 	}
+	if (!selectedRole) {
+		if (handleSnackbarOpen) {
+			handleSnackbarOpen('Вы не выбрали роль', 'error')
+		}
+		return
+	}
 	if (!surnameRu) {
 		if (handleSnackbarOpen) {
 			handleSnackbarOpen('Вы не заполнили поле "Фамилия"', 'error')
@@ -449,13 +462,19 @@ handleSaveClick = () => {
 		}
 		return
 	}
-	if (!selectedDepartment) {
+	if (selectedRole && selectedRole != 1 && !selectedEnterprise) {
+		if (handleSnackbarOpen) {
+			handleSnackbarOpen('Вы не выбрали компанию/филиал', 'error')
+		}
+		return
+	}
+	if (selectedRole && selectedRole != 1 && selectedRole != 2 && !selectedDepartment) {
 		if (handleSnackbarOpen) {
 			handleSnackbarOpen('Вы не выбрали структурное подразделение', 'error')
 		}
 		return
 	}
-	if (!selectedPosition) {
+	if (selectedRole && selectedRole != 1 && selectedRole != 2 && !selectedPosition) {
 		if (handleSnackbarOpen) {
 			handleSnackbarOpen('Вы не выбрали должность', 'error')
 		}
@@ -478,6 +497,7 @@ handleSaveClick = () => {
 		email,
 		birthDate: birthDate ? birthDate : null,
 		phoneNumber: phoneNumber ? phoneNumber : null,
+		selectedEnterprise,
 		selectedDepartment,
 		selectedPosition,
 		roleId: selectedRole ? selectedRole.id : 0,

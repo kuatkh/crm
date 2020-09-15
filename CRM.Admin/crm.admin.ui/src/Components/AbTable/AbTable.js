@@ -1,5 +1,5 @@
 import React from 'react'
-import {withStyles} from '@material-ui/core/styles'
+import {withStyles, makeStyles} from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -13,6 +13,8 @@ import Paper from '@material-ui/core/Paper'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import LaunchIcon from '@material-ui/icons/Launch'
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import {connect} from 'react-redux'
@@ -55,6 +57,7 @@ const styles = theme => ({
 })
 
 class AbTable extends React.Component {
+	_isMounted = false
 
 	constructor(props) {
 		super(props)
@@ -68,16 +71,25 @@ class AbTable extends React.Component {
 			allRows: [],
 			rows: [],
 			count: 0,
+			openedRows: [],
 		}
 	}
 
 	componentDidMount() {
-		const {columns, rows, url} = this.props
+		this._isMounted = true
+
+		const {columns, rows, url, setGetDataFunc} = this.props
+
+		if (this._isMounted) {
+			this.setState({
+				columns: Array.isArray(columns) ? columns : [],
+			})
+		}
+
 		if (url) {
 			this.onGetData()
 		} else {
 			this.setState({
-				columns: Array.isArray(columns) ? columns : [],
 				allRows: Array.isArray(rows) ? rows : [],
 				count: Array.isArray(rows) ? rows.length : 0,
 			}, () => {
@@ -85,6 +97,10 @@ class AbTable extends React.Component {
 					this.createSortHandler(this.state.orderBy, true)
 				}
 			})
+		}
+
+		if (setGetDataFunc) {
+			setGetDataFunc(this.onGetData)
 		}
 	}
 
@@ -105,9 +121,13 @@ class AbTable extends React.Component {
 		}
 	}
 
+	componentWillUnmount() {
+		this._isMounted = false
+	}
+
 onGetData = () => {
 	const {page, rowsPerPage, order, orderBy} = this.state
-	const {token, url, columns, filterData, isLoaded, handleSnackbarOpen, defaultOrderByColumn} = this.props
+	const {token, url, rows, filterData, isLoaded, handleSnackbarOpen, defaultOrderByColumn} = this.props
 
 	if (isLoaded) {
 		isLoaded(false)
@@ -126,38 +146,43 @@ onGetData = () => {
 	}
 
 	postRequest(url, token, postBody, result => {
-		if (result && Array.isArray(result.data)) {
-			this.setState({
-				columns: Array.isArray(columns) ? columns : [],
-				rows: result.data,
-				count: result.rowsCount,
-			}, () => {
-				if (isLoaded) {
-					isLoaded(true)
-				}
-			})
-		} else if (isLoaded) {
-			isLoaded(true)
-		}
-	},
-	error => {
-		this.setState({
-			page: 0,
-			rowsPerPage: 10,
-			selectedRow: '',
-			order: 'asc',
-			orderBy: 'Id',
-			columns: [],
-			rows: [],
-			count: 0,
-		}, () => {
+		if (this._isMounted) {
 			if (isLoaded) {
 				isLoaded(true)
 			}
-			if (handleSnackbarOpen) {
-				handleSnackbarOpen(`Во время выполнения запроса произошла ошибка: ${error}`, 'error')
+			if (result && Array.isArray(result.data)) {
+				this.setState({
+					rows: result.data,
+					count: result.rowsCount,
+				})
+			} else {
+				this.setState({
+					allRows: Array.isArray(rows) ? rows : [],
+					count: Array.isArray(rows) ? rows.length : 0,
+				})
 			}
-		})
+		}
+	},
+	error => {
+		if (this._isMounted) {
+			if (isLoaded) {
+				isLoaded(true)
+			}
+			this.setState({
+				page: 0,
+				rowsPerPage: 10,
+				selectedRow: '',
+				order: 'asc',
+				orderBy: 'Id',
+				rows: [],
+				count: 0,
+				openedRows: [],
+			}, () => {
+				if (handleSnackbarOpen) {
+					handleSnackbarOpen(`Во время выполнения запроса произошла ошибка: ${error}`, 'error')
+				}
+			})
+		}
 	})
 }
 
@@ -247,9 +272,9 @@ descendingComparator = (a, b, orderBy) => {
 	return 0
 }
 
-handleEditClick = id => {
+handleEditClick = row => {
 	if (this.props.handleEditClick) {
-		this.props.handleEditClick(id)
+		this.props.handleEditClick(row)
 	}
 }
 
@@ -265,9 +290,26 @@ handleDeleteClick = id => {
 	}
 }
 
+handleOpenRowClick = id => {
+	let openedRowsArr = [...this.state.openedRows]
+	if (openedRowsArr.some(r => r == id)) {
+		var index = openedRowsArr.indexOf(id)
+		if (index !== -1) {
+			openedRowsArr.splice(index, 1)
+			this.setState({
+				openedRows: [...openedRowsArr],
+			})
+		}
+	} else {
+		this.setState({
+			openedRows: [...openedRowsArr, id],
+		})
+	}
+}
+
 render() {
-	const {classes, canOpen, canEdit, canDelete, tableContainerStyles, tableStyle} = this.props
-	const {columns, rows, orderBy, order, page, rowsPerPage, count} = this.state
+	const {classes, canOpen, canEdit, canExpand, canDelete, tableContainerStyles, tableStyle} = this.props
+	const {columns, childrenColumns, childrenHeader, rows, orderBy, order, page, rowsPerPage, count, openedRows} = this.state
 	/* eslint-disable */
 	return (
 		<Paper className={classes.root}>
@@ -275,13 +317,13 @@ render() {
 				<Table stickyHeader size='small' aria-label='sticky table' style={tableStyle || {}}>
 					<TableHead>
 						<TableRow>
-							{canOpen || canEdit || canDelete
+							{canOpen || canEdit || canDelete || canExpand
 								? <TableCell style={{maxWidth: 100}} className={classes.headerStyle}></TableCell>
 								: null}
 							{columns.map(column => (
 								<TableCell
 									className={classes.headerStyle}
-									key={column.id}
+									key={'column' + column.id}
 									align={column.align}
 									style={{minWidth: column.minWidth, maxWidth: column.maxWidth}}
 									sortDirection={orderBy === column.id && column.canSort ? order : false}
@@ -306,39 +348,112 @@ render() {
 					</TableHead>
 					<TableBody>
 						{rows.map(row => (
-							<TableRow
-								hover
-								// onClick={(event) => this.handleTableRowClick(event, row.name)}
-								// aria-checked={this.isSelected(row.name)}
-								// selected={this.isSelected(row.name)}
-								role='checkbox'
-								tabIndex={-1}
-								key={row.id} >
-								{canOpen || canEdit || canDelete
-									? <TableCell>
-										{ canOpen && <Button color='default' title='Открыть' onClick={() => this.handleLaunchClick(row)}>
-											<LaunchIcon />
-										</Button> }
-										{ canEdit && <Button color='primary' title='Редактировать' onClick={() => this.handleEditClick(row.id)}>
-											<EditIcon />
-										</Button> }
-										{ canDelete && <Button color='secondary' title='Удалить' onClick={() => this.handleDeleteClick(row.id)}>
-											<DeleteIcon />
-										</Button> }
-									</TableCell>
-									: null}
-								{columns.map(column => (
-									<TableCell key={column.id} align={column.align}>
-										{
-											column.id == 'photoB64' && row[column.id]
-											? (<CardMedia component='img' className={classes.media} src={`data:image/jpeg;base64,${row[column.id]}`} title='Фото пользователя' />)
-											: column.id == 'photoB64' && !row[column.id]
-											? (<CardMedia component='img' className={classes.media} src={require('../../Static/important-person.jpg')} title='Фото пользователя' />)
-											:(<Typography title={row[column.id]} noWrap={!!column.noWrap}>{row[column.id]}</Typography>)
-										}
-									</TableCell>
-								))}
-							</TableRow>
+							<React.Fragment key={'row-' + row.id}>
+								<TableRow
+									hover
+									// onClick={(event) => this.handleTableRowClick(event, row.name)}
+									// aria-checked={this.isSelected(row.name)}
+									// selected={this.isSelected(row.name)}
+									role='checkbox'
+									tabIndex={-1} >
+									{canOpen || canEdit || canDelete || canExpand
+										? <TableCell>
+											{ canOpen && <Button color='default' title='Открыть' onClick={() => this.handleLaunchClick(row)}>
+												<LaunchIcon />
+											</Button> }
+											{ canEdit && <Button color='primary' title='Редактировать' onClick={() => this.handleEditClick(row)}>
+												<EditIcon />
+											</Button> }
+											{ canDelete && <Button color='secondary' title='Удалить' onClick={() => this.handleDeleteClick(row.id)}>
+												<DeleteIcon />
+											</Button> }
+											{ canExpand && Array.isArray(row.children) && row.children.length > 0 && Array.isArray(childrenColumns) &&
+											 <Button color='secondary' title='Удалить' onClick={() => this.handleOpenRowClick(row.id)}>
+												{openedRows.some(r => r == row.id) ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+											</Button> }
+										</TableCell>
+										: null}
+									{columns.map(column => (
+										<TableCell key={row.id + '-' + column.id} align={column.align}>
+											{
+												column.id == 'photoB64' && row[column.id]
+												? (<CardMedia component='img' className={classes.media} src={`data:image/jpeg;base64,${row[column.id]}`} title='Фото пользователя' />)
+												: column.id == 'photoB64' && !row[column.id]
+												? (<CardMedia component='img' className={classes.media} src={require('../../Static/important-person.jpg')} title='Фото пользователя' />)
+												:(<Typography title={row[column.id]} noWrap={!!column.noWrap}>{row[column.id]}</Typography>)
+											}
+										</TableCell>
+									))}
+								</TableRow>
+								{
+									canExpand && Array.isArray(row.children) && row.children.length > 0 && Array.isArray(childrenColumns) && (
+										<TableRow>
+											<TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
+												<Collapse in={openedRows.some(r => r == id)} timeout='auto' unmountOnExit>
+													<Box margin={1}>
+														<Typography variant='h6' gutterBottom component='div'>
+															{childrenHeader || ''}
+														</Typography>
+														<Table size='small' aria-label='purchases'>
+															<TableHead>
+																<TableRow>
+																	{canOpen || canEdit || canDelete
+																		? <TableCell style={{maxWidth: 100}} className={classes.headerStyle}></TableCell>
+																		: null}
+																	{childrenColumns.map(childColumn => (
+																		<TableCell
+																			className={classes.headerStyle}
+																			key={'child-' + row.id + '-' + childColumn.id}
+																			align={childColumn.align}
+																			style={{minWidth: childColumn.minWidth, maxWidth: childColumn.maxWidth}}
+																		>
+																			{childColumn.label}
+																		</TableCell>
+																	))}
+																</TableRow>
+															</TableHead>
+															<TableBody>
+																{row.children.map(childRow => (
+																	<TableRow
+																		hover
+																		role='checkbox'
+																		tabIndex={-1}
+																		key={'child-row-' + childRow.id + '-' + childColumn.id} >
+																		{canOpen || canEdit || canDelete
+																			? <TableCell>
+																				{ canOpen && <Button color='default' title='Открыть' onClick={() => this.handleLaunchClick(childRow)}>
+																					<LaunchIcon />
+																				</Button> }
+																				{ canEdit && <Button color='primary' title='Редактировать' onClick={() => this.handleEditClick(childRow.id)}>
+																					<EditIcon />
+																				</Button> }
+																				{ canDelete && <Button color='secondary' title='Удалить' onClick={() => this.handleDeleteClick(childRow.id)}>
+																					<DeleteIcon />
+																				</Button> }
+																			</TableCell>
+																			: null}
+																		{childColumn.map(childColumn => (
+																			<TableCell key={'child-cell-' + childRow.id + '-' + childColumn.id} align={childColumn.align}>
+																				{
+																					childColumn.id == 'photoB64' && childRow[childColumn.id]
+																					? (<CardMedia component='img' className={classes.media} src={`data:image/jpeg;base64,${childRow[childColumn.id]}`} title='Фото пользователя' />)
+																					: childColumn.id == 'photoB64' && !childRow[childColumn.id]
+																					? (<CardMedia component='img' className={classes.media} src={require('../../Static/important-person.jpg')} title='Фото пользователя' />)
+																					:(<Typography title={childRow[childColumn.id]} noWrap={!!childColumn.noWrap}>{childRow[childColumn.id]}</Typography>)
+																				}
+																			</TableCell>
+																		))}
+																	</TableRow>
+																))}
+															</TableBody>
+														</Table>
+													</Box>
+												</Collapse>
+											</TableCell>
+										</TableRow>
+									)
+								}
+							</React.Fragment>
 						))}
 					</TableBody>
 				</Table>

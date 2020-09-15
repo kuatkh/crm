@@ -66,7 +66,7 @@ const styles = theme => ({
 		fontWeight: 'normal',
 	},
 	backdrop: {
-		zIndex: theme.zIndex.drawer + 1,
+		zIndex: theme.zIndex.drawer + 3,
 		color: '#fff',
 	},
 })

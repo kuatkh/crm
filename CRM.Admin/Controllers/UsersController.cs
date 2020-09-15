@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 namespace CRM.Admin.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = "superadmin,admin")]
+    //[Authorize(Roles = "superadmin,admin")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -83,13 +83,6 @@ namespace CRM.Admin.Controllers
                     currentUser = await UserHelper.GetCurrentUser(_crmContext, username);
 
                     _cacheManager.Set($"CrmUser_{username}", currentUser, new TimeSpan(1, 0, 0, 0));
-
-                    if (!string.IsNullOrEmpty(currentUser.PhotoPath) && System.IO.File.Exists(currentUser.PhotoPath))
-                    {
-                        var content = await System.IO.File.ReadAllBytesAsync(currentUser.PhotoPath);
-                        result.Data = Convert.ToBase64String(content);
-                        result.IsSuccess = true;
-                    }
                 }
 
                 return Ok(result);

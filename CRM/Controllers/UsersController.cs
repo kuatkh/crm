@@ -50,12 +50,6 @@ namespace CRM.Controllers
                     currentUser = await UserHelper.GetCurrentUser(_crmContext, username);
 
                     _cacheManager.Set($"CrmUser_{username}", currentUser, new TimeSpan(1, 0, 0, 0));
-
-                    if (!string.IsNullOrEmpty(currentUser.PhotoPath) && System.IO.File.Exists(currentUser.PhotoPath))
-                    {
-                        var content = await System.IO.File.ReadAllBytesAsync(currentUser.PhotoPath);
-                        currentUser.PhotoB64 = Convert.ToBase64String(content);
-                    }
                 }
 
                 return Ok(currentUser);
@@ -90,11 +84,19 @@ namespace CRM.Controllers
 
                     _cacheManager.Set($"CrmUser_{username}", currentUser, new TimeSpan(1, 0, 0, 0));
 
-                    if (!string.IsNullOrEmpty(currentUser.PhotoPath) && System.IO.File.Exists(currentUser.PhotoPath))
+                    if (currentUser != null)
                     {
-                        var content = await System.IO.File.ReadAllBytesAsync(currentUser.PhotoPath);
-                        result.Data = Convert.ToBase64String(content);
+                        string photoPath = null;
+                        if (currentUser.CrmPatientsId != null)
+                        {
+                            photoPath = (await _crmContext.CrmPatients.FirstOrDefaultAsync(e => e.Id == currentUser.CrmPatientsId))?.PhotoPath;
+                        }
+                        else
+                        {
+                            photoPath = (await _crmContext.CrmEmployees.FirstOrDefaultAsync(e => e.Id == currentUser.CrmEmployeesId))?.PhotoPath;
+                        }
                         result.IsSuccess = true;
+                        result.Data = await UserHelper.GetUserPhotoByPath(photoPath);
                     }
                 }
 

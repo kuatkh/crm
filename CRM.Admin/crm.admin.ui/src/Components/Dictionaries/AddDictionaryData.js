@@ -53,7 +53,7 @@ const styles = theme => ({
 		margin: theme.spacing.unit,
 	},
 	gapSmall: {
-		marginTop:50,
+		marginTop: 50,
 	},
 	paper: {
 		paddingRight: theme.spacing(1),
@@ -107,9 +107,9 @@ class AddDictionaryData extends React.Component {
 			this.setState({...this.props.editDictionaryData})
 		}
 
-		this.getDepartments()
-		this.getPositions()
-		this.getRoles()
+		// this.getDepartments()
+		// this.getPositions()
+		// this.getRoles()
 	}
 
 	// getDepartments = () => {
@@ -204,10 +204,6 @@ handleSaveClick = () => {
 			isLoaded(true)
 		}
 		if (result && result.isSuccess) {
-			if (handleSnackbarOpen) {
-				handleSnackbarOpen('Данные успешно сохранены!', 'success')
-			}
-
 			if (handleEditDictionaryDialogClose) {
 				handleEditDictionaryDialogClose(true)
 			}

@@ -42,17 +42,15 @@ namespace CRM.DataModel.Data
 
             builder.Entity<CrmUsers>(entity =>
             {
-                entity.HasOne(c => c.CrmPatient)
-                .WithOne(d => d.CrmUser)
-                .HasForeignKey<CrmPatients>(e => e.CrmUsersId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CrmUsers_CrmPatients");
-
                 entity.HasOne(c => c.CrmEmployee)
                 .WithOne(d => d.CrmUser)
-                .HasForeignKey<CrmEmployees>(e => e.CrmUsersId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CrmUsers_CrmEmployees");
+
+                entity.HasOne(c => c.CrmPatient)
+                .WithOne(d => d.CrmUser)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CrmUsers_CrmPatients");
 
                 entity.ToTable("CrmUsers");
             });
@@ -100,12 +98,6 @@ namespace CRM.DataModel.Data
                 .HasForeignKey(e => e.DictEnterprisesId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CrmEmployees_DictEnterprises");
-
-                entity.HasOne(c => c.DictEnterpriseBranche)
-                .WithMany(d => d.BranchesCrmEmployees)
-                .HasForeignKey(e => e.DictEnterpriseBranchesId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CrmEmployees_DictEnterprises_Branches");
 
                 entity.HasOne(c => c.DictDepartment)
                 .WithMany(d => d.CrmEmployees)

@@ -8,7 +8,7 @@ namespace CRM.DataModel.Models
     public class CrmEmployees
     {
         public long Id { get; set; }
-        public long CrmUsersId { get; set; }
+        public long? CrmUsersId { get; set; }
         public string Iin { get; set; }
         public string DocumentNumber { get; set; }
         public string NameRu { get; set; }
@@ -25,7 +25,6 @@ namespace CRM.DataModel.Models
         public string PhoneNumber { get; set; }
         public long? DictGendersId { get; set; }
         public long? DictEnterprisesId { get; set; }
-        public long? DictEnterpriseBranchesId { get; set; }
         public long? DictDepartmentsId { get; set; }
         public long? DictPositionsId { get; set; }
         public long? DictCitiesId { get; set; }
@@ -39,7 +38,6 @@ namespace CRM.DataModel.Models
         public DateTime? DeletedDateTime { get; set; }
 
         [ForeignKey("CrmUsersId")]
-        [InverseProperty("CrmEmployee")]
         public virtual CrmUsers CrmUser { get; set; }
 
         [ForeignKey("DictGendersId")]
@@ -49,10 +47,6 @@ namespace CRM.DataModel.Models
         [ForeignKey("DictEnterprisesId")]
         [InverseProperty("CrmEmployees")]
         public virtual DictEnterprises DictEnterprise { get; set; }
-
-        [ForeignKey("DictEnterpriseBranchesId")]
-        [InverseProperty("BranchesCrmEmployees")]
-        public virtual DictEnterprises DictEnterpriseBranche { get; set; }
 
         [ForeignKey("DictDepartmentsId")]
         [InverseProperty("CrmEmployees")]

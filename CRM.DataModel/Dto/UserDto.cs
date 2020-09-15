@@ -11,7 +11,7 @@ namespace CRM.DataModel.Dto
         public long? CrmEmployeesId { get; set; }
         public long? CrmPatientsId { get; set; }
         public string UserName { get; set; }
-        public string Iin { get; set; }
+        //public string Iin { get; set; }
         public string NameRu { get; set; }
         public string NameKz { get; set; }
         public string NameEn { get; set; }
@@ -27,23 +27,23 @@ namespace CRM.DataModel.Dto
         public string ShortNameRu { get; set; }
         public string ShortNameKz { get; set; }
         public string ShortNameEn { get; set; }
-        public string AboutMe { get; set; }
-        public string JobPlace { get; set; }
+        //public string AboutMe { get; set; }
+        //public string JobPlace { get; set; }
+        public long RoleId { get; set; }
         public long? DictGendersId { get; set; }
         public long? DictEnterprisesId { get; set; }
         public long? DictDepartmentsId { get; set; }
         public long? DictPositionsId { get; set; }
-        public string CrmToken { get; set; }
-        public DateTime? CrmTokenExpiredDate { get; set; }
+        //public string CrmToken { get; set; }
+        //public DateTime? CrmTokenExpiredDate { get; set; }
         public DateTime? BirthDate { get; set; }
         public string BirthDateStr { get; set; }
-        public string PhotoB64 { get; set; }
-        public string PhotoPath { get; set; }
+        //public string PhotoB64 { get; set; }
+        //public string PhotoPath { get; set; }
         public bool IsActive { get; set; } = true;
-        public DictPositions DictPosition { get; set; }
-        public DictDepartments DictDepartment { get; set; }
-        public DictEnterprises DictEnterprise { get; set; }
-        public DictEnterprises DictEnterpriseBranches { get; set; }
-        public DictCities DictCity { get; set; }
+        //public DictPositions DictPosition { get; set; }
+        //public DictDepartments DictDepartment { get; set; }
+        //public DictEnterprises DictEnterprise { get; set; }
+        //public DictCities DictCity { get; set; }
     }
 }

@@ -19,11 +19,9 @@ namespace CRM.DataModel.Models
         public virtual ICollection<CrmUserRoles> UserRoles { get; set; }
 
         [ForeignKey("CrmEmployeesId")]
-        [InverseProperty("CrmUser")]
         public virtual CrmEmployees CrmEmployee { get; set; }
 
         [ForeignKey("CrmPatientsId")]
-        [InverseProperty("CrmUser")]
         public virtual CrmPatients CrmPatient { get; set; }
 
         [InverseProperty("NotificationReceiver")]

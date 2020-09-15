@@ -273,6 +273,7 @@ namespace CRM.Admin.Controllers
                                     DescriptionEn = d.DescriptionEn,
                                     DescriptionRu = d.DescriptionRu,
                                     DescriptionKz = d.DescriptionKz,
+                                    PositionCategory = d.Category,
                                     ParentId = d.DictEnterprisesId,
                                     ParentNameEn = d.DictEnterprise != null ? d.DictEnterprise.NameEn : null,
                                     ParentNameKz = d.DictEnterprise != null ? d.DictEnterprise.NameKz : null,

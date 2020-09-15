@@ -107,8 +107,12 @@ class App extends Component {
 								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictLoyaltyPrograms' pageTitle='Справочник бонусных программ' />} />
 							<Route path='/dictionary-statuses'
 								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictStatuses' pageTitle='Справочник статусов' />} />
-							<Route path='/dictionary-enterprises'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictEnterprises' pageTitle='Справочник компаний/филиалов' />} />
+							{
+								currentUser && currentUser.roleId == 1 && (
+									<Route path='/dictionary-enterprises'
+										component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictEnterprises' pageTitle='Справочник компаний/филиалов' />} />
+								)
+							}
 						</Router>
 						: <LogIn logInSuccess={this.logInSuccess}/>
 					}

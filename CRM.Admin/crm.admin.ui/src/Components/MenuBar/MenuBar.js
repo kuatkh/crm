@@ -363,12 +363,16 @@ render() {
 									</Tooltip>
 									<ListItemText primary={'Статусы'} />
 								</ListItem>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-enterprises') }}>
-									<Tooltip title='Компании/филиалы'>
-										<ListItemIcon><BusinessIcon /></ListItemIcon>
-									</Tooltip>
-									<ListItemText primary={'Компании/филиалы'} />
-								</ListItem>
+								{
+									currentUser && currentUser.roleId == 1 && (
+										<ListItem button onClick={() => { this.openRoute('/dictionary-enterprises') }}>
+											<Tooltip title='Компании/филиалы'>
+												<ListItemIcon><BusinessIcon /></ListItemIcon>
+											</Tooltip>
+											<ListItemText primary={'Компании/филиалы'} />
+										</ListItem>
+									)
+								}
 							</List>
 						</Collapse>
 					</List>
