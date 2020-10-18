@@ -9,6 +9,7 @@ namespace CRM.DataModel.Models
     {
         public long Id { get; set; }
         public long? CrmUsersId { get; set; }
+        public long? CrmPatientsId { get; set; }
         public string Iin { get; set; }
         public string DocumentNumber { get; set; }
         public string NameRu { get; set; }
@@ -33,12 +34,25 @@ namespace CRM.DataModel.Models
         public string PhotoB64 { get; set; }
         public string PhotoPath { get; set; }
         public bool IsActive { get; set; } = true;
+        public long? AuthorId { get; set; }
+        public long? EditorId { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public DateTime? EditedDateTime { get; set; }
         public DateTime? DeletedDateTime { get; set; }
 
         [ForeignKey("CrmUsersId")]
         public virtual CrmUsers CrmUser { get; set; }
+
+        [ForeignKey("CrmPatientsId")]
+        public virtual CrmPatients CrmPatient { get; set; }
+
+        [ForeignKey("AuthorId")]
+        [InverseProperty("CrmEmployeesAuthors")]
+        public virtual CrmUsers Author { get; set; }
+
+        [ForeignKey("EditorId")]
+        [InverseProperty("CrmEmployeesEditors")]
+        public virtual CrmUsers Editor { get; set; }
 
         [ForeignKey("DictGendersId")]
         [InverseProperty("CrmEmployees")]

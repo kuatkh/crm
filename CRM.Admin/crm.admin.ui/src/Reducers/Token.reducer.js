@@ -1,6 +1,6 @@
 import {allConstants} from '../Constants/AllConstants'
 
-const initialState = localStorage.getItem('abToken') || null
+const initialState = localStorage.getItem('crmToken') || null
 
 export function token(state = initialState, action) {
 

@@ -52,6 +52,12 @@ namespace CRM.DataModel.Data
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CrmUsers_CrmPatients");
 
+                entity.HasMany(c => c.UserRoles)
+                .WithOne(d => d.User)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CrmUsers_UserRoles");
+
                 entity.ToTable("CrmUsers");
             });
 
@@ -185,6 +191,18 @@ namespace CRM.DataModel.Data
                 .HasForeignKey(e => e.DictStatusesId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CrmPatientsAppointments_DictStatuses");
+
+                entity.HasOne(c => c.Author)
+                .WithMany(d => d.CrmPatientsAppointmentsAuthors)
+                .HasForeignKey(e => e.AuthorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CrmPatientsAppointments_Author_CrmUsers");
+
+                entity.HasOne(c => c.Editor)
+                .WithMany(d => d.CrmPatientsAppointmentsEditors)
+                .HasForeignKey(e => e.EditorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CrmPatientsAppointments_Editor_CrmUsers");
 
                 entity.ToTable("CrmPatientsAppointments");
             });

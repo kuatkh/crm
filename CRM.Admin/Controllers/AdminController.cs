@@ -174,7 +174,7 @@ namespace CRM.Admin.Controllers
                     .Where(d => d.DeletedDateTime == null)
                     .Include("ParentEnterprise")
                     .AsNoTracking()
-                    .Select(d => new SelectDto()
+                    .Select(d => new SelectWithParentDto()
                     {
                         Id = d.Id,
                         NameRu = d.NameRu,
@@ -332,13 +332,6 @@ namespace CRM.Admin.Controllers
                 {
                     currentUser = await UserHelper.GetCurrentUser(_crmContext, username);
 
-                    if (currentUser != null)
-                    {
-                        currentUser.ShortNameRu = UserHelper.GetUserShortName(currentUser.SurnameRu, currentUser.NameRu, currentUser.MiddlenameRu);
-                        currentUser.ShortNameKz = UserHelper.GetUserShortName(currentUser.SurnameKz, currentUser.NameKz, currentUser.MiddlenameKz);
-                        currentUser.ShortNameEn = UserHelper.GetUserShortName(currentUser.SurnameEn, currentUser.NameEn, currentUser.MiddlenameEn);
-                    }
-
                     _cacheManager.Set($"CrmUser_{username}", currentUser, new TimeSpan(1, 0, 0, 0));
                 }
 
@@ -356,7 +349,7 @@ namespace CRM.Admin.Controllers
                             return Ok(emptyRole);
                         }
 
-                        if (userData.RoleId > 1 && (userData.SelectedEnterprise == null || userData.SelectedEnterprise.Id <= 0))
+                        if (userData.RoleId > 1 && (userData.Enterprise == null || userData.Enterprise.Id <= 0))
                         {
                             var emptyEnterprise = new ResultDto<string>()
                             {
@@ -366,7 +359,7 @@ namespace CRM.Admin.Controllers
                             return Ok(emptyEnterprise);
                         }
 
-                        if (userData.RoleId > 2 && (userData.SelectedDepartment == null || userData.SelectedDepartment.Id <= 0))
+                        if (userData.RoleId > 2 && (userData.Department == null || userData.Department.Id <= 0))
                         {
                             var emptyDepartment = new ResultDto<string>()
                             {
@@ -376,7 +369,7 @@ namespace CRM.Admin.Controllers
                             return Ok(emptyDepartment);
                         }
 
-                        if (userData.RoleId > 2 && (userData.SelectedPosition == null || userData.SelectedPosition.Id <= 0))
+                        if (userData.RoleId > 2 && (userData.Position == null || userData.Position.Id <= 0))
                         {
                             var emptyPosition = new ResultDto<string>()
                             {
@@ -401,11 +394,29 @@ namespace CRM.Admin.Controllers
                             Id = userData.Id,
                             UserName = userData.UserName,
                             CreatedDateTime = DateTime.Now,
-                            Email = userData.Email,
-                            CrmEmployeesId = userData.CrmEmployeesId,
-                            CrmEmployee = new CrmEmployees()
+                            Email = userData.Email
+                        };
+
+                        if (userData.CrmEmployeesId > 0 && await _crmContext.CrmEmployees.AnyAsync(c => c.Id == userData.CrmEmployeesId))
+                        {
+                            user.CrmEmployeesId = userData.CrmEmployeesId;
+                            user.CrmEmployee = await _crmContext.CrmEmployees.FirstOrDefaultAsync(c => c.Id == userData.CrmEmployeesId);
+                            user.CrmEmployee.EditorId = currentUser.Id;
+                            user.CrmEmployee.EditedDateTime = DateTime.Now;
+                        }
+                        else if (userData.CrmPatientsId > 0 && await _crmContext.CrmPatients.AnyAsync(c => c.Id == userData.CrmPatientsId))
+                        {
+                            user.CrmPatientsId = userData.CrmPatientsId;
+                            user.CrmPatient = await _crmContext.CrmPatients.FirstOrDefaultAsync(c => c.Id == userData.CrmPatientsId);
+                            user.CrmPatient.EditorId = currentUser.Id;
+                            user.CrmPatient.EditedDateTime = DateTime.Now;
+                        }
+                        else
+                        {
+                            user.CrmEmployeesId = 0;
+                            user.CrmEmployee = new CrmEmployees()
                             {
-                                Id = userData.CrmEmployeesId ?? 0,
+                                Id = 0,
                                 SurnameRu = userData.SurnameRu,
                                 SurnameKz = userData.SurnameKz,
                                 SurnameEn = userData.SurnameEn,
@@ -415,19 +426,20 @@ namespace CRM.Admin.Controllers
                                 MiddlenameRu = userData.MiddlenameRu,
                                 MiddlenameKz = userData.MiddlenameKz,
                                 MiddlenameEn = userData.MiddlenameEn,
-                                DictEnterprisesId = userData.SelectedEnterprise.Id,
-                                DictDepartmentsId = userData.SelectedDepartment.Id,
-                                DictPositionsId = userData.SelectedPosition.Id,
+                                DictEnterprisesId = userData.Enterprise.Id,
+                                DictDepartmentsId = userData.Department.Id,
+                                DictPositionsId = userData.Position.Id,
                                 Iin = userData.Iin,
                                 IsActive = userData.IsActive,
                                 BirthDate = userData.BirthDate,
-                            }
-                        };
+                                CreatedDateTime = DateTime.Now,
+                                AuthorId = currentUser.Id
+                            };
+                        }
 
                         if (user.Id > 0)
                         {
                             user.EditedDateTime = DateTime.Now;
-                            user.CrmEmployee.EditedDateTime = DateTime.Now;
 
                             var updateUserResult = await _userManager.UpdateAsync(user);
 
@@ -441,11 +453,33 @@ namespace CRM.Admin.Controllers
                                 };
                                 return Ok(updateErr);
                             }
+                            else
+                            {
+                                if (user.Id > 0 && user.CrmEmployeesId > 0 && await _crmContext.CrmEmployees.AnyAsync(e => e.Id == user.CrmEmployeesId && e.CrmUsersId == null))
+                                {
+                                    var crmEmployee = await _crmContext.CrmEmployees.FirstOrDefaultAsync(e => e.Id == user.CrmEmployeesId && e.CrmUsersId == null);
+                                    if (crmEmployee != null)
+                                    {
+                                        crmEmployee.CrmUsersId = user.Id;
+                                        _crmContext.CrmEmployees.Update(crmEmployee);
+                                        await _crmContext.SaveChangesAsync();
+                                    }
+                                }
+                                if (user.Id > 0 && user.CrmPatientsId > 0 && await _crmContext.CrmPatients.AnyAsync(e => e.Id == user.CrmPatientsId && e.CrmUsersId == null))
+                                {
+                                    var crmPatient = await _crmContext.CrmPatients.FirstOrDefaultAsync(e => e.Id == user.CrmPatientsId && e.CrmUsersId == null);
+                                    if (crmPatient != null)
+                                    {
+                                        crmPatient.CrmUsersId = user.Id;
+                                        _crmContext.CrmPatients.Update(crmPatient);
+                                        await _crmContext.SaveChangesAsync();
+                                    }
+                                }
+                            }
                         }
                         else
                         {
                             user.CreatedDateTime = DateTime.Now;
-                            user.CrmEmployee.CreatedDateTime = DateTime.Now;
 
                             var addUserResult = await _userManager.CreateAsync(user, userData.UserSecret);
 
@@ -483,6 +517,8 @@ namespace CRM.Admin.Controllers
                                 }
                             }
                         }
+
+                        _cacheManager.Remove($"CrmUser_{userData.UserName}");
 
                         if (userData.RoleId > 0)
                         {

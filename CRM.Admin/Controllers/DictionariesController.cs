@@ -1195,5 +1195,69 @@ namespace CRM.Admin.Controllers
                 await _crmContext.DisposeAsync();
             }
         }
+
+        [HttpPost("GetDictServicesData")]
+        public async Task<IActionResult> GetDictServicesData()
+        {
+            try
+            {
+                UserHelper.TryGetCurrentName(this.User, out string username);
+                UserDto currentUser = (UserDto)_cacheManager.Get($"CrmUser_{username}");
+
+                if (currentUser == null)
+                {
+                    currentUser = await UserHelper.GetCurrentUser(_crmContext, username);
+
+                    _cacheManager.Set($"CrmUser_{username}", currentUser, new TimeSpan(1, 0, 0, 0));
+                }
+
+                if (currentUser != null)
+                {
+                    var result = new ResultDto<List<DictionaryDto>>()
+                    {
+                        IsSuccess = true,
+                    };
+
+                    result.Data = await _crmContext.DictServices
+                        .Where(d => d.DeletedDateTime == null)
+                        .AsNoTracking()
+                        .Select(d => new DictionaryDto()
+                        {
+                            Id = d.Id,
+                            NameEn = d.NameEn,
+                            NameKz = d.NameKz,
+                            NameRu = d.NameRu,
+                            DescriptionEn = d.DescriptionEn,
+                            DescriptionRu = d.DescriptionRu,
+                            DescriptionKz = d.DescriptionKz,
+                            Amount = d.Price,
+                        })
+                        .ToListAsync();
+                    return Ok(result);
+                }
+                else
+                {
+                    return Ok(new ResultDto<string>()
+                    {
+                        IsSuccess = false,
+                        Data = "empty_current_user"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ERROR GetDictServicesData. MSG: {JsonConvert.SerializeObject(ex)}");
+
+                return Ok(new ResultDto<string>()
+                {
+                    IsSuccess = false,
+                    Data = JsonConvert.SerializeObject(ex)
+                });
+            }
+            finally
+            {
+                await _crmContext.DisposeAsync();
+            }
+        }
     }
 }

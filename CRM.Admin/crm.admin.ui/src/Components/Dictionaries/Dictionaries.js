@@ -17,24 +17,6 @@ import {allConstants} from '../../Constants/AllConstants.js'
 import {dictionariesColumns} from '../../Constants/TableColumns.js'
 
 const styles = theme => ({
-	formControl: {
-		margin: theme.spacing(1),
-		minWidth: 120,
-		maxWidth: 300,
-	},
-	chips: {
-		display: 'flex',
-		flexWrap: 'wrap',
-	},
-	chip: {
-		margin: 2,
-	},
-	noLabel: {
-		marginTop: theme.spacing(3),
-	},
-	selectEmpty: {
-		marginTop: theme.spacing(2),
-	},
 	container: {
 		flexWrap: 'wrap',
 		gridTemplateColumns: 'repeat(12, 1fr)',
@@ -42,15 +24,8 @@ const styles = theme => ({
 		margin: 0,
 		padding: 20,
 	},
-	input: {
-		// margin: theme.spacing.unit,
-		margin: 0,
-	},
 	button: {
 		margin: theme.spacing.unit,
-	},
-	gapSmall: {
-		marginTop: 50,
 	},
 	paper: {
 		paddingRight: theme.spacing(1),
@@ -109,6 +84,12 @@ handleSnackbarClose = () => {
 	})
 }
 
+isLoaded = loading => {
+	this.setState({
+		loading: !loading,
+	})
+}
+
 handleEditDictionaryDialogOpen = () => {
 	this.setState({
 		openEditDictionaryDialog: true,
@@ -127,12 +108,6 @@ handleEditDictionaryDialogClose = isSuccess => {
 			this._abTableGetData()
 		}
 	}
-}
-
-isLoaded = loading => {
-	this.setState({
-		loading: !loading,
-	})
 }
 
 handleEditClick = row => {
@@ -162,8 +137,6 @@ render() {
 					</Paper>
 				</Grid>
 			</Grid>
-			<Divider className={classes.divider} />
-			<br/>
 			<Divider className={classes.divider} />
 			<Grid container className={classes.container}>
 				<Grid item xs={6}>

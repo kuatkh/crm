@@ -1,8 +1,6 @@
-// import { crudStudent } from './CrudStudent.reducer.js';
-// import { viewStudents } from './ViewStudents.reducer.js';
+import {combineReducers} from 'redux'
 import {currentUser} from './CurrentUser.reducer.js'
 import {token} from './Token.reducer.js'
-import {combineReducers} from 'redux'
 
 const rootReducer = combineReducers({
 	currentUser,

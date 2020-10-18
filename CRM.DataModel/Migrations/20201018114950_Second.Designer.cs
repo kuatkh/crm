@@ -3,15 +3,17 @@ using System;
 using CRM.DataModel.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace CRM.DataModel.Migrations
 {
     [DbContext(typeof(CrmDbContext))]
-    partial class CrmDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201018114950_Second")]
+    partial class Second
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -728,11 +730,16 @@ namespace CRM.DataModel.Migrations
                     b.Property<long?>("RoleId1")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("UserId1")
+                        .HasColumnType("bigint");
+
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
                     b.HasIndex("RoleId1");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("CrmUserRoles");
                 });
@@ -1514,11 +1521,15 @@ namespace CRM.DataModel.Migrations
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId1");
 
+                    b.HasOne("CRM.DataModel.Models.CrmUsers", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CRM.DataModel.Models.CrmUsers", "User")
                         .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("FK_CrmUsers_UserRoles")
-                        .IsRequired();
+                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("CRM.DataModel.Models.CrmUserTokens", b =>

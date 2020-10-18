@@ -57,6 +57,9 @@ namespace CRM.DataModel.Models
         public virtual CrmUsers Editor { get; set; }
 
         [InverseProperty("CrmPatient")]
+        public virtual ICollection<CrmEmployees> CrmEmployees { get; set; }
+
+        [InverseProperty("CrmPatient")]
         public virtual ICollection<CrmPatientsIntolerances> CrmPatientsIntolerances { get; set; }
 
         [InverseProperty("CrmPatient")]

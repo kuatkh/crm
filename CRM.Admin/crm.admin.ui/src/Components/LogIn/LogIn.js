@@ -43,7 +43,7 @@ class LogIn extends Component {
 	}
 
 	componentDidMount() {
-		if (!localStorage.getItem('abToken')) {
+		if (!localStorage.getItem('crmToken')) {
 			localStorage.clear()
 		}
 	}
@@ -71,7 +71,7 @@ handleSubmit = e => {
 					this.isLoaded(true)
 					if (result.isSuccess && result.data) {
 						this.handleSnackbarOpen('Добро пожаловать в CRM!', 'success')
-						localStorage.setItem('abToken', result.data)
+						localStorage.setItem('crmToken', result.data)
 						if (logInSuccess) {
 							logInSuccess()
 						}

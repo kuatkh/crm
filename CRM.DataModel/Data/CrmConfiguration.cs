@@ -15,5 +15,6 @@ namespace CRM.DataModel.Data
         public string Audience { get; set; }
         public string CertPath { get; set; }
         public string CertSecret { get; set; }
+        public List<string> AppointmentPositions { get; set; }
     }
 }

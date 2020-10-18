@@ -29,7 +29,6 @@ import BlockIcon from '@material-ui/icons/Block'
 import WcIcon from '@material-ui/icons/Wc'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import BusinessIcon from '@material-ui/icons/Business'
-
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 import List from '@material-ui/core/List'
@@ -44,6 +43,9 @@ import HomeIcon from '@material-ui/icons/Home'
 import AddBoxIcon from '@material-ui/icons/AddBox'
 import AllInboxIcon from '@material-ui/icons/AllInbox'
 import PeopleIcon from '@material-ui/icons/People'
+import {deepOrange} from '@material-ui/core/colors'
+import {allConstants} from '../../Constants/AllConstants.js'
+import {getRequest} from '../../Services/RequestsServices.js'
 
 const drawerWidth = 240
 
@@ -63,9 +65,9 @@ const styles = theme => ({
 		width: theme.spacing(3),
 		height: theme.spacing(3),
 	},
-	large: {
-		width: theme.spacing(7),
-		height: theme.spacing(7),
+	orange: {
+		color: theme.palette.getContrastText(deepOrange[500]),
+		backgroundColor: deepOrange[500],
 	},
 	appBar: {
 		zIndex: 1202,
@@ -117,7 +119,6 @@ const styles = theme => ({
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'flex-end',
-		padding: theme.spacing(1),
 		// necessary for content to be below app bar
 		...theme.mixins.toolbar,
 	},
@@ -127,6 +128,9 @@ const styles = theme => ({
 	},
 	grow: {
 		flexGrow: 1,
+	},
+	nested: {
+		paddingLeft: theme.spacing(4),
 	},
 })
 
@@ -138,6 +142,7 @@ class MenuBar extends React.Component {
 			open: false,
 			openDrawer: false,
 			openDictionaries: false,
+			photoB64: null,
 		}
 	}
 
@@ -145,6 +150,21 @@ class MenuBar extends React.Component {
 		const drawerState = localStorage.getItem('drawerState')
 		this.setState({
 			openDrawer: drawerState == 'opened',
+		})
+	}
+
+	getCurrentUserPhoto = () => {
+		const {token} = this.props
+
+		getRequest(`${allConstants.serverUrl}/api/Users/GetCurrentUserPhoto`, token, result => {
+			if (result && result.isSuccess) {
+				this.setState({
+					photoB64: result.data,
+				})
+			}
+		},
+		error => {
+			console.log(error)
 		})
 	}
 
@@ -238,9 +258,9 @@ render() {
 								edge='end'
 							>
 								{
-									currentUser && currentUser.photoB64
-										? <Avatar alt='Фото пользователя' src={`data:image/jpeg;base64,${currentUser.photoB64}`} className={classes.large} />
-										: <AccountCircleIcon />
+									this.state.photoB64
+										? <Avatar alt='Фото пользователя' src={`data:image/jpeg;base64,${this.state.photoB64}`} />
+										: <Avatar alt='Фото пользователя' className={classes.orange} >{currentUser && currentUser.shortNameRu ? currentUser.shortNameRu[0] : 'A'}</Avatar>
 								}
 								{currentUser && <Typography variant='button' display='block'>{`${currentUser.shortNameRu}`}</Typography>}
 							</IconButton>
@@ -260,7 +280,7 @@ render() {
 								open={this.state.open}
 								onClose={this.handleClose}
 							>
-								<MenuItem onClick={this.handleClose}>Профиль</MenuItem>
+								<MenuItem onClick={() => { this.openRoute('/profile') }}>Профиль</MenuItem>
 								<MenuItem onClick={this.handleLogOut}>Выйти</MenuItem>
 							</Menu>
 						</React.Fragment>
@@ -292,86 +312,118 @@ render() {
 							<Tooltip title='Главная страница'>
 								<ListItemIcon><HomeIcon /></ListItemIcon>
 							</Tooltip>
-							<ListItemText primary={'Главная страница'} />
-						</ListItem>
-						<ListItem button onClick={() => { this.openRoute('/users-list') }}>
-							<Tooltip title='Пользователи системы'>
-								<ListItemIcon><PeopleIcon /></ListItemIcon>
+							<Tooltip title='Главная страница'>
+								<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Главная страница'} />
 							</Tooltip>
-							<ListItemText primary={'Пользователи системы'} />
 						</ListItem>
+						{
+							currentUser && currentUser.roleId == 1 && <ListItem button onClick={() => { this.openRoute('/users-list') }}>
+								<Tooltip title='Пользователи системы'>
+									<ListItemIcon><PeopleIcon /></ListItemIcon>
+								</Tooltip>
+								<Tooltip title='Пользователи системы'>
+									<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Пользователи системы'} />
+								</Tooltip>
+							</ListItem>
+						}
 						<ListItem button onClick={this.handleOpenDictionariesClick}>
-							<ListItemIcon>
-								<ViewListIcon />
-							</ListItemIcon>
-							<ListItemText primary='Справочники' />
+							<Tooltip title='Справочники'>
+								<ListItemIcon><ViewListIcon /></ListItemIcon>
+							</Tooltip>
+							<Tooltip title='Справочники'>
+								<ListItemText primaryTypographyProps={{noWrap: true}} primary='Справочники' />
+							</Tooltip>
 							{this.state.openDictionaries ? <ExpandLess /> : <ExpandMore />}
 						</ListItem>
 						<Collapse in={this.state.openDictionaries} timeout='auto' unmountOnExit>
 							<List component='div' disablePadding>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-contries') }}>
-									<Tooltip title='Страны'>
-										<ListItemIcon><PublicIcon /></ListItemIcon>
-									</Tooltip>
-									<ListItemText primary={'Страны'} />
-								</ListItem>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-cities') }}>
-									<Tooltip title='Города'>
-										<ListItemIcon><LocationCityIcon /></ListItemIcon>
-									</Tooltip>
-									<ListItemText primary={'Города'} />
-								</ListItem>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-departments') }}>
-									<Tooltip title='Структурные подразделения'>
-										<ListItemIcon><AccountTreeIcon /></ListItemIcon>
-									</Tooltip>
-									<ListItemText primary={'Структурные подразделения'} />
-								</ListItem>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-positions') }}>
-									<Tooltip title='Должности'>
-										<ListItemIcon><PortraitIcon /></ListItemIcon>
-									</Tooltip>
-									<ListItemText primary={'Должности'} />
-								</ListItem>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-services') }}>
+								{
+									currentUser && currentUser.roleId == 1 && <React.Fragment>
+										<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-contries') }}>
+											<Tooltip title='Страны'>
+												<ListItemIcon><PublicIcon /></ListItemIcon>
+											</Tooltip>
+											<Tooltip title='Страны'>
+												<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Страны'} />
+											</Tooltip>
+										</ListItem>
+										<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-cities') }}>
+											<Tooltip title='Города'>
+												<ListItemIcon><LocationCityIcon /></ListItemIcon>
+											</Tooltip>
+											<Tooltip title='Города'>
+												<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Города'} />
+											</Tooltip>
+										</ListItem>
+										<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-departments') }}>
+											<Tooltip title='Структурные подразделения'>
+												<ListItemIcon><AccountTreeIcon /></ListItemIcon>
+											</Tooltip>
+											<Tooltip title='Структурные подразделения'>
+												<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Структурные подразделения'} />
+											</Tooltip>
+										</ListItem>
+										<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-positions') }}>
+											<Tooltip title='Должности'>
+												<ListItemIcon><PortraitIcon /></ListItemIcon>
+											</Tooltip>
+											<Tooltip title='Должности'>
+												<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Должности'} />
+											</Tooltip>
+										</ListItem>
+									</React.Fragment>
+								}
+								<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-services') }}>
 									<Tooltip title='Предоставляемые услуги'>
 										<ListItemIcon><InsertLinkIcon /></ListItemIcon>
 									</Tooltip>
-									<ListItemText primary={'Предоставляемые услуги'} />
+									<Tooltip title='Предоставляемые услуги'>
+										<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Предоставляемые услуги'} />
+									</Tooltip>
 								</ListItem>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-intolerances') }}>
+								<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-intolerances') }}>
 									<Tooltip title='Аллергические заболевания'>
 										<ListItemIcon><BlockIcon /></ListItemIcon>
 									</Tooltip>
-									<ListItemText primary={'Аллергические заболевания'} />
-								</ListItem>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-genders') }}>
-									<Tooltip title='Пол'>
-										<ListItemIcon><WcIcon /></ListItemIcon>
+									<Tooltip title='Аллергические заболевания'>
+										<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Аллергические заболевания'} />
 									</Tooltip>
-									<ListItemText primary={'Пол'} />
 								</ListItem>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-loyalty-programs') }}>
+								<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-loyalty-programs') }}>
 									<Tooltip title='Бонусные программы'>
 										<ListItemIcon><LoyaltyIcon /></ListItemIcon>
 									</Tooltip>
-									<ListItemText primary={'Бонусные программы'} />
-								</ListItem>
-								<ListItem button onClick={() => { this.openRoute('/dictionary-statuses') }}>
-									<Tooltip title='Статусы'>
-										<ListItemIcon><LoupeIcon /></ListItemIcon>
+									<Tooltip title='Бонусные программы'>
+										<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Бонусные программы'} />
 									</Tooltip>
-									<ListItemText primary={'Статусы'} />
+								</ListItem>
+								<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-genders') }}>
+									<Tooltip title='Пол'>
+										<ListItemIcon><WcIcon /></ListItemIcon>
+									</Tooltip>
+									<Tooltip title='Пол'>
+										<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Пол'} />
+									</Tooltip>
 								</ListItem>
 								{
-									currentUser && currentUser.roleId == 1 && (
-										<ListItem button onClick={() => { this.openRoute('/dictionary-enterprises') }}>
+									currentUser && currentUser.roleId == 1 && <React.Fragment>
+										<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-statuses') }}>
+											<Tooltip title='Статусы'>
+												<ListItemIcon><LoupeIcon /></ListItemIcon>
+											</Tooltip>
+											<Tooltip title='Статусы'>
+												<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Статусы'} />
+											</Tooltip>
+										</ListItem>
+										<ListItem button className={classes.nested} onClick={() => { this.openRoute('/dictionary-enterprises') }}>
 											<Tooltip title='Компании/филиалы'>
 												<ListItemIcon><BusinessIcon /></ListItemIcon>
 											</Tooltip>
-											<ListItemText primary={'Компании/филиалы'} />
+											<Tooltip title='Компании/филиалы'>
+												<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Компании/филиалы'} />
+											</Tooltip>
 										</ListItem>
-									)
+									</React.Fragment>
 								}
 							</List>
 						</Collapse>

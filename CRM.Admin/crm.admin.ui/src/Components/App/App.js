@@ -7,6 +7,7 @@ import MenuBar from '../MenuBar'
 import LogIn from '../LogIn'
 import Home from '../Home'
 import Users from '../Users'
+import Profile from '../Profile'
 import Dictionaries from '../Dictionaries'
 import {allActions} from '../../Actions/AllActions'
 import {allConstants} from '../../Constants/AllConstants.js'
@@ -20,7 +21,7 @@ const styles = theme => ({
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'flex-end',
-		padding: theme.spacing(0, 1),
+		padding: theme.spacing(1),
 		// necessary for content to be below app bar
 		...theme.mixins.toolbar,
 	},
@@ -40,7 +41,7 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		if (!localStorage.getItem('abToken')) {
+		if (!localStorage.getItem('crmToken')) {
 			localStorage.clear()
 		} else {
 			this.logInSuccess()
@@ -53,8 +54,8 @@ class App extends Component {
 		})
 		const {dispatch, currentUser, token} = this.props
 
-		if (!token && localStorage.getItem('abToken')) {
-			dispatch(allActions.addToken(localStorage.getItem('abToken')))
+		if (!token && localStorage.getItem('crmToken')) {
+			dispatch(allActions.addToken(localStorage.getItem('crmToken')))
 		}
 
 		if ((!currentUser || !currentUser.Id) && !localStorage.getItem('currentUser')) {
@@ -78,7 +79,7 @@ class App extends Component {
 	render() {
 		const {classes, currentUser, token} = this.props
 		let {isAuthorized} = this.state
-		isAuthorized = true
+		// isAuthorized = true
 		return (
 			<div className='App'>
 				<MenuBar isAuthorized={isAuthorized} currentUser={currentUser}/>
@@ -86,9 +87,12 @@ class App extends Component {
 					<div className={classes.toolbar} />
 					{isAuthorized
 						? <Router history={history}>
-							<Route exact path='/' component={Home} />
+							<Route exact path='/'
+								component={() => <Home currentUser={currentUser} token={token} />} />
 							<Route path='/users-list'
 								component={Users} />
+							<Route path='/profile'
+								component={Profile} />
 							<Route path='/dictionary-contries'
 								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictCountries' pageTitle='Справочник стран' />} />
 							<Route path='/dictionary-cities'

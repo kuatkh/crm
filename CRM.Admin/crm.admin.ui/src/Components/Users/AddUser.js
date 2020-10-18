@@ -527,10 +527,10 @@ handleSaveClick = () => {
 			} else if (result.msg == 'empty_data' && handleSnackbarOpen) {
 				handleSnackbarOpen('Отправленные данные пустые', 'error')
 			} else if (result.msg && handleSnackbarOpen) {
-				handleSnackbarOpen(`Во время сохранения пропуска произошла ошибка: ${result.msg}`, 'error')
+				handleSnackbarOpen(`Во время сохранения пользователя произошла ошибка: ${result.msg}`, 'error')
 			}
 		} else if (handleSnackbarOpen) {
-			handleSnackbarOpen('Во время сохранения пропуска произошла ошибка', 'error')
+			handleSnackbarOpen('Во время сохранения пользователя произошла ошибка', 'error')
 		}
 	},
 	error => {

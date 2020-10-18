@@ -35,9 +35,9 @@ namespace CRM.Services.Helpers
                     Id = u.Id,
                     UserName = u.UserName,
                     CrmEmployeesId = u.CrmEmployeesId,
-                    CrmPatientsId = u.CrmPatientsId,
+                    //CrmPatientsId = u.CrmPatientsId,
                     //Iin = u.CrmEmployee != null ? u.CrmEmployee.Iin : u.CrmPatient != null ? u.CrmPatient.Iin : null,
-                    //BirthDate = u.CrmEmployee != null ? u.CrmEmployee.BirthDate : u.CrmPatient != null ? u.CrmPatient.BirthDate : null,
+                    BirthDate = u.CrmEmployee != null ? u.CrmEmployee.BirthDate : u.CrmPatient != null ? u.CrmPatient.BirthDate : null,
                     MiddlenameKz = u.CrmEmployee != null ? u.CrmEmployee.MiddlenameKz : u.CrmPatient != null ? u.CrmPatient.MiddlenameKz : null,
                     MiddlenameRu = u.CrmEmployee != null ? u.CrmEmployee.MiddlenameRu : u.CrmPatient != null ? u.CrmPatient.MiddlenameRu : null,
                     MiddlenameEn = u.CrmEmployee != null ? u.CrmEmployee.MiddlenameEn : u.CrmPatient != null ? u.CrmPatient.MiddlenameEn : null,
@@ -47,65 +47,85 @@ namespace CRM.Services.Helpers
                     SurnameKz = u.CrmEmployee != null ? u.CrmEmployee.SurnameKz : u.CrmPatient != null ? u.CrmPatient.SurnameKz : null,
                     SurnameRu = u.CrmEmployee != null ? u.CrmEmployee.SurnameRu : u.CrmPatient != null ? u.CrmPatient.SurnameRu : null,
                     SurnameEn = u.CrmEmployee != null ? u.CrmEmployee.SurnameEn : u.CrmPatient != null ? u.CrmPatient.SurnameEn : null,
-                    DictGendersId = u.CrmEmployee != null
-                        ? u.CrmEmployee.DictGendersId
-                        : u.CrmPatient != null && u.CrmPatient.DictGendersId != null
-                            ? u.CrmPatient.DictGendersId
-                            : null,
-                    DictEnterprisesId = u.CrmEmployee != null ? u.CrmEmployee.DictEnterprisesId : null,
-                    DictPositionsId = u.CrmEmployee != null ? u.CrmEmployee.DictPositionsId : null,
-                    DictDepartmentsId = u.CrmEmployee != null ? u.CrmEmployee.DictDepartmentsId : null,
+                    //DictGendersId = u.CrmEmployee != null
+                    //    ? u.CrmEmployee.DictGendersId
+                    //    : u.CrmPatient != null && u.CrmPatient.DictGendersId != null
+                    //        ? u.CrmPatient.DictGendersId
+                    //        : null,
+                    //DictEnterprisesId = u.CrmEmployee != null ? u.CrmEmployee.DictEnterprisesId : null,
+                    //DictPositionsId = u.CrmEmployee != null ? u.CrmEmployee.DictPositionsId : null,
+                    //DictDepartmentsId = u.CrmEmployee != null ? u.CrmEmployee.DictDepartmentsId : null,
                     IsActive = u.CrmEmployee != null ? u.CrmEmployee.IsActive : u.CrmPatient != null ? u.CrmPatient.IsActive : false,
-                    BirthDateStr = u.CrmEmployee != null && u.CrmEmployee.BirthDate != null 
-                        ? u.CrmEmployee.BirthDate.Value.ToString("dd.MM.yyyy") 
-                        : u.CrmPatient != null && u.CrmPatient.BirthDate != null 
-                            ? u.CrmPatient.BirthDate.Value.ToString("dd.MM.yyyy") 
+                    //BirthDateStr = u.CrmEmployee != null && u.CrmEmployee.BirthDate != null 
+                    //    ? u.CrmEmployee.BirthDate.Value.ToString("dd.MM.yyyy") 
+                    //    : u.CrmPatient != null && u.CrmPatient.BirthDate != null 
+                    //        ? u.CrmPatient.BirthDate.Value.ToString("dd.MM.yyyy") 
+                    //        : null,
+                    RoleId = u.UserRoles.Any() && u.UserRoles.FirstOrDefault() != null ? u.UserRoles.FirstOrDefault().RoleId : 0,
+                    Address = u.CrmEmployee != null ? u.CrmEmployee.Address : u.CrmPatient != null ? u.CrmPatient.Address : null,
+                    PhoneNumber = u.PhoneNumber,
+                    AboutMe = u.CrmEmployee != null ? u.CrmEmployee.AboutMe : u.CrmPatient != null ? u.CrmPatient.AboutMe : null,
+                    Position = u.CrmEmployee != null && u.CrmEmployee.DictPosition != null
+                        ? new SelectDto()
+                        {
+                            //Id = u.CrmEmployee.DictPosition.Id,
+                            NameKz = u.CrmEmployee.DictPosition.NameKz,
+                            NameRu = u.CrmEmployee.DictPosition.NameRu,
+                            NameEn = u.CrmEmployee.DictPosition.NameEn
+                        }
+                        : null,
+                    Department = u.CrmEmployee != null && u.CrmEmployee.DictDepartment != null
+                        ? new SelectDto()
+                        {
+                            //Id = u.CrmEmployee.DictDepartment.Id,
+                            NameKz = u.CrmEmployee.DictDepartment.NameKz,
+                            NameRu = u.CrmEmployee.DictDepartment.NameRu,
+                            NameEn = u.CrmEmployee.DictDepartment.NameEn
+                        }
+                        : null,
+                    Enterprise = u.CrmEmployee != null && u.CrmEmployee.DictEnterprise != null
+                        ? new SelectDto()
+                        {
+                            //Id = u.CrmEmployee.DictEnterprise.Id,
+                            NameKz = u.CrmEmployee.DictEnterprise.NameKz,
+                            NameRu = u.CrmEmployee.DictEnterprise.NameRu,
+                            NameEn = u.CrmEmployee.DictEnterprise.NameEn
+                        }
+                        : null,
+                    City = u.CrmEmployee != null && u.CrmEmployee.DictCity != null
+                        ? new SelectDto()
+                        {
+                            Id = u.CrmEmployee.DictCity.Id,
+                            NameKz = u.CrmEmployee.DictCity.NameKz,
+                            NameRu = u.CrmEmployee.DictCity.NameRu,
+                            NameEn = u.CrmEmployee.DictCity.NameEn
+                        }
+                        : u.CrmPatient != null && u.CrmPatient.DictCity != null
+                            ? new SelectDto()
+                            {
+                                Id = u.CrmPatient.DictCity.Id,
+                                NameKz = u.CrmPatient.DictCity.NameKz,
+                                NameRu = u.CrmPatient.DictCity.NameRu,
+                                NameEn = u.CrmPatient.DictCity.NameEn
+                            }
                             : null,
-                    RoleId = u.UserRoles.Any() && u.UserRoles.FirstOrDefault() != null ? u.UserRoles.FirstOrDefault().RoleId : 0
-                    //DictPosition = u.CrmEmployee != null && u.CrmEmployee.DictPosition != null
-                    //    ? new DictPositions()
-                    //    {
-                    //        Id = u.CrmEmployee.DictPosition.Id,
-                    //        NameKz = u.CrmEmployee.DictPosition.NameKz,
-                    //        NameRu = u.CrmEmployee.DictPosition.NameRu,
-                    //        NameEn = u.CrmEmployee.DictPosition.NameEn
-                    //    }
-                    //    : null,
-                    //DictDepartment = u.CrmEmployee != null && u.CrmEmployee.DictDepartment != null
-                    //    ? new DictDepartments()
-                    //    {
-                    //        Id = u.CrmEmployee.DictDepartment.Id,
-                    //        NameKz = u.CrmEmployee.DictDepartment.NameKz,
-                    //        NameRu = u.CrmEmployee.DictDepartment.NameRu,
-                    //        NameEn = u.CrmEmployee.DictDepartment.NameEn
-                    //    }
-                    //    : null,
-                    //DictEnterprise = u.CrmEmployee != null && u.CrmEmployee.DictEnterprise != null
-                    //    ? new DictEnterprises()
-                    //    {
-                    //        Id = u.CrmEmployee.DictEnterprise.Id,
-                    //        NameKz = u.CrmEmployee.DictEnterprise.NameKz,
-                    //        NameRu = u.CrmEmployee.DictEnterprise.NameRu,
-                    //        NameEn = u.CrmEmployee.DictEnterprise.NameEn
-                    //    }
-                    //    : null,
-                    //DictCity = u.CrmEmployee != null && u.CrmEmployee.DictCity != null
-                    //    ? new DictCities()
-                    //    {
-                    //        Id = u.CrmEmployee.DictCity.Id,
-                    //        NameKz = u.CrmEmployee.DictCity.NameKz,
-                    //        NameRu = u.CrmEmployee.DictCity.NameRu,
-                    //        NameEn = u.CrmEmployee.DictCity.NameEn
-                    //    }
-                    //    : u.CrmPatient != null && u.CrmPatient.DictCity != null
-                    //        ? new DictCities()
-                    //        {
-                    //            Id = u.CrmPatient.DictCity.Id,
-                    //            NameKz = u.CrmPatient.DictCity.NameKz,
-                    //            NameRu = u.CrmPatient.DictCity.NameRu,
-                    //            NameEn = u.CrmPatient.DictCity.NameEn
-                    //        }
-                    //        : null
+                    Gender = u.CrmEmployee != null && u.CrmEmployee.DictGender != null
+                        ? new SelectDto()
+                        {
+                            Id = u.CrmEmployee.DictGender.Id,
+                            NameKz = u.CrmEmployee.DictGender.NameKz,
+                            NameRu = u.CrmEmployee.DictGender.NameRu,
+                            NameEn = u.CrmEmployee.DictGender.NameEn
+                        }
+                        : u.CrmPatient != null && u.CrmPatient.DictGender != null
+                            ? new SelectDto()
+                            {
+                                Id = u.CrmPatient.DictGender.Id,
+                                NameKz = u.CrmPatient.DictGender.NameKz,
+                                NameRu = u.CrmPatient.DictGender.NameRu,
+                                NameEn = u.CrmPatient.DictGender.NameEn
+                            }
+                            : null
                 })
                 .FirstOrDefaultAsync();
 
@@ -114,6 +134,9 @@ namespace CRM.Services.Helpers
                 currentUser.ShortNameRu = GetUserShortName(currentUser.SurnameRu, currentUser.NameRu, currentUser.MiddlenameRu);
                 currentUser.ShortNameKz = GetUserShortName(currentUser.SurnameKz, currentUser.NameKz, currentUser.MiddlenameKz);
                 currentUser.ShortNameEn = GetUserShortName(currentUser.SurnameEn, currentUser.NameEn, currentUser.MiddlenameEn);
+                currentUser.FullNameRu = GetUserFullName(currentUser.SurnameRu, currentUser.NameRu, currentUser.MiddlenameRu);
+                currentUser.FullNameKz = GetUserFullName(currentUser.SurnameKz, currentUser.NameKz, currentUser.MiddlenameKz);
+                currentUser.FullNameEn = GetUserFullName(currentUser.SurnameEn, currentUser.NameEn, currentUser.MiddlenameEn);
             }
 
             return currentUser;
@@ -125,6 +148,61 @@ namespace CRM.Services.Helpers
                     {
                 var content = await System.IO.File.ReadAllBytesAsync(photoPath);
                 return Convert.ToBase64String(content);
+            }
+
+            return null;
+        }
+
+        public static async Task<string> GetUserPhotoPathByUserName(CrmDbContext context, string username)
+        {
+            var currentUser = await context.Users
+                .Include("CrmEmployee")
+                .Include("CrmPatient")
+                .Where(u => u.UserName == username && u.DeletedDateTime == null &&
+                    (u.CrmEmployee != null && u.CrmEmployee.DeletedDateTime == null && u.CrmEmployee.IsActive == true || u.CrmPatient != null && u.CrmPatient.DeletedDateTime == null && u.CrmPatient.IsActive == true))
+                .AsNoTracking()
+                .Select(u => new UserEditDto()
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    PhotoB64 = u.CrmEmployee != null ? u.CrmEmployee.PhotoB64 : u.CrmPatient != null ? u.CrmPatient.PhotoB64 : null,
+                    PhotoPath = u.CrmEmployee != null ? u.CrmEmployee.PhotoPath : u.CrmPatient != null ? u.CrmPatient.PhotoPath : null
+                })
+                .FirstOrDefaultAsync();
+
+            if (currentUser != null && !string.IsNullOrEmpty(currentUser.PhotoPath) && System.IO.File.Exists(currentUser.PhotoPath))
+            {
+                return currentUser.PhotoPath;
+            }
+
+            return null;
+        }
+
+        public static async Task<string> GetUserPhotoByUserName(CrmDbContext context, string username)
+        {
+            var currentUser = await context.Users
+                .Include("CrmEmployee")
+                .Include("CrmPatient")
+                .Where(u => u.UserName == username && u.DeletedDateTime == null &&
+                    (u.CrmEmployee != null && u.CrmEmployee.DeletedDateTime == null && u.CrmEmployee.IsActive == true || u.CrmPatient != null && u.CrmPatient.DeletedDateTime == null && u.CrmPatient.IsActive == true))
+                .AsNoTracking()
+                .Select(u => new UserEditDto()
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    PhotoB64 = u.CrmEmployee != null ? u.CrmEmployee.PhotoB64 : u.CrmPatient != null ? u.CrmPatient.PhotoB64 : null,
+                    PhotoPath = u.CrmEmployee != null ? u.CrmEmployee.PhotoPath : u.CrmPatient != null ? u.CrmPatient.PhotoPath : null
+                })
+                .FirstOrDefaultAsync();
+
+            if (currentUser != null && !string.IsNullOrEmpty(currentUser.PhotoPath) && System.IO.File.Exists(currentUser.PhotoPath))
+            {
+                var content = await System.IO.File.ReadAllBytesAsync(currentUser.PhotoPath);
+                return Convert.ToBase64String(content);
+            }
+            else if (currentUser != null && !string.IsNullOrEmpty(currentUser.PhotoB64))
+            {
+                return currentUser.PhotoB64;
             }
 
             return null;

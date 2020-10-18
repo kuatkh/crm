@@ -5,7 +5,7 @@ const getRequest = (url, token, successCallback, errorCallback) => {
 		method: 'GET',
 		headers: {
 			...allConstants.requestHeaders,
-			Authorization: `Bearer ${(token || localStorage.getItem('abToken'))}`,
+			Authorization: `Bearer ${(token || localStorage.getItem('crmToken'))}`,
 		},
 	})
 		.then(res => {
@@ -34,7 +34,7 @@ const getRequest = (url, token, successCallback, errorCallback) => {
 const postRequest = (url, token, body, successCallback, errorCallback) => {
 	let requestHeaders = {
 		...allConstants.requestHeaders,
-		Authorization: `Bearer ${(token || localStorage.getItem('abToken'))}`,
+		Authorization: `Bearer ${(token || localStorage.getItem('crmToken'))}`,
 	}
 	if (token == 'init') {
 		delete requestHeaders.Authorization

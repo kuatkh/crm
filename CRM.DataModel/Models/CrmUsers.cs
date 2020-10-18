@@ -28,10 +28,22 @@ namespace CRM.DataModel.Models
         public virtual ICollection<Notifications> Notifications { get; set; }
 
         [InverseProperty("Author")]
+        public virtual ICollection<CrmEmployees> CrmEmployeesAuthors { get; set; }
+
+        [InverseProperty("Editor")]
+        public virtual ICollection<CrmEmployees> CrmEmployeesEditors { get; set; }
+
+        [InverseProperty("Author")]
         public virtual ICollection<CrmPatients> CrmPatientsAuthors { get; set; }
 
         [InverseProperty("Editor")]
         public virtual ICollection<CrmPatients> CrmPatientsEditors { get; set; }
+
+        [InverseProperty("Author")]
+        public virtual ICollection<CrmPatientsAppointments> CrmPatientsAppointmentsAuthors { get; set; }
+
+        [InverseProperty("Editor")]
+        public virtual ICollection<CrmPatientsAppointments> CrmPatientsAppointmentsEditors { get; set; }
 
         [InverseProperty("Author")]
         public virtual ICollection<CrmEmployeesWorkPlans> CrmSystemSettingsAuthors { get; set; }

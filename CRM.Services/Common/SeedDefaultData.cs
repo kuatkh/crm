@@ -327,6 +327,32 @@ namespace CRM.Services.Common
                 });
                 _context.SaveChanges();
             }
+
+            if (!_context.DictStatuses.Any())
+            {
+                _context.DictStatuses.Add(new DictStatuses()
+                {
+                    NameEn = "Created",
+                    NameRu = "Заполнено",
+                    NameKz = "Заполнено",
+                    CreatedDateTime = DateTime.Now
+                });
+                _context.DictStatuses.Add(new DictStatuses()
+                {
+                    NameEn = "Approved",
+                    NameRu = "Подтверждено",
+                    NameKz = "Подтверждено",
+                    CreatedDateTime = DateTime.Now
+                });
+                _context.DictStatuses.Add(new DictStatuses()
+                {
+                    NameEn = "Rejected",
+                    NameRu = "Отклонено",
+                    NameKz = "Отклонено",
+                    CreatedDateTime = DateTime.Now
+                });
+                _context.SaveChanges();
+            }
         }
 
         public void Dispose()

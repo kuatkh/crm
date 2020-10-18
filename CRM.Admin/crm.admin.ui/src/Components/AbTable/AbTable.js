@@ -54,6 +54,10 @@ const styles = theme => ({
 		color: '#fff !important',
 		backgroundColor: '#3f51b5 !important',
 	},
+	media: {
+		margin: 'auto',
+		maxWidth: '100px',
+	},
 })
 
 class AbTable extends React.Component {

@@ -18,6 +18,9 @@ import {connect} from 'react-redux'
 import DateFnsUtils from '@date-io/date-fns'
 import ruLocale from 'date-fns/locale/ru'
 import {MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers'
+import Switch from '@material-ui/core/Switch'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import AddUser from './AddUser'
 import AbTable from '../AbTable'
 import {allConstants} from '../../Constants/AllConstants.js'
@@ -241,7 +244,7 @@ render() {
 			<Divider className={classes.divider} />
 			<Grid container spacing={1} className={classes.container}>
 				<Grid item container xs={12}>
-					<Grid item xs={6}>
+					<Grid item xs={8}>
 						<Paper className={classes.paper}>
 							<Autocomplete
 								id='selectedDepartment'
@@ -256,12 +259,12 @@ render() {
 							/>
 						</Paper>
 					</Grid>
-					<Grid item xs={6}>
+					<Grid item xs={8}>
 						<Paper className={classes.paper}>
 							<FormGroup>
 								<FormControlLabel
 									control={<Switch name='withDeadline' checked={filterByCreatedDate} onChange={this.handleSwitchChange} aria-label='deadline switch' />}
-									label={'Крайний срок выполнения'}
+									label={'Фильтровать по дате создания'}
 								/>
 							</FormGroup>
 							{

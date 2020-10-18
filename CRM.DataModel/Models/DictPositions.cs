@@ -8,6 +8,7 @@ namespace CRM.DataModel.Models
     public class DictPositions
     {
         public long Id { get; set; }
+        public string Code { get; set; }
         public string NameRu { get; set; }
         public string NameKz { get; set; }
         public string NameEn { get; set; }
