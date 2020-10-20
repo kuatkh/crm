@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 
 namespace CRM.Services.Common
@@ -349,6 +350,51 @@ namespace CRM.Services.Common
                     NameEn = "Rejected",
                     NameRu = "Отклонено",
                     NameKz = "Отклонено",
+                    CreatedDateTime = DateTime.Now
+                });
+                _context.SaveChanges();
+            }
+
+            if (!_context.DictEnterprises.Any())
+            {
+                var enterprise = new DictEnterprises()
+                {
+                    NameEn = "Test company",
+                    NameRu = "Тест компания",
+                    NameKz = "Тест компания",
+                    Address = "Astana",
+                    PhoneNumber = "87777",
+                    CreatedDateTime = DateTime.Now
+                };
+                _context.DictEnterprises.Add(enterprise);
+                _context.SaveChanges();
+
+                _context.DictPositions.Add(new DictPositions()
+                {
+                    NameEn = "Test position",
+                    NameRu = "Тест позиция",
+                    NameKz = "Тест позиция",
+                    DictEnterprisesId = enterprise.Id,
+                    Code = "001",
+                    Category = "1",
+                    DescriptionEn = "Descr",
+                    DescriptionRu = "Опис",
+                    DescriptionKz = "Опис",
+                    CreatedDateTime = DateTime.Now
+                });
+                _context.SaveChanges();
+            }
+
+            if (!_context.DictDepartments.Any())
+            {
+                var enterprise = _context.DictEnterprises.FirstOrDefault();
+
+                _context.DictDepartments.Add(new DictDepartments()
+                {
+                    NameEn = "Test department",
+                    NameRu = "Тест департамент",
+                    NameKz = "Тест департамент",
+                    DictEnterprisesId = enterprise?.Id,
                     CreatedDateTime = DateTime.Now
                 });
                 _context.SaveChanges();

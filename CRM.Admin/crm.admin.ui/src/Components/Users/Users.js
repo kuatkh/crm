@@ -109,6 +109,8 @@ class Users extends React.Component {
 			snackbarSeverity: 'success',
 			loading: false,
 		}
+
+		this._abTableGetData = null
 	}
 
 	componentDidMount() {
@@ -203,6 +205,10 @@ handleEditUserDialogClose = isSuccess => {
 			endDate: new Date(),
 			filterByCreatedDate: false,
 			selectedDepartment: {id: 0, nameRu: 'Все'},
+		}, () => {
+			if (this._abTableGetData) {
+				this._abTableGetData()
+			}
 		})
 	} else {
 		this.setState({
@@ -338,6 +344,7 @@ render() {
 								beginDate: filterByCreatedDate ? beginDate : defaultCurrentDate,
 								endDate: filterByCreatedDate ? endDate : defaultCurrentDate,
 							}}
+							setGetDataFunc={func => this._abTableGetData = func}
 							tableStyle={{tableLayout: 'fixed'}}
 							defaultOrderByColumn='surnameRu'
 							columns={usersColumns}

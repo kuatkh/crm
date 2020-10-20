@@ -35,6 +35,7 @@ import {
 import _ from 'lodash'
 import {allConstants} from '../../Constants/AllConstants.js'
 import {getRequest, postRequest} from '../../Services/RequestsServices.js'
+import reactCSS from 'reactcss'
 require('react-big-calendar/lib/addons/dragAndDrop/styles.css')
 require('react-big-calendar/lib/css/react-big-calendar.css')
 
@@ -798,12 +799,22 @@ class Home extends React.Component {
 	}
 
 	handleAutocompleteChange = (e, v) => {
+		window.clearTimeout(this.searchTimeout)
 		this.setState({
 			...this.state,
 			[e]: v,
-			searchData: '',
+			// searchData: '',
 		}, () => {
 			this.getAppointments()
+		})
+	}
+
+	handleDoctorAutocompleteChange = (e, v) => {
+		window.clearTimeout(this.searchTimeout)
+		this.setState({
+			...this.state,
+			[e]: v,
+			// searchData: '',
 		})
 	}
 
@@ -871,7 +882,7 @@ class Home extends React.Component {
 	}
 
 	render() {
-		const {classes} = this.props
+		const {classes, currentUser} = this.props
 		const {
 			id,
 			isCalendarResizable,
@@ -911,57 +922,94 @@ class Home extends React.Component {
 		return (
 			<div>
 				<Grid container spacing={1} className={classes.container}>
-					<Grid item xs={6}>
-						<Paper className={classes.paper}>
-							<Autocomplete
-								name='mainSelectedEmployee'
-								fullWidth
-								size='small'
-								value={mainSelectedEmployee}
-								options={employeesOptions}
-								onChange={(e, v) => { this.handleAutocompleteChange('mainSelectedEmployee', v) }}
-								onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
-								getOptionLabel={option => option.nameRu}
-								renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
-							/>
-						</Paper>
-					</Grid>
+					{
+						currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+							? <Grid item xs={6}>
+								<Paper className={classes.paper}>
+									<Autocomplete
+										name='mainSelectedEmployee'
+										fullWidth
+										size='small'
+										value={mainSelectedEmployee}
+										options={employeesOptions}
+										onChange={(e, v) => { this.handleAutocompleteChange('mainSelectedEmployee', v) }}
+										onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
+										getOptionLabel={option => option.nameRu}
+										renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
+									/>
+								</Paper>
+							</Grid>
+							: null
+					}
 					<Grid item container xs={12} className={classes.gridItem}>
 						<Grid item xs={12}>
 							<Paper className={classes.paper}>
-								<DnDCalendar
-									localizer={localizer}
-									onEventDrop={this.onEventDrop}
-									onEventResize={this.onEventResize}
-									onView={this.onCurrentViewChange}
-									resizable={isCalendarResizable}
-									events={events}
-									views={['month', 'week', 'day']}
-									timeslots={2}
-									step={15}
-									defaultView='week'
-									defaultDate={new Date()}
-									selectable={isCalendarResizable}
-									onRangeChange={this.onCalendarRangeChange}
-									// onNavigate={this.onCalendarNavigate}
-									onSelectEvent={event => this.handleEventSelected(event)}
-									onSelectSlot={slotInfo => this.handleSlotSelected(slotInfo)}
-									culture='ru-RU'
-									min={minTime}
-									max={maxTime}
-									components={{event: Event}}
-									messages={{
-										allDay: 'Весь день',
-										previous: 'Пред.',
-										next: 'След.',
-										today: 'Сегодня',
-										month: 'Месяц',
-										week: 'Неделя',
-										day: 'День',
-										date: 'Дата',
-										time: 'Время',
-									}}
-								/>
+								{
+									currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+										? <DnDCalendar
+											localizer={localizer}
+											onEventDrop={this.onEventDrop}
+											onEventResize={this.onEventResize}
+											onView={this.onCurrentViewChange}
+											resizable={isCalendarResizable}
+											events={events}
+											views={['month', 'week', 'day']}
+											timeslots={2}
+											step={15}
+											defaultView='week'
+											defaultDate={new Date()}
+											selectable={isCalendarResizable}
+											onRangeChange={this.onCalendarRangeChange}
+											// onNavigate={this.onCalendarNavigate}
+											onSelectEvent={event => this.handleEventSelected(event)}
+											onSelectSlot={slotInfo => this.handleSlotSelected(slotInfo)}
+											culture='ru-RU'
+											min={minTime}
+											max={maxTime}
+											components={{event: Event}}
+											messages={{
+												allDay: 'Весь день',
+												previous: 'Пред.',
+												next: 'След.',
+												today: 'Сегодня',
+												month: 'Месяц',
+												week: 'Неделя',
+												day: 'День',
+												date: 'Дата',
+												time: 'Время',
+											}}
+										/>
+										: <Calendar
+											localizer={localizer}
+											onView={this.onCurrentViewChange}
+											resizable={false}
+											selectable={false}
+											events={events}
+											views={['month', 'week', 'day']}
+											timeslots={2}
+											step={15}
+											defaultView='week'
+											defaultDate={new Date()}
+											min={minTime}
+											max={maxTime}
+											onRangeChange={this.onCalendarRangeChange}
+											onSelectEvent={event => this.handleEventSelected(event)}
+											culture='ru-RU'
+											components={{event: Event}}
+											messages={{
+												allDay: 'Весь день',
+												previous: 'Пред.',
+												next: 'След.',
+												today: 'Сегодня',
+												month: 'Месяц',
+												week: 'Неделя',
+												day: 'День',
+												date: 'Дата',
+												time: 'Время',
+											}}
+										/>
+								}
+
 							</Paper>
 						</Grid>
 					</Grid>
@@ -988,84 +1036,95 @@ class Home extends React.Component {
 					<DialogTitle className={classes.headerStyle} id='add-event-dialog-title'>{openEvent ? 'Редактирование' : openSlot ? 'Добавление' : ''}</DialogTitle>
 					<DialogContent dividers={true}>
 						<div className={classes.modalRoot}>
-							<Grid container spacing={1}>
-								<Grid item xs={6}>
-									<Paper className={classes.paper}>
-										<TextField
-											name='iin'
-											error={(iin && iin.length < 12 || !iin && !documentNumber)}
-											fullWidth={true}
-											size='small'
-											autoComplete='off'
-											value={iin}
-											label='ИИН'
-											variant='outlined'
-											className={classes.input}
-											inputProps={{'aria-label': 'Description', maxLength: 12, onKeyDown: this.handleIinKeydown}}
-											onChange={this.handleChange}/>
-									</Paper>
-								</Grid>
-								<Grid container item xs={6}>
-									<Grid item xs={8}>
-										<Paper className={classes.paper}>
-											<TextField
-												error={(documentNumber && documentNumber.length < 4 || !iin && !documentNumber || iin && iin.length < 12)}
-												name='documentNumber'
-												fullWidth={true}
-												size='small'
-												autoComplete='off'
-												value={documentNumber}
-												label='Номер документа'
-												variant='outlined'
-												className={classes.input}
-												inputProps={{'aria-label': 'Description', onKeyDown: this.handleDocumentNumberKeydown}}
-												onChange={this.handleChange}/>
-										</Paper>
-									</Grid>
-									<Grid item xs={4}>
-										<Paper className={classes.paper}>
-											<Tooltip title='Поиск по номеру документа'>
-												<Button
-													fullWidth
-													variant='outlined'
-													color='primary'
-													disabled={(!documentNumber)}
-													className={classes.button}
-													onClick={() => this.getPatientByDocumentNumber(documentNumber)} >
-													Найти
-												</Button>
-											</Tooltip>
-										</Paper>
-									</Grid>
-								</Grid>
-							</Grid>
-							<Divider className={classes.divider} />
+							{
+								currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+									? <React.Fragment>
+										<Grid container spacing={1}>
+											<Grid item xs={6}>
+												<Paper className={classes.paper}>
+													<TextField
+														name='iin'
+														error={(iin && iin.length < 12 || !iin && !documentNumber)}
+														fullWidth={true}
+														size='small'
+														autoComplete='off'
+														value={iin}
+														label='ИИН'
+														variant='outlined'
+														className={classes.input}
+														inputProps={{'aria-label': 'Description', maxLength: 12, onKeyDown: this.handleIinKeydown}}
+														onChange={this.handleChange}/>
+												</Paper>
+											</Grid>
+											<Grid container item xs={6}>
+												<Grid item xs={8}>
+													<Paper className={classes.paper}>
+														<TextField
+															error={(documentNumber && documentNumber.length < 4 || !iin && !documentNumber || iin && iin.length < 12)}
+															name='documentNumber'
+															fullWidth={true}
+															size='small'
+															autoComplete='off'
+															value={documentNumber}
+															label='Номер документа'
+															variant='outlined'
+															className={classes.input}
+															inputProps={{'aria-label': 'Description', onKeyDown: this.handleDocumentNumberKeydown}}
+															onChange={this.handleChange}/>
+													</Paper>
+												</Grid>
+												<Grid item xs={4}>
+													<Paper className={classes.paper}>
+														<Tooltip title='Поиск по номеру документа'>
+															<Button
+																fullWidth
+																variant='outlined'
+																color='primary'
+																disabled={(!documentNumber)}
+																className={classes.button}
+																onClick={() => this.getPatientByDocumentNumber(documentNumber)} >
+																Найти
+															</Button>
+														</Tooltip>
+													</Paper>
+												</Grid>
+											</Grid>
+										</Grid>
+										<Divider className={classes.divider} />
+									</React.Fragment>
+									: null
+							}
 							<MuiPickersUtilsProvider utils={DateFnsUtils} locale={ruLocale}>
 								<Grid container spacing={1}>
 									<Grid container item xs={6}>
-										<Grid item xs={12}>
-											<Paper className={classes.paper}>
-												<Autocomplete
-													name='toEmployee'
-													fullWidth
-													size='small'
-													value={toEmployee}
-													options={employeesOptions}
-													groupBy={option => option.positionId}
-													getOptionLabel={option => option.positionNameRu}
-													className={classes.input}
-													onChange={(e, v) => { this.handleAutocompleteChange('toEmployee', v) }}
-													onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
-													getOptionLabel={option => option.nameRu}
-													renderOption={option => <span>{option.nameRu} ({option.positionNameRu})</span>}
-													renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
-												/>
-											</Paper>
-										</Grid>
+										{
+											currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+												? <Grid item xs={12}>
+													<Paper className={classes.paper}>
+														<Autocomplete
+															name='toEmployee'
+															fullWidth
+															size='small'
+															value={toEmployee}
+															options={employeesOptions}
+															groupBy={option => option.positionId}
+															getOptionLabel={option => option.positionNameRu}
+															className={classes.input}
+															onChange={(e, v) => { this.handleDoctorAutocompleteChange('toEmployee', v) }}
+															onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
+															getOptionLabel={option => option.nameRu}
+															renderOption={option => <span>{option.nameRu} ({option.positionNameRu})</span>}
+															renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
+														/>
+													</Paper>
+												</Grid>
+												: null
+										}
 										<Grid item xs={12}>
 											<Paper className={classes.paper}>
 												<Autocomplete
 													name='selectedProcedures'
+													disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 													multiple
 													fullWidth
 													filterSelectedOptions
@@ -1086,6 +1145,7 @@ class Home extends React.Component {
 												name='complain'
 												fullWidth
 												multiline
+												disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 												rows={4}
 												size='small'
 												autoComplete='off'
@@ -1098,7 +1158,7 @@ class Home extends React.Component {
 										</Paper>
 									</Grid>
 									{
-										(id <= 0 || !id) && <React.Fragment>
+										(id <= 0 || !id || currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)) && <React.Fragment>
 											<Grid item xs={6}>
 												<Paper className={classes.paper}>
 													<KeyboardDatePicker
@@ -1152,6 +1212,7 @@ class Home extends React.Component {
 												cancelLabel='Отменить'
 												okLabel='Выбрать'
 												fullWidth
+												disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 												size='small'
 												className={classes.input}
 												ampm={false}
@@ -1173,6 +1234,7 @@ class Home extends React.Component {
 												cancelLabel='Отменить'
 												okLabel='Выбрать'
 												fullWidth
+												disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 												size='small'
 												className={classes.input}
 												ampm={false}
@@ -1196,6 +1258,7 @@ class Home extends React.Component {
 											error={!surnameRu}
 											name='surnameRu'
 											fullWidth
+											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 											size='small'
 											autoComplete='off'
 											value={surnameRu}
@@ -1213,6 +1276,7 @@ class Home extends React.Component {
 											error={!nameRu}
 											name='nameRu'
 											fullWidth
+											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 											size='small'
 											autoComplete='off'
 											value={nameRu}
@@ -1228,6 +1292,7 @@ class Home extends React.Component {
 										<TextField
 											name='middlenameRu'
 											fullWidth
+											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 											size='small'
 											autoComplete='off'
 											value={middlenameRu}
@@ -1238,22 +1303,28 @@ class Home extends React.Component {
 											onChange={this.handleChange}/>
 									</Paper>
 								</Grid>
-								<Divider className={classes.divider} />
-								<Grid item xs={6}>
-									<Paper className={classes.paper}>
-										<TextField
-											name='phoneNumber'
-											fullWidth
-											size='small'
-											autoComplete='off'
-											value={phoneNumber}
-											label='Номер телефона'
-											variant='outlined'
-											className={classes.input}
-											inputProps={{'aria-label': 'Description'}}
-											onChange={this.handleChange}/>
-									</Paper>
-								</Grid>
+								{
+									currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+										? <React.Fragment>
+											<Divider className={classes.divider} />
+											<Grid item xs={6}>
+												<Paper className={classes.paper}>
+													<TextField
+														name='phoneNumber'
+														fullWidth
+														size='small'
+														autoComplete='off'
+														value={phoneNumber}
+														label='Номер телефона'
+														variant='outlined'
+														className={classes.input}
+														inputProps={{'aria-label': 'Description'}}
+														onChange={this.handleChange}/>
+												</Paper>
+											</Grid>
+										</React.Fragment>
+										: null
+								}
 							</Grid>
 						</div>
 					</DialogContent>
@@ -1265,7 +1336,7 @@ class Home extends React.Component {
 							variant='outlined'
 							size='medium'
 							color='secondary'>
-								Отменить
+							{currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2) ? 'Отменить' : 'Закрыть'}
 						</Button>
 						{
 							openEvent && <Button
@@ -1278,21 +1349,25 @@ class Home extends React.Component {
 								Удалить
 							</Button>
 						}
-						<Button
-							onClick={() => {
-								if (openEvent) {
-									this.updateEvent()
-								} else if (openSlot) {
-									this.setNewAppointment()
-								}
-							}}
-							startIcon={<SaveIcon />}
-							className={classes.actionButtons}
-							variant='outlined'
-							size='medium'
-							color='primary'>
+						{
+							currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+								? <Button
+									onClick={() => {
+										if (openEvent) {
+											this.updateEvent()
+										} else if (openSlot) {
+											this.setNewAppointment()
+										}
+									}}
+									startIcon={<SaveIcon />}
+									className={classes.actionButtons}
+									variant='outlined'
+									size='medium'
+									color='primary'>
 								Сохранить{openEvent && ' изменения'}
-						</Button>
+								</Button>
+								: null
+						}
 					</DialogActions>
 				</Dialog>
 			</div>

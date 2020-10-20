@@ -89,33 +89,41 @@ class App extends Component {
 						? <Router history={history}>
 							<Route exact path='/'
 								component={() => <Home currentUser={currentUser} token={token} />} />
-							<Route path='/users-list'
-								component={Users} />
-							<Route path='/profile'
-								component={Profile} />
-							<Route path='/dictionary-contries'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictCountries' pageTitle='Справочник стран' />} />
-							<Route path='/dictionary-cities'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictCities' pageTitle='Справочник городов' />} />
-							<Route path='/dictionary-departments'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictDepartments' pageTitle='Справочник структурных подразделений' />} />
-							<Route path='/dictionary-positions'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictPositions' pageTitle='Справочник должностей' />} />
-							<Route path='/dictionary-services'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictServices' pageTitle='Спарвочник предоставляемых услуг' />} />
-							<Route path='/dictionary-intolerances'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictIntolerances' pageTitle='Справочник аллергический заболеваний' />} />
-							<Route path='/dictionary-genders'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictGenders' pageTitle='Справочник пола человека' />} />
-							<Route path='/dictionary-loyalty-programs'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictLoyaltyPrograms' pageTitle='Справочник бонусных программ' />} />
-							<Route path='/dictionary-statuses'
-								component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictStatuses' pageTitle='Справочник статусов' />} />
 							{
-								currentUser && currentUser.roleId == 1 && (
-									<Route path='/dictionary-enterprises'
-										component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictEnterprises' pageTitle='Справочник компаний/филиалов' />} />
-								)
+								currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+									? <React.Fragment>
+										<Route path='/users-list'
+											component={Users} />
+										<Route path='/profile'
+											component={Profile} />
+										<Route path='/dictionary-services'
+											component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictServices' pageTitle='Спарвочник предоставляемых услуг' />} />
+										<Route path='/dictionary-intolerances'
+											component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictIntolerances' pageTitle='Справочник аллергический заболеваний' />} />
+										<Route path='/dictionary-genders'
+											component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictGenders' pageTitle='Справочник пола человека' />} />
+										<Route path='/dictionary-loyalty-programs'
+											component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictLoyaltyPrograms' pageTitle='Справочник бонусных программ' />} />
+										{
+											currentUser && currentUser.roleId == 1 && (
+												<React.Fragment>
+													<Route path='/dictionary-contries'
+														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictCountries' pageTitle='Справочник стран' />} />
+													<Route path='/dictionary-cities'
+														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictCities' pageTitle='Справочник городов' />} />
+													<Route path='/dictionary-departments'
+														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictDepartments' pageTitle='Справочник структурных подразделений' />} />
+													<Route path='/dictionary-positions'
+														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictPositions' pageTitle='Справочник должностей' />} />
+													<Route path='/dictionary-enterprises'
+														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictEnterprises' pageTitle='Справочник компаний/филиалов' />} />
+													<Route path='/dictionary-statuses'
+														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictStatuses' pageTitle='Справочник статусов' />} />
+												</React.Fragment>
+											)
+										}
+									</React.Fragment>
+									: null
 							}
 						</Router>
 						: <LogIn logInSuccess={this.logInSuccess}/>

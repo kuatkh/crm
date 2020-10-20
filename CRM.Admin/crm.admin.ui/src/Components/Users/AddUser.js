@@ -93,7 +93,7 @@ class AddUser extends React.Component {
 			selectedRole: null,
 			email: '',
 			iin: '',
-			birthDate: '',
+			birthDate: new Date(),
 			phoneNumber: '',
 			nameRu: '',
 			surnameRu: '',
@@ -121,6 +121,7 @@ class AddUser extends React.Component {
 			this.setState({...this.props.editUserData})
 		}
 
+		this.getEnterprises()
 		this.getDepartments()
 		this.getPositions()
 		this.getRoles()
@@ -497,9 +498,24 @@ handleSaveClick = () => {
 		email,
 		birthDate: birthDate ? birthDate : null,
 		phoneNumber: phoneNumber ? phoneNumber : null,
-		selectedEnterprise,
-		selectedDepartment,
-		selectedPosition,
+		enterprise: {
+			id: selectedEnterprise.id,
+			nameRu: selectedEnterprise.nameRu,
+			nameEn: selectedEnterprise.nameEn,
+			nameKz: selectedEnterprise.nameKz,
+		},
+		department: {
+			id: selectedDepartment.id,
+			nameRu: selectedDepartment.nameRu,
+			nameEn: selectedDepartment.nameEn,
+			nameKz: selectedDepartment.nameKz,
+		},
+		position: {
+			id: selectedPosition.id,
+			nameRu: selectedPosition.nameRu,
+			nameEn: selectedPosition.nameEn,
+			nameKz: selectedPosition.nameKz,
+		},
 		roleId: selectedRole ? selectedRole.id : 0,
 	}
 
@@ -748,6 +764,7 @@ render() {
 									required
 									name='selectedEnterprise'
 									size='small'
+									disabled={Array.isArray(this.state.enterprisesOptions) && this.state.enterprisesOptions.length == 1}
 									value={this.state.selectedEnterprise}
 									options={this.state.enterprisesOptions}
 									groupBy={option => option.parentId}
@@ -819,6 +836,8 @@ render() {
 										cancelLabel='Отменить'
 										okLabel='Выбрать'
 										fullWidth
+										size='small'
+										className={classes.input}
 										label='День рождения'
 										format='dd.MM.yyyy'
 										value={this.state.birthDate}
