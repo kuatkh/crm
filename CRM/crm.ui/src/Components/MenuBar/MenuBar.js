@@ -8,11 +8,27 @@ import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
+import MenuList from '@material-ui/core/MenuList'
+import Collapse from '@material-ui/core/Collapse'
 import Avatar from '@material-ui/core/Avatar'
 import Badge from '@material-ui/core/Badge'
+import BallotIcon from '@material-ui/icons/Ballot'
+import LoupeIcon from '@material-ui/icons/Loupe'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks'
+import ExpandLess from '@material-ui/icons/ExpandLess'
+import ExpandMore from '@material-ui/icons/ExpandMore'
+import ViewListIcon from '@material-ui/icons/ViewList'
+import PublicIcon from '@material-ui/icons/Public'
+import LocationCityIcon from '@material-ui/icons/LocationCity'
+import AccountTreeIcon from '@material-ui/icons/AccountTree'
+import PortraitIcon from '@material-ui/icons/Portrait'
+import InsertLinkIcon from '@material-ui/icons/InsertLink'
+import BlockIcon from '@material-ui/icons/Block'
+import WcIcon from '@material-ui/icons/Wc'
+import LoyaltyIcon from '@material-ui/icons/Loyalty'
+import BusinessIcon from '@material-ui/icons/Business'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 import List from '@material-ui/core/List'
@@ -27,6 +43,9 @@ import HomeIcon from '@material-ui/icons/Home'
 import AddBoxIcon from '@material-ui/icons/AddBox'
 import AllInboxIcon from '@material-ui/icons/AllInbox'
 import PeopleIcon from '@material-ui/icons/People'
+import {deepOrange} from '@material-ui/core/colors'
+import {allConstants} from '../../Constants/AllConstants.js'
+import {getRequest} from '../../Services/RequestsServices.js'
 
 const drawerWidth = 240
 
@@ -46,9 +65,9 @@ const styles = theme => ({
 		width: theme.spacing(3),
 		height: theme.spacing(3),
 	},
-	large: {
-		width: theme.spacing(7),
-		height: theme.spacing(7),
+	orange: {
+		color: theme.palette.getContrastText(deepOrange[500]),
+		backgroundColor: deepOrange[500],
 	},
 	appBar: {
 		zIndex: 1202,
@@ -56,6 +75,7 @@ const styles = theme => ({
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.leavingScreen,
 		}),
+		background: 'green',
 	},
 	appBarShift: {
 		marginLeft: drawerWidth,
@@ -99,7 +119,6 @@ const styles = theme => ({
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'flex-end',
-		padding: 0,
 		// necessary for content to be below app bar
 		...theme.mixins.toolbar,
 	},
@@ -110,6 +129,9 @@ const styles = theme => ({
 	grow: {
 		flexGrow: 1,
 	},
+	nested: {
+		paddingLeft: theme.spacing(4),
+	},
 })
 
 class MenuBar extends React.Component {
@@ -119,6 +141,8 @@ class MenuBar extends React.Component {
 		this.state = {
 			open: false,
 			openDrawer: false,
+			openDictionaries: false,
+			photoB64: null,
 		}
 	}
 
@@ -126,6 +150,21 @@ class MenuBar extends React.Component {
 		const drawerState = localStorage.getItem('drawerState')
 		this.setState({
 			openDrawer: drawerState == 'opened',
+		})
+	}
+
+	getCurrentUserPhoto = () => {
+		const {token} = this.props
+
+		getRequest(`${allConstants.serverUrl}/api/Users/GetCurrentUserPhoto`, token, result => {
+			if (result && result.isSuccess) {
+				this.setState({
+					photoB64: result.data,
+				})
+			}
+		},
+		error => {
+			console.log(error)
 		})
 	}
 
@@ -156,6 +195,12 @@ handleDrawerClose = () => {
 		openDrawer: false,
 	}, () => {
 		localStorage.setItem('drawerState', 'closed')
+	})
+}
+
+handleOpenDictionariesClick = () => {
+	this.setState({
+		openDictionaries: !this.state.openDictionaries,
 	})
 }
 
@@ -194,7 +239,7 @@ render() {
 						</IconButton>
 					)}
 					<Typography variant='h6' noWrap>
-						CRM
+					CRM. Страница администратора
 					</Typography>
 					{isAuthorized && (
 						<React.Fragment>
@@ -213,9 +258,9 @@ render() {
 								edge='end'
 							>
 								{
-									currentUser && currentUser.photoB64
-										? <Avatar alt='Фото пользователя' src={`data:image/jpeg;base64,${currentUser.photoB64}`} className={classes.large} />
-										: <AccountCircleIcon />
+									this.state.photoB64
+										? <Avatar alt='Фото пользователя' src={`data:image/jpeg;base64,${this.state.photoB64}`} />
+										: <Avatar alt='Фото пользователя' className={classes.orange} >{currentUser && currentUser.shortNameRu ? currentUser.shortNameRu[0] : 'A'}</Avatar>
 								}
 								{currentUser && <Typography variant='button' display='block'>{`${currentUser.shortNameRu}`}</Typography>}
 							</IconButton>
@@ -235,9 +280,8 @@ render() {
 								open={this.state.open}
 								onClose={this.handleClose}
 							>
-								<MenuItem onClick={this.handleClose}>Профиль</MenuItem>
+								<MenuItem onClick={() => { this.openRoute('/profile') }}>Профиль</MenuItem>
 								<MenuItem onClick={this.handleLogOut}>Выйти</MenuItem>
-								{/* <MenuItem onClick={this.handleClose}>My account</MenuItem> */}
 							</Menu>
 						</React.Fragment>
 					)}
@@ -268,32 +312,10 @@ render() {
 							<Tooltip title='Главная страница'>
 								<ListItemIcon><HomeIcon /></ListItemIcon>
 							</Tooltip>
-							<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Главная страница'} />
-						</ListItem>
-						{/* <ListItem button onClick={() => { this.openRoute('/add-card') }}>
-							<Tooltip title='Создать пропуск'>
-								<ListItemIcon><AddBoxIcon /></ListItemIcon>
+							<Tooltip title='Главная страница'>
+								<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Главная страница'} />
 							</Tooltip>
-							<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Создать пропуск'} />
 						</ListItem>
-						<ListItem button onClick={() => { this.openRoute('/cards-list') }}>
-							<Tooltip title='Мои пропуска'>
-								<ListItemIcon><AllInboxIcon /></ListItemIcon>
-							</Tooltip>
-							<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Мои пропуска'} />
-						</ListItem>
-						<ListItem button onClick={() => { this.openRoute('/agreement-cards-list') }}>
-							<Tooltip title='Пропуска на согласование'>
-								<ListItemIcon><LibraryBooksIcon /></ListItemIcon>
-							</Tooltip>
-							<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Пропуска на согласование'} />
-						</ListItem>
-						<ListItem button onClick={() => { this.openRoute('/visitors-list') }}>
-							<Tooltip title='Посетители'>
-								<ListItemIcon><PeopleIcon /></ListItemIcon>
-							</Tooltip>
-							<ListItemText primaryTypographyProps={{noWrap: true}} primary={'Посетители'} />
-						</ListItem> */}
 					</List>
 				</Drawer>
 			)}

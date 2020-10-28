@@ -1,13 +1,12 @@
 import React, {Component} from 'react'
 import {withStyles} from '@material-ui/core/styles'
 import Alert from '@material-ui/lab/Alert'
-import {Button, TextField, Grid, Paper, Typography, CircularProgress, Snackbar, Backdrop} from '@material-ui/core'
+import {Button, TextField, Grid, Paper, Typography, Link, CircularProgress, Snackbar, Backdrop} from '@material-ui/core'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import IconButton from '@material-ui/core/IconButton'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import {allConstants} from '../../Constants/AllConstants.js'
-import {postRequest} from '../../Services/RequestsServices.js'
 
 const styles = theme => ({
 	toolbar: {
@@ -22,7 +21,7 @@ const styles = theme => ({
 		padding: theme.spacing(3),
 	},
 	backdrop: {
-		zIndex: theme.zIndex.drawer + 1,
+		zIndex: theme.zIndex.drawer + 3,
 		color: '#fff',
 	},
 })
@@ -40,6 +39,7 @@ class LogIn extends Component {
 			showUserSecret: false,
 		}
 		this.userSecretNumberRegexStr = '^[0-9]*$'
+		this.userSecretRegexStr = '^(?:[A-Za-z]+|\d+)$'
 	}
 
 	componentDidMount() {
@@ -58,24 +58,33 @@ handleSubmit = e => {
 	const {logInSuccess} = this.props
 	if (userName && userSecret) {
 		this.isLoaded(false)
-		postRequest(`${allConstants.serverUrl}/api/Auth/LogIn`, 'init', {userName, userSecret}, result => {
-			this.isLoaded(true)
-			if (result.isSuccess && result.data) {
-				localStorage.setItem('crmToken', result.data)
-				if (logInSuccess) {
-					logInSuccess()
-				}
-			} else if (!result.isSuccess && result.data == 'Invalid_username_or_password') {
-				this.handleSnackbarOpen('Неверный логин или пароль!', 'error')
-			} else {
-				this.handleSnackbarOpen('Во время авторизации произошла ошибка!', 'error')
-			}
-		},
-		error => {
-			console.log(error)
-			this.isLoaded(true)
-			this.handleSnackbarOpen(`Во время авторизации произошла ошибка: ${error}`, 'error')
+		fetch(`${allConstants.serverUrl}/api/Auth/LogIn`, {
+			method: 'POST',
+			headers: {
+				...allConstants.requestHeaders,
+			},
+			body: JSON.stringify({userName, userSecret}),
 		})
+			.then(res => res.json())
+			.then(
+				result => {
+					this.isLoaded(true)
+					if (result.isSuccess && result.data) {
+						this.handleSnackbarOpen('Добро пожаловать в CRM!', 'success')
+						localStorage.setItem('crmToken', result.data)
+						if (logInSuccess) {
+							logInSuccess()
+						}
+					} else if (!result.isSuccess && result.data == 'Invalid_username_or_password') {
+						this.handleSnackbarOpen('Неверный логин или пароль!', 'error')
+					} else {
+						this.handleSnackbarOpen('Во время авторизации произошла ошибка!', 'error')
+					}
+				},
+				error => {
+					console.log(error)
+				}
+			)
 	}
 }
 
@@ -154,10 +163,11 @@ render() {
 								<Grid item>
 									<TextField
 										type='userName'
-										placeholder='Логин'
-										fullWidth name='userName'
-										variant='outlined'
+										placeholder='Email'
+										fullWidth
 										autoComplete='off'
+										name='userName'
+										variant='outlined'
 										value={this.state.userName}
 										onChange={this.handleChange}
 										required
@@ -193,6 +203,9 @@ render() {
 							</Grid>
 						</form>
 					</Grid>
+					{/* <Grid item>
+						<Link href='#' variant='body2'>Забыли пароль?</Link>
+					</Grid> */}
 				</Paper>
 			</Grid>
 			<Snackbar open={this.state.openSnackbar} autoHideDuration={6000} onClose={this.handleSnackbarClose}>

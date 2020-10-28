@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "name": "crm.admin.ui",
+  "description": null,
+  "icons": {
+    "60": "icons-ea7e79c19b8d71d110d35988adb3cf47/firefox_app_60x60.png",
+    "128": "icons-ea7e79c19b8d71d110d35988adb3cf47/firefox_app_128x128.png",
+    "512": "icons-ea7e79c19b8d71d110d35988adb3cf47/firefox_app_512x512.png"
+  },
+  "developer": {
+    "name": null,
+    "url": null
+  }
+}

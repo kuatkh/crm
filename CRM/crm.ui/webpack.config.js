@@ -1,11 +1,11 @@
 ﻿/* global __dirname */
-const webpack = require('webpack');
-var path = require('path');
+const webpack = require('webpack')
+var path = require('path')
 var FileSystem = require('fs')
-const CompressionPlugin = require('compression-webpack-plugin');
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 module.exports = {
 	entry: [
@@ -16,7 +16,7 @@ module.exports = {
 	],
 	optimization: {
 		minimizer: [
-			new UglifyJsPlugin()
+			new UglifyJsPlugin(),
 		],
 	},
 	output: {
@@ -41,13 +41,13 @@ module.exports = {
 			algorithm: 'gzip',
 			test: /\.js$|\.css$|\.html$/,
 			threshold: 10240,
-			minRatio: 0.8
+			minRatio: 0.8,
 		}),
 		new HtmlWebpackPlugin({
 			title: 'CRM',
 			filename: 'index.html',
 			template: 'index.html',
-			xhtml: true
+			xhtml: true,
 		}),
 
 		// https://github.com/itgalaxy/favicons#usage
@@ -60,24 +60,24 @@ module.exports = {
 			inject: true,
 			background: '#fff',
 			title: 'CRM',
-			developerName: 'Kuat Khamitov', 
+			developerName: 'Kuat Khamitov',
 			icons: {
-			  android: true,
-			  appleIcon: true,
-			  appleStartup: true,
-			  coast: false,
-			  favicons: true,
-			  firefox: true,
-			  opengraph: false,
-			  twitter: false,
-			  yandex: false,
-			  windows: true
-			}
+				android: true,
+				appleIcon: true,
+				appleStartup: true,
+				coast: false,
+				favicons: true,
+				firefox: true,
+				opengraph: false,
+				twitter: false,
+				yandex: false,
+				windows: true,
+			},
 		}),
 		new webpack.DefinePlugin({
-			'process.env': { 
-				NODE_ENV: JSON.stringify('production')
-			}
+			'process.env': {
+				NODE_ENV: JSON.stringify('production'),
+			},
 		}),
 	],
 	module: {
@@ -98,7 +98,7 @@ module.exports = {
 			{
 				test: /\.(png|jpg|gif)$/,
 				loader: 'file-loader',
-			},			
+			},
 			{
 				exclude: /node_modules/,
 				loader: 'eslint-loader',
@@ -106,7 +106,7 @@ module.exports = {
 			},
 			{
 				test: /\.html$/,
-				loader: 'html-loader'
+				loader: 'html-loader',
 			},
 		],
 	},

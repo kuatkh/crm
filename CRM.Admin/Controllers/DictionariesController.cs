@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 namespace CRM.Admin.Controllers
 {
     [Route("api/[controller]")]
-    //[Authorize(Roles = "superadmin,admin")]
+    [Authorize(Roles = "superadmin,admin")]
     [ApiController]
     public class DictionariesController : ControllerBase
     {
@@ -1196,8 +1196,8 @@ namespace CRM.Admin.Controllers
             }
         }
 
-        [HttpPost("GetDictServicesData")]
-        public async Task<IActionResult> GetDictServicesData()
+        [HttpGet("GetDictServicesData")]
+        public async Task<IActionResult> GetDictServicesData(string searchData)
         {
             try
             {
@@ -1219,7 +1219,14 @@ namespace CRM.Admin.Controllers
                     };
 
                     result.Data = await _crmContext.DictServices
-                        .Where(d => d.DeletedDateTime == null)
+                        .Where(d => d.DeletedDateTime == null && (!string.IsNullOrEmpty(searchData) && 
+                                (d.NameRu != null && d.NameRu.ToLower().Contains(searchData.ToLower()) ||
+                                d.NameEn != null && d.NameEn.ToLower().Contains(searchData.ToLower()) ||
+                                d.NameKz != null && d.NameKz.ToLower().Contains(searchData.ToLower()) ||
+                                d.DescriptionRu != null && d.DescriptionRu.ToLower().Contains(searchData.ToLower()) ||
+                                d.DescriptionEn != null && d.DescriptionEn.ToLower().Contains(searchData.ToLower()) ||
+                                d.DescriptionKz != null && d.DescriptionKz.ToLower().Contains(searchData.ToLower()))
+                            || string.IsNullOrEmpty(searchData) && d.Id < 30))
                         .AsNoTracking()
                         .Select(d => new DictionaryDto()
                         {

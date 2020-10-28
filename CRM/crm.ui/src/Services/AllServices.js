@@ -4,7 +4,6 @@ export const allServices = {
 
 function addCurrentUser(userData) {
 	if (userData) {
-		localStorage.removeItem('currentUser')
 		localStorage.setItem('currentUser', JSON.stringify(userData))
 		return userData
 	}

@@ -35,7 +35,8 @@ import {
 import _ from 'lodash'
 import {allConstants} from '../../Constants/AllConstants.js'
 import {getRequest, postRequest} from '../../Services/RequestsServices.js'
-import reactCSS from 'reactcss'
+import 'moment/locale/ru'
+import 'globalize/lib/cultures/globalize.culture.ru-RU'
 require('react-big-calendar/lib/addons/dragAndDrop/styles.css')
 require('react-big-calendar/lib/css/react-big-calendar.css')
 
@@ -46,7 +47,7 @@ minTime.setHours(7, 0, 0)
 const maxTime = new Date()
 maxTime.setHours(22, 0, 0)
 
-const minPickerTime = moment('6:59', 'HH:mm')
+const minPickerTime = moment('06:59', 'HH:mm')
 const maxPickerTime = moment('22:01', 'HH:mm')
 
 const styles = theme => ({
@@ -115,7 +116,16 @@ const Event = ({event}) => (
 	<span>
 		<p><b>{event.surnameRu} {event.nameRu} {event.middlenameRu}</b></p>
 		<p>{event.toEmployee ? event.toEmployee.nameRu : ''}</p>
-		<p style={{wordBreak: 'break-all', whiteSpace: 'normal'}}>Симптомы: <i>{event.complain}</i></p>
+		{
+			event.complain && <p style={{wordBreak: 'break-all', whiteSpace: 'normal'}}>Симптомы: <i>{event.complain}</i></p>
+		}
+		{
+			Array.isArray(event.selectedProcedures) && event.selectedProcedures.length > 0
+				? <span style={{wordBreak: 'break-all', whiteSpace: 'normal'}}>Процедуры: {
+					event.selectedProcedures.map(p => <p key={'proc-' + p.id} style={{wordBreak: 'break-all', whiteSpace: 'normal', paddingLeft: '5px'}}><i><b> * {p.nameRu}</b></i></p>)
+				}</span>
+				: null
+		}
 	</span>
 )
 
@@ -130,6 +140,7 @@ class Home extends React.Component {
 			snackbarSeverity: 'success',
 			loading: false,
 			searchData: '',
+			proceduresSearchData: '',
 			employeesOptions: [],
 			mainSelectedEmployee: null,
 			toEmployee: null,
@@ -162,18 +173,29 @@ class Home extends React.Component {
 		}
 
 		this.searchTimeout = null
+		this.proceduresSearchTimeout = null
 		this.regexStr = '^[0-9]*$'
 	}
 
 	componentDidMount() {
-		// var range = this.getDateRange(new Date(), 'week')
 		this.getAppointments()
+		this.filterUsersData()
+		this.filterProceduresData()
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate(prevProps, prevState) {
 		if (!_.isEqual(prevProps.currentUser, this.props.currentUser)) {
-			// var range = this.getDateRange(new Date(), 'week')
 			this.getAppointments()
+		}
+		if (prevState.searchData != this.state.searchData) {
+			this.searchTimeout = setTimeout(() => {
+				this.filterUsersData()
+			}, 800)
+		}
+		if (prevState.proceduresSearchData != this.state.proceduresSearchData) {
+			this.proceduresSearchTimeout = setTimeout(() => {
+				this.filterProceduresData()
+			}, 800)
 		}
 	}
 
@@ -242,6 +264,7 @@ class Home extends React.Component {
 
 			postRequest(`${allConstants.serverUrl}/api/Appointments/GetAppointments`, token, filter, result => {
 				this.isLoaded(true)
+				console.log('result.data', result)
 				if (result && result.isSuccess && Array.isArray(result.data)) {
 					this.setState({events: result.data.map(d => {
 						d.start = new Date(d.start)
@@ -265,6 +288,7 @@ class Home extends React.Component {
 			toEmployee: null,
 			selectedProcedures: [],
 			searchData: '',
+			proceduresSearchData: '',
 			id: 0,
 			code: '',
 			title: '',
@@ -286,6 +310,7 @@ class Home extends React.Component {
 			start: new Date(),
 			end: new Date(),
 			dateRange: this.getDateRange(this.state.dateRange.rangeStart, view),
+			clickedEvent: {},
 		}, () => {
 			this.getAppointments()
 		})
@@ -294,13 +319,13 @@ class Home extends React.Component {
 	onCalendarRangeChange = (dates, view) => {
 		if (Array.isArray(dates)) {
 			if ((view == 'week' || !view) && dates.length == 7) {
-				console.log('dddd', dates.sort((a, b) => new Date(b) - new Date(a))[6])
+				console.log('dddd', dates.sort((a, b) => new Date(b) - new Date(a))[0])
 				this.setState({
-					dateRange: this.getDateRange(dates.sort((a, b) => new Date(b) - new Date(a))[6], 'week'),
+					dateRange: this.getDateRange(dates.sort((a, b) => new Date(b) - new Date(a))[0], 'week'),
 				}, () => {
 					this.getAppointments()
 				})
-			} else if (view == 'day' && dates.length == 1) {
+			} else if ((view == 'day' || !view) && dates.length == 1) {
 				this.setState({
 					dateRange: {rangeStart: dates[0], rangeEnd: dates[0]},
 				}, () => {
@@ -324,6 +349,7 @@ class Home extends React.Component {
 			toEmployee: null,
 			selectedProcedures: [],
 			searchData: '',
+			proceduresSearchData: '',
 			id: 0,
 			code: '',
 			title: '',
@@ -344,6 +370,7 @@ class Home extends React.Component {
 			endDate: new Date(),
 			start: new Date(),
 			end: new Date(),
+			clickedEvent: {},
 		})
 	}
 
@@ -353,6 +380,8 @@ class Home extends React.Component {
 			code: '',
 			toEmployee: this.state.mainSelectedEmployee,
 			selectedProcedures: [],
+			searchData: '',
+			proceduresSearchData: '',
 			title: '',
 			complain: '',
 			iin: '',
@@ -372,6 +401,7 @@ class Home extends React.Component {
 			start: slotInfo.start,
 			end: slotInfo.end,
 			openSlot: true,
+			clickedEvent: {},
 		})
 	}
 
@@ -379,10 +409,12 @@ class Home extends React.Component {
 		this.setState({
 			openEvent: true,
 			clickedEvent: event,
+			searchData: '',
+			proceduresSearchData: '',
 			id: event.id,
 			code: event.code,
-			start: event.start,
-			end: event.end,
+			start: new Date(event.start),
+			end: new Date(event.end),
 			title: event.title || '',
 			complain: event.complain || '',
 			iin: event.iin || '',
@@ -398,7 +430,7 @@ class Home extends React.Component {
 			middlenameKz: event.middlenameKz || '',
 			phoneNumber: event.phoneNumber || '',
 			toEmployee: event.toEmployee,
-			selectedProcedures: event.selectedProcedures,
+			selectedProcedures: event.selectedProcedures || [],
 		})
 	}
 
@@ -434,6 +466,7 @@ class Home extends React.Component {
 			for (var d = newDate; d <= endDate; d.setDate(d.getDate() + 1)) {
 				const newStart = new Date(d.getFullYear(), d.getMonth(), d.getDate(), start.getHours(), start.getMinutes(), start.getSeconds())
 				const newEnd = new Date(d.getFullYear(), d.getMonth(), d.getDate(), end.getHours(), end.getMinutes(), end.getSeconds())
+
 				const newItem = {
 					title,
 					toEmployee: toEmployee || mainSelectedEmployee,
@@ -458,12 +491,16 @@ class Home extends React.Component {
 				this.saveAppointment(newItem)
 			}
 		} else {
+
+			const newStart = new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds())
+			const newEnd = new Date(start.getFullYear(), start.getMonth(), start.getDate(), end.getHours(), end.getMinutes(), end.getSeconds())
+
 			const newItem = {
 				title,
 				toEmployee: toEmployee || mainSelectedEmployee,
 				selectedProcedures,
-				start: moment(start).format(),
-				end: moment(end).format(),
+				start: moment(newStart).format(),
+				end: moment(newEnd).format(),
 				complain,
 				code: this.uuidv4(),
 				iin,
@@ -484,7 +521,28 @@ class Home extends React.Component {
 	}
 
 	saveAppointment = appointment => {
-		const {token} = this.props
+		const {token, currentUser} = this.props
+
+		if (currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2) && !appointment.iin) {
+			this.handleSnackbarOpen('Вы не заполнили поле "ИИН"', 'error')
+			return
+		}
+
+		if (!appointment.toEmployee) {
+			this.handleSnackbarOpen('Вы не заполнили поле "Доктор"', 'error')
+			return
+		}
+
+		if (!appointment.nameRu) {
+			this.handleSnackbarOpen('Вы не заполнили поле "Имя"', 'error')
+			return
+		}
+
+		if (!appointment.surnameRu) {
+			this.handleSnackbarOpen('Вы не заполнили поле "Фамилия"', 'error')
+			return
+		}
+		console.log('appointment', appointment)
 
 		this.isLoaded(false)
 
@@ -510,7 +568,10 @@ class Home extends React.Component {
 
 		this.isLoaded(false)
 
-		postRequest(`${allConstants.serverUrl}/api/Appointments/SetAppointmentStartEnd`, token, {id, start: moment(start).format(), end: moment(end).format()}, result => {
+		const newStart = new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds())
+		const newEnd = new Date(start.getFullYear(), start.getMonth(), start.getDate(), end.getHours(), end.getMinutes(), end.getSeconds())
+
+		postRequest(`${allConstants.serverUrl}/api/Appointments/SetAppointmentStartEnd`, token, {id, start: moment(newStart).format(), end: moment(newEnd).format()}, result => {
 			// this.isLoaded(true)
 			this.handleClose()
 			if (result && !result.isSuccess) {
@@ -560,12 +621,16 @@ class Home extends React.Component {
 			middlenameKz,
 			phoneNumber,
 		} = this.state
+		console.log('updateEvent clickedEvent', clickedEvent)
+		console.log('updateEvent events', events)
 		const index = events.findIndex(event => event === clickedEvent)
+		console.log('updateEvent index', index)
 		const updatedEvent = events.slice()
+		console.log('updateEvent updatedEvent', updatedEvent)
 		updatedEvent[index].id = id
 		updatedEvent[index].code = code || ''
 		updatedEvent[index].toEmployee = toEmployee || mainSelectedEmployee
-		updatedEvent[index].selectedProcedures = selectedProcedures
+		updatedEvent[index].selectedProcedures = selectedProcedures || []
 		updatedEvent[index].title = title || ''
 		updatedEvent[index].complain = complain || ''
 		updatedEvent[index].start = start
@@ -582,6 +647,10 @@ class Home extends React.Component {
 		updatedEvent[index].middlenameEn = middlenameEn || ''
 		updatedEvent[index].middlenameKz = middlenameKz || ''
 		updatedEvent[index].phoneNumber = phoneNumber || ''
+
+		const newStart = new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds())
+		const newEnd = new Date(start.getFullYear(), start.getMonth(), start.getDate(), end.getHours(), end.getMinutes(), end.getSeconds())
+
 		const newItem = {
 			id: updatedEvent[index].id,
 			code: updatedEvent[index].code,
@@ -589,8 +658,8 @@ class Home extends React.Component {
 			selectedProcedures,
 			title,
 			complain,
-			start,
-			end,
+			start: moment(newStart).format(),
+			end: moment(newEnd).format(),
 			iin,
 			documentNumber,
 			nameRu,
@@ -604,10 +673,10 @@ class Home extends React.Component {
 			middlenameKz,
 			phoneNumber,
 		}
+		this.setState({
+			events: updatedEvent,
+		})
 		this.saveAppointment(newItem)
-		// this.setState({
-		// 	events: updatedEvent,
-		// })
 	}
 
 	//filters out specific event that is to be deleted and set that variable to state
@@ -711,29 +780,61 @@ class Home extends React.Component {
 	}
 
 	handleStartTime = time => {
+		const {start, end} = this.state
+		console.log('time', time)
+		let check = moment(new Date().getHours() + ':' + new Date().getMinutes(), 'HH:mm')
+		if (time) {
+			check = moment(time.getHours() + ':' + time.getMinutes(), 'HH:mm')
+			// check = new Date(start.getFullYear(), start.getMonth(), start.getDate(), time.getHours(), time.getMinutes(), time.getSeconds())
+		}
 		let newTime = null
-		if (minPickerTime.isBefore(time) && maxPickerTime.isAfter(time)) {
-			this.setState({start: time})
-			newTime = time
+		if (check.isBetween(minPickerTime, maxPickerTime)) {
+			// newTime = time
+			newTime = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), check.hours(), check.minutes())
+			if (start) {
+				newTime = new Date(start.getFullYear(), start.getMonth(), start.getDate(), check.hours(), check.minutes())
+			}
 		} else {
 			newTime = new Date()
+			if (start) {
+				newTime = new Date(start.getFullYear(), start.getMonth(), start.getDate(), newTime.getHours(), newTime.getMinutes())
+			}
 		}
+		console.log('newTime', newTime)
 
 		this.setState({start: newTime})
-		if (this.state.end && this.state.end < newTime) {
+		if (end && end < newTime) {
 			this.setState({end: newTime})
 		}
 	}
 
 	handleEndTime = time => {
+		const {start} = this.state
+
+		let check = moment(new Date().getHours() + ':' + new Date().getMinutes(), 'HH:mm')
+		if (time) {
+			check = moment(time.getHours() + ':' + time.getMinutes(), 'HH:mm')
+			// check = new Date(start.getFullYear(), start.getMonth(), start.getDate(), time.getHours(), time.getMinutes(), time.getSeconds())
+		}
 		let newTime = null
-		if (time && this.state.start && this.state.start > time) {
-			newTime = this.state.start
-		} else if (minPickerTime.isBefore(time) && maxPickerTime.isAfter(time)) {
-			newTime = time //.setDate(time.getDate() + 1)
+		if (check && start && moment(start.getHours() + ':' + start.getMinutes(), 'HH:mm') > check) {
+			newTime = start
+			console.log('end time 1', newTime)
+		} else if (check.isBetween(minPickerTime, maxPickerTime)) {
+			// newTime = check //.setDate(time.getDate() + 1)
+			newTime = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), check.hours(), check.minutes())
+			if (start) {
+				newTime = new Date(start.getFullYear(), start.getMonth(), start.getDate(), check.hours(), check.minutes())
+			}
+			console.log('end time 2', newTime)
 		} else {
 			newTime = new Date()
+			if (start) {
+				newTime = new Date(start.getFullYear(), start.getMonth(), start.getDate(), newTime.getHours(), newTime.getMinutes())
+			}
+			console.log('end time 3', newTime)
 		}
+		console.log('end newTime', newTime)
 		this.setState({end: newTime})
 	}
 
@@ -814,7 +915,6 @@ class Home extends React.Component {
 		this.setState({
 			...this.state,
 			[e]: v,
-			// searchData: '',
 		})
 	}
 
@@ -823,9 +923,21 @@ class Home extends React.Component {
 		this.setState({
 			searchData: v,
 		})
-		this.searchTimeout = setTimeout(() => {
-			this.filterData()
-		}, 1000)
+	}
+
+	handleProceduresAutocompleteChange = (e, v) => {
+		window.clearTimeout(this.proceduresSearchTimeout)
+		this.setState({
+			...this.state,
+			[e]: v,
+		})
+	}
+
+	handleProceduresAutocompleteInputChange = v => {
+		window.clearTimeout(this.proceduresSearchTimeout)
+		this.setState({
+			proceduresSearchData: v,
+		})
 	}
 
 	getPatientByDocumentNumber = docNum => {
@@ -858,7 +970,30 @@ class Home extends React.Component {
 		})
 	}
 
-	filterData = () => {
+	filterProceduresData = () => {
+		const {token} = this.props
+		const {proceduresSearchData} = this.state
+		this.isLoaded(false)
+
+		getRequest(`${allConstants.serverUrl}/api/Dictionaries/GetDictServicesData?searchData=${proceduresSearchData}`, token, result => {
+			this.isLoaded(true)
+			if (result.isSuccess && Array.isArray(result.data)) {
+				this.setState({
+					proceduresOptions: [...result.data],
+				})
+			} else {
+				this.handleSnackbarOpen(`Во время получения списка произошла ошибка ${result.msg || ''}`, 'error')
+			}
+			window.clearTimeout(this.proceduresSearchTimeout)
+		},
+		error => {
+			this.isLoaded(true)
+			this.handleSnackbarOpen(`Во время получения списка произошла ошибка: ${error}`, 'error')
+			window.clearTimeout(this.proceduresSearchTimeout)
+		})
+	}
+
+	filterUsersData = () => {
 		const {token} = this.props
 		const {searchData} = this.state
 		this.isLoaded(false)
@@ -892,6 +1027,7 @@ class Home extends React.Component {
 			selectedProcedures,
 			proceduresOptions,
 			searchData,
+			proceduresSearchData,
 			events,
 			openSlot,
 			openEvent,
@@ -1132,9 +1268,10 @@ class Home extends React.Component {
 													value={selectedProcedures}
 													options={proceduresOptions}
 													className={classes.input}
-													onChange={(e, v) => { this.handleAutocompleteChange('selectedProcedures', v) }}
+													onChange={(e, v) => { this.handleProceduresAutocompleteChange('selectedProcedures', v) }}
+													onInputChange={(e, v) => { this.handleProceduresAutocompleteInputChange(v) }}
 													getOptionLabel={option => option.nameRu}
-													renderInput={params => <TextField {...params} autoComplete='off' label='Процедуры' variant='outlined' />}
+													renderInput={params => <TextField {...params} autoComplete='off' value={proceduresSearchData} label='Процедуры' variant='outlined' />}
 												/>
 											</Paper>
 										</Grid>
@@ -1158,7 +1295,7 @@ class Home extends React.Component {
 										</Paper>
 									</Grid>
 									{
-										(id <= 0 || !id || currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)) && <React.Fragment>
+										(id <= 0 || !id) && currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2) && <React.Fragment>
 											<Grid item xs={6}>
 												<Paper className={classes.paper}>
 													<KeyboardDatePicker

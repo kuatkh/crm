@@ -64,7 +64,7 @@ namespace CRM
                 .AddEntityFrameworkStores<CrmDbContext>()
                 .AddDefaultTokenProviders();
 
-            var cert = new X509Certificate2(_configuration.CertPath, _configuration.CertSecret);
+            var cert = new X509Certificate2(Path.Combine(_configuration.CertPath), _configuration.CertSecret);
             var key = new X509SecurityKey(cert);
 
             services

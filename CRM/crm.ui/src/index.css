@@ -13,6 +13,7 @@ code {
 }
 
 .date-time-picker-styles {
+  width: 100%;
   padding: 18.5px 14px;
   border: thin solid gray;
   border-width: 1px;

@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 namespace CRM.Admin.Controllers
 {
     [Route("api/[controller]")]
-    //[Authorize(Roles = "superadmin,admin")]
+    [Authorize(Roles = "superadmin,admin")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -128,6 +128,8 @@ namespace CRM.Admin.Controllers
                 UserHelper.TryGetCurrentName(this.User, out string username);
                 UserDto currentUser = (UserDto)_cacheManager.Get($"CrmUser_{username}");
 
+                _logger.LogError($"searchData = {searchData}");
+
                 if (currentUser == null)
                 {
                     currentUser = await UserHelper.GetCurrentUser(_crmContext, username);
@@ -137,32 +139,32 @@ namespace CRM.Admin.Controllers
 
                 if (currentUser != null)
                 {
-                    var users = await _crmContext.Users
-                    .Include("CrmEmployee.DictPosition")
-                    .Where(u => (!string.IsNullOrEmpty(searchData) && u.CrmEmployee != null && u.CrmEmployee.DictPosition != null &&
+                    var users = await _crmContext.CrmEmployees
+                    .Include("DictPosition")
+                    .Where(u => (!string.IsNullOrEmpty(searchData) && u.DictPosition != null &&
                         (toAppointment && (_configuration.AppointmentPositions == null || !_configuration.AppointmentPositions.Any() || 
-                            u.CrmEmployee != null && u.CrmEmployee.DictPosition != null && _configuration.AppointmentPositions != null && _configuration.AppointmentPositions.Any(c => c == u.CrmEmployee.DictPosition.Code)) ||
+                            u.DictPosition != null && _configuration.AppointmentPositions != null && _configuration.AppointmentPositions.Any(c => c == u.DictPosition.Code)) ||
                             !toAppointment) &&
-                        (u.CrmEmployee.SurnameRu != null && u.CrmEmployee.SurnameRu.ToLower().Contains(searchData.ToLower()) ||
-                        u.CrmEmployee.NameRu != null && u.CrmEmployee.NameRu.ToLower().Contains(searchData.ToLower()) ||
-                        u.CrmEmployee.MiddlenameRu != null && u.CrmEmployee.MiddlenameRu.ToLower().Contains(searchData.ToLower())) ||
-                        (u.CrmEmployee.SurnameKz != null && u.CrmEmployee.SurnameKz.ToLower().Contains(searchData.ToLower()) ||
-                        u.CrmEmployee.NameKz != null && u.CrmEmployee.NameKz.ToLower().Contains(searchData.ToLower()) ||
-                        u.CrmEmployee.MiddlenameKz != null && u.CrmEmployee.MiddlenameKz.ToLower().Contains(searchData.ToLower())) ||
-                        (u.CrmEmployee.SurnameEn != null && u.CrmEmployee.SurnameEn.ToLower().Contains(searchData.ToLower()) ||
-                        u.CrmEmployee.NameEn != null && u.CrmEmployee.NameEn.ToLower().Contains(searchData.ToLower()) ||
-                        u.CrmEmployee.MiddlenameEn != null && u.CrmEmployee.MiddlenameEn.ToLower().Contains(searchData.ToLower())) ||
+                        ((u.SurnameRu != null && u.SurnameRu.ToLower().Contains(searchData.ToLower()) ||
+                        u.NameRu != null && u.NameRu.ToLower().Contains(searchData.ToLower()) ||
+                        u.MiddlenameRu != null && u.MiddlenameRu.ToLower().Contains(searchData.ToLower())) ||
+                        (u.SurnameKz != null && u.SurnameKz.ToLower().Contains(searchData.ToLower()) ||
+                        u.NameKz != null && u.NameKz.ToLower().Contains(searchData.ToLower()) ||
+                        u.MiddlenameKz != null && u.MiddlenameKz.ToLower().Contains(searchData.ToLower())) ||
+                        (u.SurnameEn != null && u.SurnameEn.ToLower().Contains(searchData.ToLower()) ||
+                        u.NameEn != null && u.NameEn.ToLower().Contains(searchData.ToLower()) ||
+                        u.MiddlenameEn != null && u.MiddlenameEn.ToLower().Contains(searchData.ToLower()))) ||
                         string.IsNullOrEmpty(searchData) && u.Id < 30) && u.DeletedDateTime == null)
                     .Select(u => new SelectWithPositionDto()
                     {
                         Id = u.Id,
-                        NameRu = u.CrmEmployee != null ? UserHelper.GetUserFullName(u.CrmEmployee.SurnameRu, u.CrmEmployee.NameRu, u.CrmEmployee.MiddlenameRu) : null,
-                        NameKz = u.CrmEmployee != null ? UserHelper.GetUserFullName(u.CrmEmployee.SurnameKz, u.CrmEmployee.NameKz, u.CrmEmployee.MiddlenameKz) : null,
-                        NameEn = u.CrmEmployee != null ? UserHelper.GetUserFullName(u.CrmEmployee.SurnameEn, u.CrmEmployee.NameEn, u.CrmEmployee.MiddlenameEn) : null,
-                        PositionId = toAppointment && u.CrmEmployee != null ? u.CrmEmployee.DictPositionsId : null,
-                        PositionNameEn = toAppointment && u.CrmEmployee != null && u.CrmEmployee.DictPosition != null ? u.CrmEmployee.DictPosition.NameEn : null,
-                        PositionNameRu = toAppointment && u.CrmEmployee != null && u.CrmEmployee.DictPosition != null ? u.CrmEmployee.DictPosition.NameRu : null,
-                        PositionNameKz = toAppointment && u.CrmEmployee != null && u.CrmEmployee.DictPosition != null ? u.CrmEmployee.DictPosition.NameKz : null,
+                        NameRu = UserHelper.GetUserFullName(u.SurnameRu, u.NameRu, u.MiddlenameRu),
+                        NameKz = UserHelper.GetUserFullName(u.SurnameKz, u.NameKz, u.MiddlenameKz),
+                        NameEn = UserHelper.GetUserFullName(u.SurnameEn, u.NameEn, u.MiddlenameEn),
+                        PositionId = toAppointment ? u.DictPositionsId : null,
+                        PositionNameEn = toAppointment && u.DictPosition != null ? u.DictPosition.NameEn : null,
+                        PositionNameRu = toAppointment && u.DictPosition != null ? u.DictPosition.NameRu : null,
+                        PositionNameKz = toAppointment && u.DictPosition != null ? u.DictPosition.NameKz : null,
                     })
                     .OrderBy(u => u.PositionId)
                     .ThenBy(u => u.Id)

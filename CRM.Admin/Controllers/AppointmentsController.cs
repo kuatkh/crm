@@ -58,6 +58,7 @@ namespace CRM.Admin.Controllers
                     var appointments = await _crmContext.CrmPatientsAppointments
                         .Include("CrmPatient")
                         .Include("ToCrmEmployee.DictPosition")
+                        .Include("CrmPatientsAppointmentsServices.DictService")
                         .AsNoTracking()
                         .Where(a => a.DeletedDateTime == null && a.AppointmentStartDateTime.Date >= appointmentData.Start.Date && a.AppointmentEndDateTime.Date <= appointmentData.End.Date.AddDays(1) && a.ToCrmEmployeesId == appointmentData.ToEmployee.Id)
                         .Select(a => new AppointmentDto()
@@ -68,7 +69,7 @@ namespace CRM.Admin.Controllers
                             Start = a.AppointmentStartDateTime,
                             End = a.AppointmentEndDateTime,
                             CrmPatientsId = a.CrmPatientsId,
-                            Iin = a.CrmPatient != null && currentUser.RoleId == 1 ? a.CrmPatient.Iin : null,
+                            Iin = a.CrmPatient != null && (currentUser.RoleId == 1 || currentUser.RoleId == 2) ? a.CrmPatient.Iin : null,
                             DocumentNumber = a.CrmPatient != null && currentUser.RoleId == 1 ? a.CrmPatient.DocumentNumber : null,
                             SurnameEn = a.CrmPatient != null ? a.CrmPatient.SurnameEn : null,
                             SurnameRu = a.CrmPatient != null ? a.CrmPatient.SurnameRu : null,
@@ -92,6 +93,22 @@ namespace CRM.Admin.Controllers
                                     PositionNameRu = a.ToCrmEmployee.DictPosition.NameRu,
                                     PositionNameKz = a.ToCrmEmployee.DictPosition.NameKz
                                 }
+                                : null,
+                            SelectedProcedures = a.CrmPatientsAppointmentsServices != null && a.CrmPatientsAppointmentsServices.Any(p => p.DeletedDateTime == null)
+                                ? a.CrmPatientsAppointmentsServices
+                                    .Where(p => p.DeletedDateTime == null)
+                                    .Select(p => new DictionaryDto()
+                                    {
+                                        Id = p.DictService != null ? p.DictService.Id : 0,
+                                        NameRu = p.DictService != null ? p.DictService.NameRu : null,
+                                        NameEn = p.DictService != null ? p.DictService.NameEn : null,
+                                        NameKz = p.DictService != null ? p.DictService.NameKz : null,
+                                        DescriptionRu = p.DictService != null ? p.DictService.DescriptionRu : null,
+                                        DescriptionEn = p.DictService != null ? p.DictService.DescriptionEn : null,
+                                        DescriptionKz = p.DictService != null ? p.DictService.DescriptionKz : null,
+                                        ParentId = p.Id
+                                    })
+                                    .ToList()
                                 : null
                         })
                         .ToListAsync();
@@ -238,6 +255,64 @@ namespace CRM.Admin.Controllers
 
                                 await _crmContext.CrmPatientsAppointments.AddAsync(appointment);
                                 await _crmContext.SaveChangesAsync();
+                            }
+
+                            if (appointmentData.SelectedProcedures != null && appointmentData.SelectedProcedures.Any() && appointment.Id > 0)
+                            {
+                                // удаляем старые сохраненные, которых нету в новом листе
+                                var selectedProceduresIds = appointmentData.SelectedProcedures.Select(s => s.Id.ToString()).ToList();
+                                var oldProcedures = await _crmContext.CrmPatientsAppointmentsServices
+                                    .Where(p => p.CrmPatientsAppointmentsId == appointment.Id && p.DictServicesId != null && !selectedProceduresIds.Any(s => s == p.DictServicesId.Value.ToString()) && p.DeletedDateTime == null)
+                                    .ToListAsync();
+
+                                if (oldProcedures != null && oldProcedures.Any())
+                                {
+                                    foreach (var oldProc in oldProcedures)
+                                    {
+                                        oldProc.DeletedDateTime = DateTime.Now;
+                                    }
+                                    _crmContext.CrmPatientsAppointmentsServices.UpdateRange(oldProcedures);
+                                    await _crmContext.SaveChangesAsync();
+                                }
+
+                                // игнорим старые сохраненные, которые присутствуют в листе
+                                var savedProcedures = await _crmContext.CrmPatientsAppointmentsServices
+                                    .Where(p => p.CrmPatientsAppointmentsId == appointment.Id && p.DictServicesId != null && selectedProceduresIds.Any(s => s == p.DictServicesId.Value.ToString()) && p.DeletedDateTime == null)
+                                    .AsNoTracking()
+                                    .Select(p => new CrmPatientsAppointmentsServices()
+                                    {
+                                        Id = p.Id,
+                                        DictServicesId = p.DictServicesId
+                                    })
+                                    .ToListAsync();
+
+                                foreach (var proc in appointmentData.SelectedProcedures.Where(s => savedProcedures != null && !savedProcedures.Any(p => p.DictServicesId == s.Id) || savedProcedures == null || !savedProcedures.Any()))
+                                {
+                                    await _crmContext.CrmPatientsAppointmentsServices.AddAsync(new CrmPatientsAppointmentsServices()
+                                    {
+                                        CrmPatientsAppointmentsId = appointment.Id,
+                                        CreatedDateTime = DateTime.Now,
+                                        DictServicesId = proc.Id
+                                    });
+                                    await _crmContext.SaveChangesAsync();
+                                }
+                            }
+                            else
+                            {
+                                // удаляем старые сохраненные, так как пустой лист
+                                var oldProcedures = await _crmContext.CrmPatientsAppointmentsServices
+                                    .Where(p => p.CrmPatientsAppointmentsId == appointment.Id && p.DeletedDateTime == null)
+                                    .ToListAsync();
+
+                                if (oldProcedures != null && oldProcedures.Any())
+                                {
+                                    foreach (var oldProc in oldProcedures)
+                                    {
+                                        oldProc.DeletedDateTime = DateTime.Now;
+                                    }
+                                    _crmContext.CrmPatientsAppointmentsServices.UpdateRange(oldProcedures);
+                                    await _crmContext.SaveChangesAsync();
+                                }
                             }
                         }
                         else

@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 namespace CRM.Admin.Controllers
 {
     [Route("api/[controller]")]
-    //[Authorize(Roles = "superadmin,admin")]
+    [Authorize(Roles = "superadmin,admin")]
     [ApiController]
     public class PatientsController : ControllerBase
     {
