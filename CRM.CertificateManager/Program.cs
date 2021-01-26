@@ -109,11 +109,11 @@ namespace CRM.CertificateManager
 
             var rsaCertPfxBytes =
                 iec.ExportSelfSignedCertificatePfx(password, rsaCert);
-            File.WriteAllBytes("C:/config/abRsaCert.pfx", rsaCertPfxBytes);
+            File.WriteAllBytes("C:/config/crmRsaCert.pfx", rsaCertPfxBytes);
 
             var ecdsaCertPfxBytes =
                 iec.ExportSelfSignedCertificatePfx(password, ecdsaCert);
-            File.WriteAllBytes("C:/config/abEcdsaCert.pfx", ecdsaCertPfxBytes);
+            File.WriteAllBytes("C:/config/crmEcdsaCert.pfx", ecdsaCertPfxBytes);
         }
     }
 }

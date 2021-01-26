@@ -165,7 +165,7 @@ namespace CRM.Admin.Controllers
 
                     var ecdsaCertPfxBytes =
                         iec.ExportSelfSignedCertificatePfx(password, ecdsaCert);
-                    System.IO.File.WriteAllBytes($"{path}{(!string.IsNullOrEmpty(certData.FileName) ? certData.FileName : "abEcdsaCert")}.pfx", ecdsaCertPfxBytes);
+                    System.IO.File.WriteAllBytes($"{path}{(!string.IsNullOrEmpty(certData.FileName) ? certData.FileName : "crmEcdsaCert")}.pfx", ecdsaCertPfxBytes);
                 }
                 else
                 {
@@ -173,7 +173,7 @@ namespace CRM.Admin.Controllers
 
                     var rsaCertPfxBytes =
                         iec.ExportSelfSignedCertificatePfx(password, rsaCert);
-                    System.IO.File.WriteAllBytes($"{path}{(!string.IsNullOrEmpty(certData.FileName) ? certData.FileName : "abRsaCert")}.pfx", rsaCertPfxBytes);
+                    System.IO.File.WriteAllBytes($"{path}{(!string.IsNullOrEmpty(certData.FileName) ? certData.FileName : "crmRsaCert")}.pfx", rsaCertPfxBytes);
                 }
 
                 var success = new ResultDto<string>()
