@@ -73,38 +73,26 @@ namespace CRM
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, jwtBearerOptions =>
+                .AddJwtBearer(options =>
                 {
-                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = key,
+
                         ValidateAudience = true,
                         ValidAudiences = new[] { "crm.full", "crm.adm.full" },
 
                         ValidateIssuer = true,
                         ValidIssuers = new[] { "http://localhost:5000", "https://localhost:5001", _configuration.AuthServerUrl },
 
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = key,
-
                         ValidateLifetime = true,
 
-                        ClockSkew = TimeSpan.Zero
+                        ClockSkew = TimeSpan.Zero,
                     };
-                    jwtBearerOptions.Authority = _configuration.AuthServerUrl;
-                    jwtBearerOptions.RequireHttpsMetadata = false;
-                }, introspectionOptions =>
-                {
-                    introspectionOptions.Authority = _configuration.AuthServerUrl;
-                    introspectionOptions.AuthenticationType = JwtBearerDefaults.AuthenticationScheme;
-                    introspectionOptions.ClientId = _configuration.Client.Id;
-                    introspectionOptions.ClientSecret = _configuration.Client.Secret;
-                    introspectionOptions.DiscoveryPolicy = new DiscoveryPolicy()
-                    {
-                        RequireHttps = false,
-                        Authority = _configuration.AuthServerUrl,
-                        ValidateEndpoints = false,
-                        ValidateIssuerName = true
-                    };
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.Authority = _configuration.AuthServerUrl;
                 });
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
