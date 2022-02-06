@@ -11,26 +11,26 @@ module.exports = {
 		'./src/index.js',
 	],
 	output: {
-		filename: './build-dev/bundle.js'
+		filename: './build-dev/bundle.js',
 	},
-    devServer: {
-        contentBase: path.join(__dirname, "build-dev"),
+	devServer: {
+		contentBase: path.join(__dirname, 'build-dev'),
 		port: 9000,
-		historyApiFallback: true
-    },
+		historyApiFallback: true,
+	},
 	plugins: [
 		new webpack.optimize.OccurrenceOrderPlugin(),
 		new webpack.optimize.AggressiveMergingPlugin(),
 		//new BundleAnalyzerPlugin(),
 
-        new HtmlWebpackPlugin({
+		new HtmlWebpackPlugin({
 			hash: true,
-            filename: './build-dev/index.html' 
+			filename: './build-dev/index.html',
 		}),
 		new webpack.DefinePlugin({
-			'process.env': { 
-				NODE_ENV: JSON.stringify('development')
-			}
+			'process.env': {
+				NODE_ENV: JSON.stringify('development'),
+			},
 		}),
 	],
 	module: {
@@ -38,12 +38,12 @@ module.exports = {
 			{
 				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
-				loader: 'babel-loader'
+				loader: 'babel-loader',
 			},
 			{
 				// include: /style/,
 				test: /\.css$/,
-				loader: 'style-loader!css-loader'
+				loader: 'style-loader!css-loader',
 			},
 			{
 				test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
@@ -52,21 +52,21 @@ module.exports = {
 			{
 				test: /\.(jpe?g|png|gif|svg)$/i,
 				use: [
-				  'url-loader?limit=10000',
-				  'img-loader'
-				]
+					'url-loader?limit=10000',
+					'img-loader',
+				],
 			},
 			{
 				exclude: /node_modules/,
 				loader: 'eslint-loader',
-				test: /\.js$/
+				test: /\.js$/,
 			},
-		]
+		],
 	},
 	resolve: {
 		modules: ['src', 'node_modules'],
 		alias: {
-			common: path.resolve(__dirname, 'src')
-		}
-	}
+			common: path.resolve(__dirname, 'src'),
+		},
+	},
 }

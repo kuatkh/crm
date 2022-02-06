@@ -31,11 +31,6 @@ module.exports = {
 		new webpack.optimize.OccurrenceOrderPlugin(),
 		new webpack.optimize.AggressiveMergingPlugin(),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-		new webpack.DefinePlugin({
-			'process.env': {
-				'NODE_ENV': JSON.stringify('production'),
-			},
-		}),
 		new CompressionPlugin({
 			filename: '[path].gz[query]',
 			algorithm: 'gzip',
