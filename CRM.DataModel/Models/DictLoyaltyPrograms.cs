@@ -8,12 +8,8 @@ namespace CRM.DataModel.Models
     public class DictLoyaltyPrograms
     {
         public long Id { get; set; }
-        public string NameRu { get; set; }
-        public string NameKz { get; set; }
-        public string NameEn { get; set; }
-        public string DescriptionRu { get; set; }
-        public string DescriptionKz { get; set; }
-        public string DescriptionEn { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public float DiscountAmount { get; set; }
         public long? DictEnterprisesId { get; set; }
         public DateTime CreatedDateTime { get; set; }

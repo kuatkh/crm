@@ -10,9 +10,7 @@ namespace CRM.DataModel.Models
         public long Id { get; set; }
         public long CrmPatientsId { get; set; }
         public long? DictIntolerancesId { get; set; }
-        public string DescriptionRu { get; set; }
-        public string DescriptionKz { get; set; }
-        public string DescriptionEn { get; set; }
+        public string Description { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public DateTime? EditedDateTime { get; set; }
         public DateTime? DeletedDateTime { get; set; }

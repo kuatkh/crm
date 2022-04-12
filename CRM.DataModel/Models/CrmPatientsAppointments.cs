@@ -13,7 +13,6 @@ namespace CRM.DataModel.Models
         public long CrmPatientsId { get; set; }
         public long ToCrmEmployeesId { get; set; }
         public long DictStatusesId { get; set; }
-        //public DateTime AppointmentDateTime { get; set; }
         public DateTime AppointmentStartDateTime { get; set; }
         public DateTime AppointmentEndDateTime { get; set; }
         public DateTime? AppointmentStartedDateTime { get; set; }

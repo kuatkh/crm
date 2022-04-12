@@ -146,15 +146,9 @@ namespace CRM.Controllers
                         CrmPatientsId = u.CrmPatientsId,
                         Iin = u.CrmEmployee != null ? u.CrmEmployee.Iin : u.CrmPatient != null ? u.CrmPatient.Iin : null,
                         BirthDate = u.CrmEmployee != null ? u.CrmEmployee.BirthDate : u.CrmPatient != null ? u.CrmPatient.BirthDate : null,
-                        MiddlenameKz = u.CrmEmployee != null ? u.CrmEmployee.MiddlenameKz : u.CrmPatient != null ? u.CrmPatient.MiddlenameKz : null,
-                        MiddlenameRu = u.CrmEmployee != null ? u.CrmEmployee.MiddlenameRu : u.CrmPatient != null ? u.CrmPatient.MiddlenameRu : null,
-                        MiddlenameEn = u.CrmEmployee != null ? u.CrmEmployee.MiddlenameEn : u.CrmPatient != null ? u.CrmPatient.MiddlenameEn : null,
-                        NameKz = u.CrmEmployee != null ? u.CrmEmployee.NameKz : u.CrmPatient != null ? u.CrmPatient.NameKz : null,
-                        NameRu = u.CrmEmployee != null ? u.CrmEmployee.NameRu : u.CrmPatient != null ? u.CrmPatient.NameRu : null,
-                        NameEn = u.CrmEmployee != null ? u.CrmEmployee.NameEn : u.CrmPatient != null ? u.CrmPatient.NameEn : null,
-                        SurnameKz = u.CrmEmployee != null ? u.CrmEmployee.SurnameKz : u.CrmPatient != null ? u.CrmPatient.SurnameKz : null,
-                        SurnameRu = u.CrmEmployee != null ? u.CrmEmployee.SurnameRu : u.CrmPatient != null ? u.CrmPatient.SurnameRu : null,
-                        SurnameEn = u.CrmEmployee != null ? u.CrmEmployee.SurnameEn : u.CrmPatient != null ? u.CrmPatient.SurnameEn : null,
+                        Middlename = u.CrmEmployee != null ? u.CrmEmployee.Middlename : u.CrmPatient != null ? u.CrmPatient.Middlename : null,
+                        Name = u.CrmEmployee != null ? u.CrmEmployee.Name : u.CrmPatient != null ? u.CrmPatient.Name : null,
+                        Surname = u.CrmEmployee != null ? u.CrmEmployee.Surname : u.CrmPatient != null ? u.CrmPatient.Surname : null,
                         DictGendersId = u.CrmEmployee != null
                             ? u.CrmEmployee.DictGendersId
                             : u.CrmPatient != null && u.CrmPatient.DictGendersId != null
@@ -177,61 +171,47 @@ namespace CRM.Controllers
                             ? new SelectDto()
                             {
                                 Id = u.CrmEmployee.DictPosition.Id,
-                                NameKz = u.CrmEmployee.DictPosition.NameKz,
-                                NameRu = u.CrmEmployee.DictPosition.NameRu,
-                                NameEn = u.CrmEmployee.DictPosition.NameEn
+                                Name = u.CrmEmployee.DictPosition.Name
                             }
                             : null,
                         Department = u.CrmEmployee != null && u.CrmEmployee.DictDepartment != null
                             ? new SelectDto()
                             {
                                 Id = u.CrmEmployee.DictDepartment.Id,
-                                NameKz = u.CrmEmployee.DictDepartment.NameKz,
-                                NameRu = u.CrmEmployee.DictDepartment.NameRu,
-                                NameEn = u.CrmEmployee.DictDepartment.NameEn
+                                Name = u.CrmEmployee.DictDepartment.Name
                             }
                             : null,
                         Enterprise = u.CrmEmployee != null && u.CrmEmployee.DictEnterprise != null
                             ? new SelectDto()
                             {
                                 Id = u.CrmEmployee.DictEnterprise.Id,
-                                NameKz = u.CrmEmployee.DictEnterprise.NameKz,
-                                NameRu = u.CrmEmployee.DictEnterprise.NameRu,
-                                NameEn = u.CrmEmployee.DictEnterprise.NameEn
+                                Name = u.CrmEmployee.DictEnterprise.Name
                             }
                             : null,
                         City = u.CrmEmployee != null && u.CrmEmployee.DictCity != null
                             ? new SelectDto()
                             {
                                 Id = u.CrmEmployee.DictCity.Id,
-                                NameKz = u.CrmEmployee.DictCity.NameKz,
-                                NameRu = u.CrmEmployee.DictCity.NameRu,
-                                NameEn = u.CrmEmployee.DictCity.NameEn
+                                Name = u.CrmEmployee.DictCity.Name
                             }
                             : u.CrmPatient != null && u.CrmPatient.DictCity != null
                                 ? new SelectDto()
                                 {
                                     Id = u.CrmPatient.DictCity.Id,
-                                    NameKz = u.CrmPatient.DictCity.NameKz,
-                                    NameRu = u.CrmPatient.DictCity.NameRu,
-                                    NameEn = u.CrmPatient.DictCity.NameEn
+                                    Name = u.CrmPatient.DictCity.Name
                                 }
                                 : null,
                         Gender = u.CrmEmployee != null && u.CrmEmployee.DictGender != null
                             ? new SelectDto()
                             {
                                 Id = u.CrmEmployee.DictGender.Id,
-                                NameKz = u.CrmEmployee.DictGender.NameKz,
-                                NameRu = u.CrmEmployee.DictGender.NameRu,
-                                NameEn = u.CrmEmployee.DictGender.NameEn
+                                Name = u.CrmEmployee.DictGender.Name
                             }
                             : u.CrmPatient != null && u.CrmPatient.DictGender != null
                                 ? new SelectDto()
                                 {
                                     Id = u.CrmPatient.DictGender.Id,
-                                    NameKz = u.CrmPatient.DictGender.NameKz,
-                                    NameRu = u.CrmPatient.DictGender.NameRu,
-                                    NameEn = u.CrmPatient.DictGender.NameEn
+                                    Name = u.CrmPatient.DictGender.Name
                                 }
                                 : null
                     })
@@ -285,9 +265,9 @@ namespace CRM.Controllers
                         var crmEmployee = await _crmContext.CrmEmployees.FirstOrDefaultAsync(c => c.Id == profileData.CrmEmployeesId && c.DeletedDateTime == null);
                         if (crmEmployee != null)
                         {
-                            crmEmployee.NameRu = profileData.NameRu;
-                            crmEmployee.SurnameRu = profileData.SurnameRu;
-                            crmEmployee.MiddlenameRu = profileData.MiddlenameRu;
+                            crmEmployee.Name = profileData.Name;
+                            crmEmployee.Surname = profileData.Surname;
+                            crmEmployee.Middlename = profileData.Middlename;
                             crmEmployee.AboutMe = profileData.AboutMe;
                             crmEmployee.PhoneNumber = profileData.PhoneNumber;
                             crmEmployee.EditedDateTime = DateTime.Now;
@@ -314,9 +294,9 @@ namespace CRM.Controllers
                         var crmPatient = await _crmContext.CrmPatients.FirstOrDefaultAsync(c => c.Id == profileData.CrmPatientsId && c.DeletedDateTime == null);
                         if (crmPatient != null)
                         {
-                            crmPatient.NameRu = profileData.NameRu;
-                            crmPatient.SurnameRu = profileData.SurnameRu;
-                            crmPatient.MiddlenameRu = profileData.MiddlenameRu;
+                            crmPatient.Name = profileData.Name;
+                            crmPatient.Surname = profileData.Surname;
+                            crmPatient.Middlename = profileData.Middlename;
                             crmPatient.AboutMe = profileData.AboutMe;
                             crmPatient.PhoneNumber = profileData.PhoneNumber;
                             crmPatient.EditedDateTime = DateTime.Now;
@@ -349,9 +329,9 @@ namespace CRM.Controllers
                         {
                             if (crmUser.CrmEmployee != null)
                             {
-                                crmUser.CrmEmployee.NameRu = profileData.NameRu;
-                                crmUser.CrmEmployee.SurnameRu = profileData.SurnameRu;
-                                crmUser.CrmEmployee.MiddlenameRu = profileData.MiddlenameRu;
+                                crmUser.CrmEmployee.Name = profileData.Name;
+                                crmUser.CrmEmployee.Surname = profileData.Surname;
+                                crmUser.CrmEmployee.Middlename = profileData.Middlename;
                                 crmUser.CrmEmployee.AboutMe = profileData.AboutMe;
                                 crmUser.CrmEmployee.PhoneNumber = profileData.PhoneNumber;
                                 crmUser.CrmEmployee.EditedDateTime = DateTime.Now;
@@ -362,9 +342,9 @@ namespace CRM.Controllers
                             }
                             else if (crmUser.CrmPatient != null)
                             {
-                                crmUser.CrmPatient.NameRu = profileData.NameRu;
-                                crmUser.CrmPatient.SurnameRu = profileData.SurnameRu;
-                                crmUser.CrmPatient.MiddlenameRu = profileData.MiddlenameRu;
+                                crmUser.CrmPatient.Name = profileData.Name;
+                                crmUser.CrmPatient.Surname = profileData.Surname;
+                                crmUser.CrmPatient.Middlename = profileData.Middlename;
                                 crmUser.CrmPatient.AboutMe = profileData.AboutMe;
                                 crmUser.CrmPatient.PhoneNumber = profileData.PhoneNumber;
                                 crmUser.CrmPatient.EditedDateTime = DateTime.Now;

@@ -8,9 +8,7 @@ namespace CRM.DataModel.Models
     public class DictDepartments
     {
         public long Id { get; set; }
-        public string NameRu { get; set; }
-        public string NameKz { get; set; }
-        public string NameEn { get; set; }
+        public string Name { get; set; }
         public long? DictEnterprisesId { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public DateTime? EditedDateTime { get; set; }

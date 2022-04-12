@@ -9,9 +9,7 @@ namespace CRM.DataModel.Models
     {
         public long Id { get; set; }
         public long? ParentId { get; set; }
-        public string NameRu { get; set; }
-        public string NameKz { get; set; }
-        public string NameEn { get; set; }
+        public string Name { get; set; }
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public DateTime CreatedDateTime { get; set; }

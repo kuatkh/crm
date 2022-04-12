@@ -95,9 +95,9 @@ class AddUser extends React.Component {
 			iin: '',
 			birthDate: new Date(),
 			phoneNumber: '',
-			nameRu: '',
-			surnameRu: '',
-			middlenameRu: '',
+			name: '',
+			surname: '',
+			middlename: '',
 			enterprisesId: 0,
 			departmentsId: 0,
 			positionsId: 0,
@@ -384,9 +384,9 @@ handleSaveClick = () => {
 		userName,
 		userSecret,
 		userSecretConfirmation,
-		surnameRu,
-		nameRu,
-		middlenameRu,
+		surname,
+		name,
+		middlename,
 		email,
 		birthDate,
 		phoneNumber,
@@ -451,13 +451,13 @@ handleSaveClick = () => {
 		}
 		return
 	}
-	if (!surnameRu) {
+	if (!surname) {
 		if (handleSnackbarOpen) {
 			handleSnackbarOpen('Вы не заполнили поле "Фамилия"', 'error')
 		}
 		return
 	}
-	if (!nameRu) {
+	if (!name) {
 		if (handleSnackbarOpen) {
 			handleSnackbarOpen('Вы не заполнили поле "Имя"', 'error')
 		}
@@ -492,29 +492,23 @@ handleSaveClick = () => {
 		userName,
 		userSecret: userSecret ? userSecret : null,
 		userSecretConfirmation: userSecretConfirmation ? userSecretConfirmation : null,
-		surnameRu,
-		nameRu,
-		middlenameRu: middlenameRu ? middlenameRu : null,
+		surname,
+		name,
+		middlename: middlename ? middlename : null,
 		email,
 		birthDate: birthDate ? birthDate : null,
 		phoneNumber: phoneNumber ? phoneNumber : null,
 		enterprise: {
 			id: selectedEnterprise.id,
-			nameRu: selectedEnterprise.nameRu,
-			nameEn: selectedEnterprise.nameEn,
-			nameKz: selectedEnterprise.nameKz,
+			name: selectedEnterprise.name,
 		},
 		department: {
 			id: selectedDepartment.id,
-			nameRu: selectedDepartment.nameRu,
-			nameEn: selectedDepartment.nameEn,
-			nameKz: selectedDepartment.nameKz,
+			name: selectedDepartment.name,
 		},
 		position: {
 			id: selectedPosition.id,
-			nameRu: selectedPosition.nameRu,
-			nameEn: selectedPosition.nameEn,
-			nameKz: selectedPosition.nameKz,
+			name: selectedPosition.name,
 		},
 		roleId: selectedRole ? selectedRole.id : 0,
 	}
@@ -573,9 +567,9 @@ handleCancelClick = () => {
 		iin: '',
 		birthDate: '',
 		phoneNumber: '',
-		nameRu: '',
-		surnameRu: '',
-		middlenameRu: '',
+		name: '',
+		surname: '',
+		middlename: '',
 		departmentsId: 0,
 		positionsId: 0,
 		roleId: 0,
@@ -699,7 +693,7 @@ render() {
 									options={this.state.rolesOptions}
 									fullWidth
 									onChange={(e, v) => { this.handleAutocompleteChange('selectedRole', v) }}
-									getOptionLabel={option => option.nameRu}
+									getOptionLabel={option => option.name}
 									renderInput={params => <TextField {...params} label='Роль' variant='outlined' />}
 								/>
 							</Paper>
@@ -711,11 +705,11 @@ render() {
 							<Paper className={classes.paper}>
 								<TextField
 									required
-									name='surnameRu'
+									name='surname'
 									fullWidth
 									size='small'
 									autoComplete='off'
-									value={this.state.surnameRu}
+									value={this.state.surname}
 									label='Фамилия'
 									variant='outlined'
 									className={classes.input}
@@ -727,11 +721,11 @@ render() {
 							<Paper className={classes.paper}>
 								<TextField
 									required
-									name='nameRu'
+									name='name'
 									fullWidth
 									size='small'
 									autoComplete='off'
-									value={this.state.nameRu}
+									value={this.state.name}
 									label='Имя'
 									variant='outlined'
 									className={classes.input}
@@ -742,11 +736,11 @@ render() {
 						<Grid item xs={6}>
 							<Paper className={classes.paper}>
 								<TextField
-									name='middlenameRu'
+									name='middlename'
 									fullWidth
 									size='small'
 									autoComplete='off'
-									value={this.state.middlenameRu}
+									value={this.state.middlename}
 									label='Отчество'
 									variant='outlined'
 									className={classes.input}
@@ -768,10 +762,10 @@ render() {
 									value={this.state.selectedEnterprise}
 									options={this.state.enterprisesOptions}
 									groupBy={option => option.parentId}
-									getOptionLabel={option => option.parentNameRu}
+									groupOptionLabel={option => option.parentName}
 									fullWidth
 									onChange={(e, v) => { this.handleAutocompleteChange('selectedEnterprise', v) }}
-									getOptionLabel={option => option.nameRu}
+									getOptionLabel={option => option.name}
 									renderInput={params => <TextField {...params} label='Компания/филиал' variant='outlined' />}
 								/>
 							</Paper>
@@ -788,7 +782,7 @@ render() {
 									onChange={(e, v) => { this.handleAutocompleteChange('selectedDepartment', v) }}
 									// onInputChange={(e, v) => { this.handleAutocompleteInputChange('newDepartmentStr', v) }}
 									// onClose={(e, v) => { this.handleAutocompleteClose('newDepartmentStr', 'selectedDepartment', 'departmentsOptions') }}
-									getOptionLabel={option => option.nameRu}
+									getOptionLabel={option => option.name}
 									renderInput={params => <TextField {...params} label='Подразделение' variant='outlined' />}
 								/>
 							</Paper>
@@ -805,7 +799,7 @@ render() {
 									onChange={(e, v) => { this.handleAutocompleteChange('selectedPosition', v) }}
 									// onInputChange={(e, v) => { this.handleAutocompleteInputChange('newPositionStr', v) }}
 									// onClose={(e, v) => { this.handleAutocompleteClose('newPositionStr', 'selectedPosition', 'positionsOptions') }}
-									getOptionLabel={option => option.nameRu}
+									getOptionLabel={option => option.name}
 									renderInput={params => <TextField {...params} label='Должность' variant='outlined' />}
 								/>
 							</Paper>

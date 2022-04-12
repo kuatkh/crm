@@ -94,11 +94,6 @@ namespace CRM.Auth
                 endpoints.MapControllers();
             });
 
-            using var serviceScope = app.Services.CreateScope();
-
-            using var context = serviceScope.ServiceProvider.GetService<CrmDbContext>();
-            context.Database.Migrate();
-
             return app;
         }
     }

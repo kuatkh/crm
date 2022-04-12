@@ -30,6 +30,7 @@ namespace CRM.DataModel.Data
         public DbSet<DictEnterprises> DictEnterprises { get; set; }
         public DbSet<DictGenders> DictGenders { get; set; }
         public DbSet<DictIntolerances> DictIntolerances { get; set; }
+        public DbSet<DictLanguages> DictLanguages { get; set; }
         public DbSet<DictLoyaltyPrograms> DictLoyaltyPrograms { get; set; }
         public DbSet<DictPositions> DictPositions { get; set; }
         public DbSet<DictServices> DictServices { get; set; }
@@ -332,6 +333,11 @@ namespace CRM.DataModel.Data
             builder.Entity<DictIntolerances>(entity =>
             {
                 entity.ToTable("DictIntolerances");
+            });
+
+            builder.Entity<DictLanguages>(entity =>
+            {
+                entity.ToTable("DictLanguages");
             });
 
             builder.Entity<DictLoyaltyPrograms>(entity =>

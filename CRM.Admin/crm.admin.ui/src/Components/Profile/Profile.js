@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {compose} from 'recompose'
 import {withStyles} from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
@@ -6,13 +7,9 @@ import Autocomplete from '@material-ui/lab/Autocomplete'
 import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton'
 import TextField from '@material-ui/core/TextField'
-import Snackbar from '@material-ui/core/Snackbar'
-import Alert from '@material-ui/lab/Alert'
 import Paper from '@material-ui/core/Paper'
 import Divider from '@material-ui/core/Divider'
 import Grid from '@material-ui/core/Grid'
-import Backdrop from '@material-ui/core/Backdrop'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import CardMedia from '@material-ui/core/CardMedia'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import SaveIcon from '@material-ui/icons/Save'
@@ -20,8 +17,10 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import EditIcon from '@material-ui/icons/Edit'
 import red from '@material-ui/core/colors/red'
 import {connect} from 'react-redux'
-import {allConstants} from '../../Constants/AllConstants.js'
-import {getRequest, postRequest} from '../../Services/RequestsServices.js'
+import {withSnackbar} from 'Components/SnackbarWrapper'
+import {loading} from 'Components/LoadingWrapper'
+import {allConstants} from 'Constants/AllConstants.js'
+import {getRequest, postRequest} from 'Services/RequestsServices.js'
 
 const styles = theme => ({
 	formControl: {
@@ -116,10 +115,6 @@ class Profile extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			openSnackbar: false,
-			snackbarMsg: '',
-			snackbarSeverity: 'success',
-			loading: false,
 			isEditProfile: false,
 			oldData: null,
 			isPhotoChanged: false,
@@ -127,15 +122,9 @@ class Profile extends Component {
 			crmEmployeesId: null,
 			crmPatientsId: null,
 			userName: '',
-			nameRu: '',
-			nameKz: '',
-			nameEn: '',
-			surnameRu: '',
-			surnameKz: '',
-			surnameEn: '',
-			middlenameRu: '',
-			middlenameKz: '',
-			middlenameEn: '',
+			name: '',
+			surname: '',
+			middlename: '',
 			department: null,
 			position: null,
 			birthDate: '',
@@ -158,12 +147,12 @@ class Profile extends Component {
 			if (result && result.isSuccess && result.data) {
 				this.setState({...result.data})
 			} else {
-				this.handleSnackbarOpen(`Во время получения данных профиля произошла ошибка${result && result.msg ? `: ${result.msg}` : ''}`, 'error')
+				this.props.snackbar.showError(`Во время получения данных профиля произошла ошибка${result && result.msg ? `: ${result.msg}` : ''}`)
 			}
 		},
 		error => {
 			console.log(error)
-			this.handleSnackbarOpen(`Во время получения данных профиля произошла ошибка: ${error}`, 'error')
+			this.props.snackbar.showError(`Во время получения данных профиля произошла ошибка: ${error}`)
 		})
 	}
 
@@ -176,48 +165,28 @@ class Profile extends Component {
 					photoB64: result.data,
 				})
 			} else {
-				this.handleSnackbarOpen(`Во время получения фото профиля произошла ошибка${result && result.msg ? `: ${result.msg}` : ''}`, 'error')
+				this.props.snackbar.showError(`Во время получения фото профиля произошла ошибка${result && result.msg ? `: ${result.msg}` : ''}`)
 			}
 		},
 		error => {
 			console.log(error)
-			this.handleSnackbarOpen(`Во время получения фото профиля произошла ошибка: ${error}`, 'error')
+			this.handleSnackbarOpen(`Во время получения фото профиля произошла ошибка: ${error}`)
 		})
 	}
 
-handleSnackbarOpen = (msg, severity) => {
-	this.setState({
-		openSnackbar: true,
-		snackbarMsg: msg || '',
-		snackbarSeverity: severity || 'success',
-	})
-}
-
-handleSnackbarClose = () => {
-	this.setState({
-		openSnackbar: false,
-	})
-}
-
-isLoaded = loading => {
-	this.setState({
-		loading: !loading,
-	})
-}
-
 handleEditClick = () => {
 	const {
-		surnameRu,
-		nameRu,
-		middlenameRu,
+		surname,
+		name,
+		middlename,
 		address,
 		phoneNumber,
 		aboutMe,
 	} = this.state
 	const oldData = {
-		surnameRu,
-		nameRu,
-		middlenameRu,
+		surname,
+		name,
+		middlename,
 		address,
 		phoneNumber,
 		aboutMe,
@@ -239,21 +208,21 @@ handleSaveClick = () => {
 		isPhotoChanged,
 		crmEmployeesId,
 		crmPatientsId,
-		surnameRu,
-		nameRu,
-		middlenameRu,
+		surname,
+		name,
+		middlename,
 		address,
 		phoneNumber,
 		aboutMe,
 	} = this.state
 	const {token} = this.props
 
-	if (!surnameRu) {
-		this.handleSnackbarOpen('Вы не заполнили поле "Фамилия"', 'error')
+	if (!surname) {
+		this.props.snackbar.showWarning('Вы не заполнили поле "Фамилия"')
 		return
 	}
-	if (!nameRu) {
-		this.handleSnackbarOpen('Вы не заполнили поле "Имя"', 'error')
+	if (!name) {
+		this.props.snackbar.showWarning('Вы не заполнили поле "Имя"')
 		return
 	}
 
@@ -263,9 +232,9 @@ handleSaveClick = () => {
 		id,
 		crmEmployeesId,
 		crmPatientsId,
-		surnameRu,
-		nameRu,
-		middlenameRu,
+		surname,
+		name,
+		middlename,
 		address,
 		phoneNumber,
 		aboutMe,
@@ -275,19 +244,19 @@ handleSaveClick = () => {
 		this.isLoaded(true)
 
 		if (result && result.isSuccess) {
-			this.handleSnackbarOpen('Профиль успешно сохранен!', 'success')
+			this.props.snackbar.showSuccess('Профиль успешно сохранен!')
 		} else if (result && !result.isSuccess && result.msg == 'empty_current_user_or_profile_data') {
-			this.handleSnackbarOpen('Во время сохранения профиля произошла ошибка. Данные текущего пользователя или отправленные данные пустые', 'error')
+			this.props.snackbar.showError('Во время сохранения профиля произошла ошибка. Данные текущего пользователя или отправленные данные пустые')
 		} else if (result && !result.isSuccess && result.msg == 'empty_employee') {
-			this.handleSnackbarOpen(`Во время сохранения профиля произошла ошибка. Профиль пользователя с идентификатором ${userData.crmEmployeesId} не найден`, 'error')
+			this.props.snackbar.showError(`Во время сохранения профиля произошла ошибка. Профиль пользователя с идентификатором ${userData.crmEmployeesId} не найден`)
 		} else if (result && !result.isSuccess && result.msg == 'empty_patient') {
-			this.handleSnackbarOpen(`Во время сохранения профиля произошла ошибка. Профиль пациента с идентификатором ${userData.crmPatientsId} не найден`, 'error')
+			this.props.snackbar.showError(`Во время сохранения профиля произошла ошибка. Профиль пациента с идентификатором ${userData.crmPatientsId} не найден`)
 		} else if (result && !result.isSuccess && result.msg == 'empty_employee_and_patient') {
-			this.handleSnackbarOpen(`Во время сохранения профиля произошла ошибка. Профиль пользователя и пациента с идентификатором ${userData.id} не найден`, 'error')
+			this.props.snackbar.showError(`Во время сохранения профиля произошла ошибка. Профиль пользователя и пациента с идентификатором ${userData.id} не найден`)
 		} else if (result && !result.isSuccess && (result.msg == 'empty_id' || result.msg == 'empty_user')) {
-			this.handleSnackbarOpen(`Во время сохранения профиля произошла ошибка. Профиль пользователя с идентификатором ${userData.id} не найден`, 'error')
+			this.props.snackbar.showError(`Во время сохранения профиля произошла ошибка. Профиль пользователя с идентификатором ${userData.id} не найден`)
 		} else {
-			this.handleSnackbarOpen(`Во время сохранения профиля произошла ошибка${result && result.msg ? `: ${result.msg}` : ''}`, 'error')
+			this.props.snackbar.showError(`Во время сохранения профиля произошла ошибка${result && result.msg ? `: ${result.msg}` : ''}`)
 		}
 
 		if (isPhotoChanged) {
@@ -301,7 +270,7 @@ handleSaveClick = () => {
 	},
 	error => {
 		this.isLoaded(true)
-		this.handleSnackbarOpen(`Во время сохранения профиля произошла ошибка: ${error}`, 'error')
+		this.props.snackbar.showError(`Во время сохранения профиля произошла ошибка: ${error}`, 'error')
 	})
 }
 
@@ -325,21 +294,21 @@ handleSavePhoto = () => {
 	postRequest(`${allConstants.serverUrl}/api/Users/SaveProfilePhoto`, token, photoData, photoResult => {
 		this.isLoaded(true)
 		if (photoResult && photoResult.isSuccess) {
-			this.handleSnackbarOpen('Фото профиля успешно сохранено!', 'success')
+			this.props.snackbar.showSuccess('Фото профиля успешно сохранено!')
 		} else if (photoResult && !photoResult.isSuccess && photoResult.msg == 'empty_current_user_or_profile_data') {
-			this.handleSnackbarOpen('Во время сохранения фото профиля произошла ошибка. Данные текущего пользователя или отправленные данные пустые', 'error')
+			this.props.snackbar.showError('Во время сохранения фото профиля произошла ошибка. Данные текущего пользователя или отправленные данные пустые')
 		} else if (photoResult && !photoResult.isSuccess && photoResult.msg == 'empty_photo') {
-			this.handleSnackbarOpen('Во время сохранения фото профиля произошла ошибка. Данные фото пустые', 'error')
+			this.props.snackbar.showError('Во время сохранения фото профиля произошла ошибка. Данные фото пустые')
 		} else if (photoResult && !photoResult.isSuccess && photoResult.msg == 'empty_employee_and_patient') {
-			this.handleSnackbarOpen(`Во время сохранения фото профиля произошла ошибка. Профиль пользователя и пациента с идентификатором ${photoData.id} не найден`, 'error')
+			this.props.snackbar.showError(`Во время сохранения фото профиля произошла ошибка. Профиль пользователя и пациента с идентификатором ${photoData.id} не найден`)
 		} else if (photoResult && !photoResult.isSuccess && (photoResult.msg == 'empty_id' || photoResult.msg == 'empty_user')) {
-			this.handleSnackbarOpen(`Во время сохранения фото профиля произошла ошибка. Профиль пользователя с идентификатором ${photoData.id} не найден`, 'error')
+			this.props.snackbar.showError(`Во время сохранения фото профиля произошла ошибка. Профиль пользователя с идентификатором ${photoData.id} не найден`)
 		} else if (photoResult && !photoResult.isSuccess && photoResult.msg == 'empty_employee') {
-			this.handleSnackbarOpen(`Во время сохранения фото профиля произошла ошибка. Профиль пользователя с идентификатором ${photoData.crmEmployeesId} не найден`, 'error')
+			this.props.snackbar.showError(`Во время сохранения фото профиля произошла ошибка. Профиль пользователя с идентификатором ${photoData.crmEmployeesId} не найден`)
 		} else if (photoResult && !photoResult.isSuccess && photoResult.msg == 'empty_patient') {
-			this.handleSnackbarOpen(`Во время сохранения фото профиля произошла ошибка. Профиль пациента с идентификатором ${photoData.crmPatientsId} не найден`, 'error')
+			this.props.snackbar.showError(`Во время сохранения фото профиля произошла ошибка. Профиль пациента с идентификатором ${photoData.crmPatientsId} не найден`)
 		} else {
-			this.handleSnackbarOpen(`Во время сохранения фото профиля произошла ошибка${photoResult && photoResult.msg ? `: ${photoResult.msg}` : ''}`, 'error')
+			this.props.snackbar.showError(`Во время сохранения фото профиля произошла ошибка${photoResult && photoResult.msg ? `: ${photoResult.msg}` : ''}`)
 		}
 
 		this.setState({
@@ -349,7 +318,7 @@ handleSavePhoto = () => {
 	},
 	error => {
 		this.isLoaded(true)
-		this.handleSnackbarOpen(`Во время сохранения фото профиля произошла ошибка: ${error}`, 'error')
+		this.props.snackbar.showError(`Во время сохранения фото профиля произошла ошибка: ${error}`)
 
 		this.setState({
 			isEditProfile: false,
@@ -395,7 +364,7 @@ getBase64 = (file, callback) => {
 	}
 	reader.onerror = error => {
 		console.log('Error: ', error)
-		this.handleSnackbarOpen(`Во время загрузки файла произошла ошибка: ${error}`, 'error')
+		this.props.snackbar.showError(`Во время загрузки файла произошла ошибка: ${error}`)
 	}
 }
 
@@ -408,9 +377,9 @@ render() {
 		loading,
 		isEditProfile,
 		photoB64,
-		surnameRu,
-		nameRu,
-		middlenameRu,
+		surname,
+		name,
+		middlename,
 		address,
 		phoneNumber,
 		aboutMe,
@@ -525,13 +494,13 @@ render() {
 							<Paper className={classes.paper}>
 								<TextField
 									required
-									error={(isEditProfile && !surnameRu)}
-									name='surnameRu'
+									error={(isEditProfile && !surname)}
+									name='surname'
 									fullWidth
 									disabled={!isEditProfile}
 									size='small'
 									autoComplete='off'
-									value={surnameRu}
+									value={surname}
 									label='Фамилия'
 									variant='outlined'
 									className={classes.input}
@@ -543,13 +512,13 @@ render() {
 							<Paper className={classes.paper}>
 								<TextField
 									required
-									error={(isEditProfile && !nameRu)}
-									name='nameRu'
+									error={(isEditProfile && !name)}
+									name='name'
 									fullWidth
 									disabled={!isEditProfile}
 									size='small'
 									autoComplete='off'
-									value={nameRu}
+									value={name}
 									label='Имя'
 									variant='outlined'
 									className={classes.input}
@@ -560,15 +529,15 @@ render() {
 						<Grid item xs={6}>
 							<Paper className={classes.paper}>
 								<TextField
-									name='middlenameRu'
+									name='middlename'
 									fullWidth
 									disabled={!isEditProfile}
 									size='small'
 									autoComplete='off'
-									value={middlenameRu}
+									value={middlename}
 									label='Отчество'
 									variant='outlined'
-									className={classes.middlenameRu}
+									className={classes.middlename}
 									inputProps={{'aria-label': 'Description'}}
 									onChange={this.handleChange}/>
 							</Paper>
@@ -585,7 +554,7 @@ render() {
 									options={department ? [{...department}] : []}
 									fullWidth
 									disabled
-									getOptionLabel={option => option.nameRu}
+									getOptionLabel={option => option.name}
 									renderInput={params => <TextField {...params} label='Структурное подразделение' variant='outlined' />}
 								/>
 							</Paper>
@@ -599,7 +568,7 @@ render() {
 									options={position ? [{...position}] : []}
 									fullWidth
 									disabled
-									getOptionLabel={option => option.nameRu}
+									getOptionLabel={option => option.name}
 									renderInput={params => <TextField {...params} label='Должность' variant='outlined' />}
 								/>
 							</Paper>
@@ -660,14 +629,6 @@ render() {
 					</Grid>
 				</Grid>
 			</Grid>
-			<Snackbar open={openSnackbar} autoHideDuration={6000} onClose={this.handleSnackbarClose}>
-				<Alert onClose={this.handleSnackbarClose} severity={snackbarSeverity}>
-					{snackbarMsg}
-				</Alert>
-			</Snackbar>
-			<Backdrop className={classes.backdrop} open={loading}>
-				<CircularProgress color='inherit' />
-			</Backdrop>
 		</div>
 	)
 }
@@ -681,4 +642,4 @@ function mapStateToProps(state) {
 	}
 }
 
-export default connect(mapStateToProps)(withStyles(styles, {withTheme: true})(Profile))
+export default connect(mapStateToProps)(compose(withSnackbar, loading, withStyles(styles))(Profile))

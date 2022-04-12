@@ -1,12 +1,5 @@
 {
-	"compilerOptions": {
-		"target": "ES6",
-		"baseUrl": "src",
-		"paths": {
-			"*" : ["*"]
-		}
-	},
-	"include": [
-		"src/**/*"
-	]
+    "compilerOptions": {
+      "baseUrl": "./src"
+    }
 }

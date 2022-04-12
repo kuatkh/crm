@@ -71,27 +71,17 @@ namespace CRM.Admin.Controllers
                             CrmPatientsId = a.CrmPatientsId,
                             Iin = a.CrmPatient != null && (currentUser.RoleId == 1 || currentUser.RoleId == 2) ? a.CrmPatient.Iin : null,
                             DocumentNumber = a.CrmPatient != null && currentUser.RoleId == 1 ? a.CrmPatient.DocumentNumber : null,
-                            SurnameEn = a.CrmPatient != null ? a.CrmPatient.SurnameEn : null,
-                            SurnameRu = a.CrmPatient != null ? a.CrmPatient.SurnameRu : null,
-                            SurnameKz = a.CrmPatient != null ? a.CrmPatient.SurnameKz : null,
-                            NameEn = a.CrmPatient != null ? a.CrmPatient.NameEn : null,
-                            NameRu = a.CrmPatient != null ? a.CrmPatient.NameRu : null,
-                            NameKz = a.CrmPatient != null ? a.CrmPatient.NameKz : null,
-                            MiddlenameEn = a.CrmPatient != null ? a.CrmPatient.MiddlenameEn : null,
-                            MiddlenameRu = a.CrmPatient != null ? a.CrmPatient.MiddlenameRu : null,
-                            MiddlenameKz = a.CrmPatient != null ? a.CrmPatient.MiddlenameKz : null,
+                            Surname = a.CrmPatient != null ? a.CrmPatient.Surname : null,
+                            Name = a.CrmPatient != null ? a.CrmPatient.Name : null,
+                            Middlename = a.CrmPatient != null ? a.CrmPatient.Middlename : null,
                             PhoneNumber = a.CrmPatient != null && currentUser.RoleId == 1 ? a.CrmPatient.PhoneNumber : null,
                             ToEmployee = a.ToCrmEmployee != null 
                                 ? new SelectWithPositionDto()
                                 {
                                     Id = a.ToCrmEmployeesId,
-                                    NameEn = UserHelper.GetUserShortName(a.ToCrmEmployee.SurnameEn, a.ToCrmEmployee.NameEn, a.ToCrmEmployee.MiddlenameEn),
-                                    NameRu = UserHelper.GetUserShortName(a.ToCrmEmployee.SurnameRu, a.ToCrmEmployee.NameRu, a.ToCrmEmployee.MiddlenameRu),
-                                    NameKz = UserHelper.GetUserShortName(a.ToCrmEmployee.SurnameKz, a.ToCrmEmployee.NameKz, a.ToCrmEmployee.MiddlenameKz),
+                                    Name = UserHelper.GetUserShortName(a.ToCrmEmployee.Surname, a.ToCrmEmployee.Name, a.ToCrmEmployee.Middlename),
                                     PositionId = a.ToCrmEmployee.DictPositionsId,
-                                    PositionNameEn = a.ToCrmEmployee.DictPosition.NameEn,
-                                    PositionNameRu = a.ToCrmEmployee.DictPosition.NameRu,
-                                    PositionNameKz = a.ToCrmEmployee.DictPosition.NameKz
+                                    PositionName = a.ToCrmEmployee.DictPosition.Name
                                 }
                                 : null,
                             SelectedProcedures = a.CrmPatientsAppointmentsServices != null && a.CrmPatientsAppointmentsServices.Any(p => p.DeletedDateTime == null)
@@ -100,12 +90,8 @@ namespace CRM.Admin.Controllers
                                     .Select(p => new DictionaryDto()
                                     {
                                         Id = p.DictService != null ? p.DictService.Id : 0,
-                                        NameRu = p.DictService != null ? p.DictService.NameRu : null,
-                                        NameEn = p.DictService != null ? p.DictService.NameEn : null,
-                                        NameKz = p.DictService != null ? p.DictService.NameKz : null,
-                                        DescriptionRu = p.DictService != null ? p.DictService.DescriptionRu : null,
-                                        DescriptionEn = p.DictService != null ? p.DictService.DescriptionEn : null,
-                                        DescriptionKz = p.DictService != null ? p.DictService.DescriptionKz : null,
+                                        Name = p.DictService != null ? p.DictService.Name : null,
+                                        Description = p.DictService != null ? p.DictService.Description : null,
                                         ParentId = p.Id
                                     })
                                     .ToList()
@@ -180,15 +166,9 @@ namespace CRM.Admin.Controllers
                             crmPatient.EditedDateTime = DateTime.Now;
                             crmPatient.EditorId = currentUser.Id;
                             crmPatient.IsActive = true;
-                            crmPatient.SurnameEn = appointmentData.SurnameEn;
-                            crmPatient.SurnameRu = appointmentData.SurnameRu;
-                            crmPatient.SurnameKz = appointmentData.SurnameKz;
-                            crmPatient.NameEn = appointmentData.NameEn;
-                            crmPatient.NameRu = appointmentData.NameRu;
-                            crmPatient.NameKz = appointmentData.NameKz;
-                            crmPatient.MiddlenameEn = appointmentData.MiddlenameEn;
-                            crmPatient.MiddlenameRu = appointmentData.MiddlenameRu;
-                            crmPatient.MiddlenameKz = appointmentData.MiddlenameKz;
+                            crmPatient.Surname = appointmentData.Surname;
+                            crmPatient.Name = appointmentData.Name;
+                            crmPatient.Middlename = appointmentData.Middlename;
                             crmPatient.PhoneNumber = appointmentData.PhoneNumber;
 
                             _crmContext.CrmPatients.Update(crmPatient);
@@ -204,15 +184,9 @@ namespace CRM.Admin.Controllers
                                 Iin = appointmentData.Iin,
                                 DocumentNumber = appointmentData.DocumentNumber,
                                 IsActive = true,
-                                SurnameEn = appointmentData.SurnameEn,
-                                SurnameRu = appointmentData.SurnameRu,
-                                SurnameKz = appointmentData.SurnameKz,
-                                NameEn = appointmentData.NameEn,
-                                NameRu = appointmentData.NameRu,
-                                NameKz = appointmentData.NameKz,
-                                MiddlenameEn = appointmentData.MiddlenameEn,
-                                MiddlenameRu = appointmentData.MiddlenameRu,
-                                MiddlenameKz = appointmentData.MiddlenameKz,
+                                Surname = appointmentData.Surname,
+                                Name = appointmentData.Name,
+                                Middlename = appointmentData.Middlename,
                                 PhoneNumber = appointmentData.PhoneNumber,
                             };
 

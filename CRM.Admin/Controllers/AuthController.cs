@@ -62,11 +62,7 @@ namespace CRM.Admin.Controllers
 
                     var postContent = new FormUrlEncodedContent(content);
 
-                    string authServerUrl = _configuration.AuthServerUrl;
-#if DEBUG
-                    authServerUrl = "https://localhost:44338/";
-#endif
-                    HttpResponseMessage logInResult = await client.PostAsync($"{authServerUrl}connect/token", postContent);
+                    HttpResponseMessage logInResult = await client.PostAsync($"{_configuration.AuthServerUrl}connect/token", postContent);
 
                     if (logInResult.IsSuccessStatusCode)
                     {

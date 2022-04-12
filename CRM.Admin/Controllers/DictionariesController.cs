@@ -68,13 +68,9 @@ namespace CRM.Admin.Controllers
                                 .AsNoTracking()
                                 .Select(d => new DictionaryDto() {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
+                                    Name = d.Name,
                                     ParentId = d.DictCountriesId,
-                                    ParentNameEn = d.DictCountry != null ? d.DictCountry.NameEn : null,
-                                    ParentNameKz = d.DictCountry != null ? d.DictCountry.NameKz : null,
-                                    ParentNameRu = d.DictCountry != null ? d.DictCountry.NameRu : null,
+                                    ParentName = d.DictCountry != null ? d.DictCountry.Name : null,
                                     CreatedDateTime = d.CreatedDateTime,
                                     EditedDateTime = d.EditedDateTime,
                                     DeletedDateTime = d.DeletedDateTime,
@@ -94,9 +90,7 @@ namespace CRM.Admin.Controllers
                                 .Select(d => new DictionaryDto()
                                 {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
+                                    Name = d.Name,
                                     CreatedDateTime = d.CreatedDateTime,
                                     EditedDateTime = d.EditedDateTime,
                                     DeletedDateTime = d.DeletedDateTime,
@@ -117,13 +111,9 @@ namespace CRM.Admin.Controllers
                                 .Select(d => new DictionaryDto()
                                 {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
+                                    Name = d.Name,
                                     ParentId = d.DictEnterprisesId,
-                                    ParentNameEn = d.DictEnterprise != null ? d.DictEnterprise.NameEn : null,
-                                    ParentNameKz = d.DictEnterprise != null ? d.DictEnterprise.NameKz : null,
-                                    ParentNameRu = d.DictEnterprise != null ? d.DictEnterprise.NameRu : null,
+                                    ParentName = d.DictEnterprise != null ? d.DictEnterprise.Name : null,
                                     CreatedDateTime = d.CreatedDateTime,
                                     EditedDateTime = d.EditedDateTime,
                                     DeletedDateTime = d.DeletedDateTime,
@@ -144,9 +134,7 @@ namespace CRM.Admin.Controllers
                                 .Select(d => new DictionaryDto()
                                 {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
+                                    Name = d.Name,
                                     PhoneNumber = d.PhoneNumber,
                                     Address = d.Address,
                                     CreatedDateTime = d.CreatedDateTime,
@@ -161,9 +149,7 @@ namespace CRM.Admin.Controllers
                                             .Select(e => new DictionaryDto()
                                             {
                                                 Id = e.Id,
-                                                NameEn = e.NameEn,
-                                                NameKz = e.NameKz,
-                                                NameRu = e.NameRu,
+                                                Name = e.Name,
                                                 PhoneNumber = e.PhoneNumber,
                                                 Address = e.Address,
                                                 CreatedDateTime = e.CreatedDateTime,
@@ -188,9 +174,7 @@ namespace CRM.Admin.Controllers
                                 .Select(d => new DictionaryDto()
                                 {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
+                                    Name = d.Name,
                                     CreatedDateTime = d.CreatedDateTime,
                                     EditedDateTime = d.EditedDateTime,
                                     DeletedDateTime = d.DeletedDateTime,
@@ -210,12 +194,30 @@ namespace CRM.Admin.Controllers
                                 .Select(d => new DictionaryDto()
                                 {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
-                                    DescriptionEn = d.DescriptionEn,
-                                    DescriptionRu = d.DescriptionRu,
-                                    DescriptionKz = d.DescriptionKz,
+                                    Name = d.Name,
+                                    Description = d.Description,
+                                    CreatedDateTime = d.CreatedDateTime,
+                                    EditedDateTime = d.EditedDateTime,
+                                    DeletedDateTime = d.DeletedDateTime,
+                                    CreatedDateTimeStr = d.CreatedDateTime.ToString("dd.MM.yyyy HH:mm:ss"),
+                                    EditedDateTimeStr = d.EditedDateTime != null ? d.EditedDateTime.Value.ToString("dd.MM.yyyy HH:mm:ss") : null,
+                                    DeletedDateTimeStr = d.DeletedDateTime != null ? d.DeletedDateTime.Value.ToString("dd.MM.yyyy HH:mm:ss") : null,
+                                })
+                                .OrderBy(filterDto.OrderBy + " " + filterDto.Order)
+                                .Skip(filterDto.Page * filterDto.RowsPerPage)
+                                .Take(filterDto.RowsPerPage)
+                                .ToListAsync();
+                            break;
+                        case "DictLanguages":
+                            result.Data = await _crmContext.DictLanguages
+                                .Where(d => d.DeletedDateTime == null)
+                                .AsNoTracking()
+                                .Select(d => new DictionaryDto()
+                                {
+                                    Id = d.Id,
+                                    Name = d.Name,
+                                    Code = d.Code,
+                                    Description = d.Description,
                                     CreatedDateTime = d.CreatedDateTime,
                                     EditedDateTime = d.EditedDateTime,
                                     DeletedDateTime = d.DeletedDateTime,
@@ -236,16 +238,10 @@ namespace CRM.Admin.Controllers
                                 .Select(d => new DictionaryDto()
                                 {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
-                                    DescriptionEn = d.DescriptionEn,
-                                    DescriptionRu = d.DescriptionRu,
-                                    DescriptionKz = d.DescriptionKz,
+                                    Name = d.Name,
+                                    Description = d.Description,
                                     ParentId = d.DictEnterprisesId,
-                                    ParentNameEn = d.DictEnterprise != null ? d.DictEnterprise.NameEn : null,
-                                    ParentNameKz = d.DictEnterprise != null ? d.DictEnterprise.NameKz : null,
-                                    ParentNameRu = d.DictEnterprise != null ? d.DictEnterprise.NameRu : null,
+                                    ParentName = d.DictEnterprise != null ? d.DictEnterprise.Name : null,
                                     Amount = d.DiscountAmount,
                                     CreatedDateTime = d.CreatedDateTime,
                                     EditedDateTime = d.EditedDateTime,
@@ -267,17 +263,11 @@ namespace CRM.Admin.Controllers
                                 .Select(d => new DictionaryDto()
                                 {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
-                                    DescriptionEn = d.DescriptionEn,
-                                    DescriptionRu = d.DescriptionRu,
-                                    DescriptionKz = d.DescriptionKz,
+                                    Name = d.Name,
+                                    Description = d.Description,
                                     PositionCategory = d.Category,
                                     ParentId = d.DictEnterprisesId,
-                                    ParentNameEn = d.DictEnterprise != null ? d.DictEnterprise.NameEn : null,
-                                    ParentNameKz = d.DictEnterprise != null ? d.DictEnterprise.NameKz : null,
-                                    ParentNameRu = d.DictEnterprise != null ? d.DictEnterprise.NameRu : null,
+                                    ParentName = d.DictEnterprise != null ? d.DictEnterprise.Name : null,
                                     CreatedDateTime = d.CreatedDateTime,
                                     EditedDateTime = d.EditedDateTime,
                                     DeletedDateTime = d.DeletedDateTime,
@@ -298,16 +288,10 @@ namespace CRM.Admin.Controllers
                                 .Select(d => new DictionaryDto()
                                 {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
-                                    DescriptionEn = d.DescriptionEn,
-                                    DescriptionRu = d.DescriptionRu,
-                                    DescriptionKz = d.DescriptionKz,
+                                    Name = d.Name,
+                                    Description = d.Description,
                                     ParentId = d.DictDepartmentsId,
-                                    ParentNameEn = d.DictDepartment != null ? d.DictDepartment.NameEn : null,
-                                    ParentNameKz = d.DictDepartment != null ? d.DictDepartment.NameKz : null,
-                                    ParentNameRu = d.DictDepartment != null ? d.DictDepartment.NameRu : null,
+                                    ParentName = d.DictDepartment != null ? d.DictDepartment.Name : null,
                                     Amount = d.Price,
                                     CreatedDateTime = d.CreatedDateTime,
                                     EditedDateTime = d.EditedDateTime,
@@ -328,9 +312,7 @@ namespace CRM.Admin.Controllers
                                 .Select(d => new DictionaryDto()
                                 {
                                     Id = d.Id,
-                                    NameEn = d.NameEn,
-                                    NameKz = d.NameKz,
-                                    NameRu = d.NameRu,
+                                    Name = d.Name,
                                     CreatedDateTime = d.CreatedDateTime,
                                     EditedDateTime = d.EditedDateTime,
                                     DeletedDateTime = d.DeletedDateTime,
@@ -406,9 +388,7 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictCountries()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
+                            Name = dictionaryData.Name,
                             CreatedDateTime = DateTime.Now,
                             Code = dictionaryData.Code
                         };
@@ -417,9 +397,7 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
+                        item.Name = dictionaryData.Name;
                         item.EditedDateTime = DateTime.Now;
                         item.Code = dictionaryData.Code;
 
@@ -485,9 +463,7 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictCities()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
+                            Name = dictionaryData.Name,
                             CreatedDateTime = DateTime.Now,
                             DictCountriesId = dictionaryData.ParentId ?? 1,
                             Code = dictionaryData.Code
@@ -497,9 +473,7 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
+                        item.Name = dictionaryData.Name;
                         item.EditedDateTime = DateTime.Now;
                         item.Code = dictionaryData.Code;
                         item.DictCountriesId = dictionaryData.ParentId ?? 1;
@@ -566,9 +540,7 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictDepartments()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
+                            Name = dictionaryData.Name,
                             CreatedDateTime = DateTime.Now,
                             DictEnterprisesId = dictionaryData.ParentId
                         };
@@ -577,9 +549,7 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
+                        item.Name = dictionaryData.Name;
                         item.EditedDateTime = DateTime.Now;
                         item.DictEnterprisesId = dictionaryData.ParentId;
 
@@ -645,12 +615,8 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictPositions()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
-                            DescriptionEn = dictionaryData.DescriptionEn,
-                            DescriptionRu = dictionaryData.DescriptionRu,
-                            DescriptionKz = dictionaryData.DescriptionKz,
+                            Name = dictionaryData.Name,
+                            Description = dictionaryData.Description,
                             Category = dictionaryData.PositionCategory,
                             CreatedDateTime = DateTime.Now,
                             DictEnterprisesId = dictionaryData.ParentId
@@ -660,12 +626,8 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
-                        item.DescriptionEn = dictionaryData.DescriptionEn;
-                        item.DescriptionRu = dictionaryData.DescriptionRu;
-                        item.DescriptionKz = dictionaryData.DescriptionKz;
+                        item.Name = dictionaryData.Name;
+                        item.Description = dictionaryData.Description;
                         item.Category = dictionaryData.PositionCategory;
                         item.EditedDateTime = DateTime.Now;
                         item.DictEnterprisesId = dictionaryData.ParentId;
@@ -732,12 +694,8 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictServices()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
-                            DescriptionEn = dictionaryData.DescriptionEn,
-                            DescriptionRu = dictionaryData.DescriptionRu,
-                            DescriptionKz = dictionaryData.DescriptionKz,
+                            Name = dictionaryData.Name,
+                            Description = dictionaryData.Description,
                             Price = dictionaryData.Amount ?? 0,
                             CreatedDateTime = DateTime.Now,
                             Code = dictionaryData.Code
@@ -747,12 +705,8 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
-                        item.DescriptionEn = dictionaryData.DescriptionEn;
-                        item.DescriptionRu = dictionaryData.DescriptionRu;
-                        item.DescriptionKz = dictionaryData.DescriptionKz;
+                        item.Name = dictionaryData.Name;
+                        item.Description = dictionaryData.Description;
                         item.Price = dictionaryData.Amount ?? 0;
                         item.EditedDateTime = DateTime.Now;
                         item.Code = dictionaryData.Code;
@@ -819,12 +773,8 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictIntolerances()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
-                            DescriptionEn = dictionaryData.DescriptionEn,
-                            DescriptionRu = dictionaryData.DescriptionRu,
-                            DescriptionKz = dictionaryData.DescriptionKz,
+                            Name = dictionaryData.Name,
+                            Description = dictionaryData.Description,
                             CreatedDateTime = DateTime.Now,
                             Code = dictionaryData.Code
                         };
@@ -833,12 +783,8 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
-                        item.DescriptionEn = dictionaryData.DescriptionEn;
-                        item.DescriptionRu = dictionaryData.DescriptionRu;
-                        item.DescriptionKz = dictionaryData.DescriptionKz;
+                        item.Name = dictionaryData.Name;
+                        item.Description = dictionaryData.Description;
                         item.EditedDateTime = DateTime.Now;
                         item.Code = dictionaryData.Code;
 
@@ -904,9 +850,7 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictGenders()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
+                            Name = dictionaryData.Name,
                             CreatedDateTime = DateTime.Now
                         };
 
@@ -914,9 +858,7 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
+                        item.Name = dictionaryData.Name;
                         item.EditedDateTime = DateTime.Now;
 
                         _crmContext.DictGenders.Update(item);
@@ -981,12 +923,8 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictLoyaltyPrograms()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
-                            DescriptionEn = dictionaryData.DescriptionEn,
-                            DescriptionRu = dictionaryData.DescriptionRu,
-                            DescriptionKz = dictionaryData.DescriptionKz,
+                            Name = dictionaryData.Name,
+                            Description = dictionaryData.Description,
                             DiscountAmount = dictionaryData.Amount ?? 0,
                             DictEnterprisesId = dictionaryData.ParentId,
                             CreatedDateTime = DateTime.Now
@@ -996,12 +934,8 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
-                        item.DescriptionEn = dictionaryData.DescriptionEn;
-                        item.DescriptionRu = dictionaryData.DescriptionRu;
-                        item.DescriptionKz = dictionaryData.DescriptionKz;
+                        item.Name = dictionaryData.Name;
+                        item.Description = dictionaryData.Description;
                         item.DiscountAmount = dictionaryData.Amount ?? 0;
                         item.DictEnterprisesId = dictionaryData.ParentId;
                         item.EditedDateTime = DateTime.Now;
@@ -1068,9 +1002,7 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictStatuses()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
+                            Name = dictionaryData.Name,
                             CreatedDateTime = DateTime.Now
                         };
 
@@ -1078,9 +1010,7 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
+                        item.Name = dictionaryData.Name;
                         item.EditedDateTime = DateTime.Now;
 
                         _crmContext.DictStatuses.Update(item);
@@ -1145,9 +1075,7 @@ namespace CRM.Admin.Controllers
                     {
                         item = new DictEnterprises()
                         {
-                            NameEn = dictionaryData.NameEn,
-                            NameKz = dictionaryData.NameKz,
-                            NameRu = dictionaryData.NameRu,
+                            Name = dictionaryData.Name,
                             Address = dictionaryData.Address,
                             PhoneNumber = dictionaryData.PhoneNumber,
                             ParentId = dictionaryData.ParentId,
@@ -1158,9 +1086,7 @@ namespace CRM.Admin.Controllers
                     }
                     else
                     {
-                        item.NameEn = dictionaryData.NameEn;
-                        item.NameKz = dictionaryData.NameKz;
-                        item.NameRu = dictionaryData.NameRu;
+                        item.Name = dictionaryData.Name;
                         item.Address = dictionaryData.Address;
                         item.PhoneNumber = dictionaryData.PhoneNumber;
                         item.ParentId = dictionaryData.ParentId;
@@ -1196,6 +1122,83 @@ namespace CRM.Admin.Controllers
             }
         }
 
+        [HttpPost("SaveDictLanguages")]
+        public async Task<IActionResult> SaveDictLanguages([FromBody] DictionaryDto dictionaryData)
+        {
+            var result = new ResultDto<string>()
+            {
+                IsSuccess = false,
+            };
+
+            try
+            {
+                UserHelper.TryGetCurrentName(this.User, out string username);
+                UserDto currentUser = (UserDto)_cacheManager.Get($"CrmUser_{username}");
+
+                if (currentUser == null)
+                {
+                    currentUser = await UserHelper.GetCurrentUser(_crmContext, username);
+
+                    _cacheManager.Set($"CrmUser_{username}", currentUser, new TimeSpan(1, 0, 0, 0));
+                }
+
+                if (currentUser != null && dictionaryData != null)
+                {
+                    DictLanguages item = null;
+                    if (dictionaryData.Id > 0)
+                    {
+                        item = await _crmContext.DictLanguages.FirstOrDefaultAsync(d => d.Id == dictionaryData.Id);
+                    }
+                    
+                    if (item == null)
+                    {
+                        item = new DictLanguages()
+                        {
+                            Name = dictionaryData.Name,
+                            Code = dictionaryData.Code,
+                            Description = dictionaryData.Description,
+                            CreatedDateTime = DateTime.Now
+                        };
+
+                        await _crmContext.DictLanguages.AddAsync(item);
+                    }
+                    else
+                    {
+                        item.Name = dictionaryData.Name;
+                        item.Code = dictionaryData.Code;
+                        item.Description = dictionaryData.Description;
+                        item.EditedDateTime = DateTime.Now;
+
+                        _crmContext.DictLanguages.Update(item);
+                    }
+
+                    await _crmContext.SaveChangesAsync();
+
+                    result.IsSuccess = true;
+                    return Ok(result);
+                }
+                else
+                {
+                    _logger.LogError($"ERROR SaveDictLanguages. MSG: CURRENT USER OR DICTIONARY DATA IS EMPTY");
+                    result.IsSuccess = false;
+                    result.Msg = "CURRENT USER OR DICTIONARY DATA IS EMPTY";
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ERROR SaveDictLanguages. MSG: {JsonConvert.SerializeObject(ex)}");
+                result.IsSuccess = false;
+                result.Msg = JsonConvert.SerializeObject(ex);
+
+                return Ok(result);
+            }
+            finally
+            {
+                await _crmContext.DisposeAsync();
+            }
+        }
+
         [HttpGet("GetDictServicesData")]
         public async Task<IActionResult> GetDictServicesData(string searchData)
         {
@@ -1220,23 +1223,15 @@ namespace CRM.Admin.Controllers
 
                     result.Data = await _crmContext.DictServices
                         .Where(d => d.DeletedDateTime == null && (!string.IsNullOrEmpty(searchData) && 
-                                (d.NameRu != null && d.NameRu.ToLower().Contains(searchData.ToLower()) ||
-                                d.NameEn != null && d.NameEn.ToLower().Contains(searchData.ToLower()) ||
-                                d.NameKz != null && d.NameKz.ToLower().Contains(searchData.ToLower()) ||
-                                d.DescriptionRu != null && d.DescriptionRu.ToLower().Contains(searchData.ToLower()) ||
-                                d.DescriptionEn != null && d.DescriptionEn.ToLower().Contains(searchData.ToLower()) ||
-                                d.DescriptionKz != null && d.DescriptionKz.ToLower().Contains(searchData.ToLower()))
+                                (d.Name != null && d.Name.ToLower().Contains(searchData.ToLower()) ||
+                                d.Description != null && d.Description.ToLower().Contains(searchData.ToLower()))
                             || string.IsNullOrEmpty(searchData) && d.Id < 30))
                         .AsNoTracking()
                         .Select(d => new DictionaryDto()
                         {
                             Id = d.Id,
-                            NameEn = d.NameEn,
-                            NameKz = d.NameKz,
-                            NameRu = d.NameRu,
-                            DescriptionEn = d.DescriptionEn,
-                            DescriptionRu = d.DescriptionRu,
-                            DescriptionKz = d.DescriptionKz,
+                            Name = d.Name,
+                            Description = d.Description,
                             Amount = d.Price,
                         })
                         .ToListAsync();

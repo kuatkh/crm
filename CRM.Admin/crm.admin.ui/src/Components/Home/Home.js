@@ -1,40 +1,44 @@
 import React from 'react'
-import {withStyles} from '@material-ui/core/styles'
-import Radio from '@material-ui/core/Radio'
-import RadioGroup from '@material-ui/core/RadioGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Typography from '@material-ui/core/FormControl'
+import {compose} from 'recompose'
+import {withStyles} from '@mui/styles'
 import {Calendar, momentLocalizer} from 'react-big-calendar'
 import moment from 'moment'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import Tooltip from '@material-ui/core/Tooltip'
-import Button from '@material-ui/core/Button'
-import SaveIcon from '@material-ui/icons/Save'
-import CancelIcon from '@material-ui/icons/Cancel'
-import DeleteIcon from '@material-ui/icons/Delete'
-import Divider from '@material-ui/core/Divider'
-import Grid from '@material-ui/core/Grid'
-import Paper from '@material-ui/core/Paper'
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import TextField from '@material-ui/core/TextField'
-import Snackbar from '@material-ui/core/Snackbar'
-import Alert from '@material-ui/lab/Alert'
-import Backdrop from '@material-ui/core/Backdrop'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import {MuiPickersUtilsProvider, KeyboardDatePicker, KeyboardTimePicker} from '@material-ui/pickers'
-import AccessTimeIcon from '@material-ui/icons/AccessTime'
-import DateFnsUtils from '@date-io/date-fns'
-import ruLocale from 'date-fns/locale/ru'
 import {
-	pink, purple, teal, amber, deepOrange,
-} from '@material-ui/core/colors'
+	Grid,
+	Box,
+	CssBaseline,
+	Container,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	TextField,
+	DialogActions,
+	Button,
+	Select,
+	MenuItem,
+	FormControl,
+	InputLabel,
+	Typography,
+	Divider,
+	Paper,
+	Tooltip,
+} from '@mui/material'
+import SaveIcon from '@mui/icons-material/Save'
+import CancelIcon from '@mui/icons-material/Cancel'
+import DeleteIcon from '@mui/icons-material/Delete'
+import Autocomplete from '@material-ui/lab/Autocomplete'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import AdapterDateFns from '@mui/lab/AdapterDateFns'
+import DatePicker from '@mui/lab/DatePicker'
+import TimePicker from '@mui/lab/TimePicker'
+import LocalizationProvider from '@mui/lab/LocalizationProvider'
+import ruLocale from 'date-fns/locale/ru'
 import _ from 'lodash'
-import {allConstants} from '../../Constants/AllConstants.js'
-import {getRequest, postRequest} from '../../Services/RequestsServices.js'
+import {allConstants} from 'Constants/AllConstants.js'
+import {getRequest, postRequest} from 'Services/RequestsServices.js'
+import {withSnackbar} from 'Components/SnackbarWrapper'
+import {loading} from 'Components/LoadingWrapper'
 import 'moment/locale/ru'
 import 'globalize/lib/cultures/globalize.culture.ru-RU'
 require('react-big-calendar/lib/addons/dragAndDrop/styles.css')
@@ -135,10 +139,6 @@ class Home extends React.Component {
 		this.state = {
 			isCalendarResizable: true,
 			dateRange: this.getDateRange(new Date(), 'week'),
-			openSnackbar: false,
-			snackbarMsg: '',
-			snackbarSeverity: 'success',
-			loading: false,
 			searchData: '',
 			proceduresSearchData: '',
 			employeesOptions: [],
@@ -153,15 +153,9 @@ class Home extends React.Component {
 			complain: '',
 			iin: '',
 			documentNumber: '',
-			nameRu: '',
-			nameEn: '',
-			nameKz: '',
-			surnameRu: '',
-			surnameEn: '',
-			surnameKz: '',
-			middlenameRu: '',
-			middlenameEn: '',
-			middlenameKz: '',
+			name: '',
+			surname: '',
+			middlename: '',
 			phoneNumber: '',
 			startDate: new Date(),
 			endDate: new Date(),
@@ -199,26 +193,6 @@ class Home extends React.Component {
 		}
 	}
 
-	handleSnackbarOpen = (msg, severity) => {
-		this.setState({
-			openSnackbar: true,
-			snackbarMsg: msg || '',
-			snackbarSeverity: severity || 'success',
-		})
-	}
-
-	handleSnackbarClose = () => {
-		this.setState({
-			openSnackbar: false,
-		})
-	}
-
-	isLoaded = loading => {
-		this.setState({
-			loading: !loading,
-		})
-	}
-
 	getDateRange = (date, view) => {
 		if (!date) {
 			date = new Date()
@@ -249,7 +223,7 @@ class Home extends React.Component {
 		console.log('dateRange', dateRange)
 
 		if ((mainSelectedEmployee && mainSelectedEmployee.id || currentUser && currentUser.crmEmployeesId) && dateRange) {
-			this.isLoaded(false)
+			this.props.loadingScreen.show()
 
 			let filter = {
 				start: moment(dateRange.rangeStart).format(),
@@ -263,7 +237,7 @@ class Home extends React.Component {
 			}
 
 			postRequest(`${allConstants.serverUrl}/api/Appointments/GetAppointments`, token, filter, result => {
-				this.isLoaded(true)
+				this.props.loadingScreen.hide()
 				console.log('result.data', result)
 				if (result && result.isSuccess && Array.isArray(result.data)) {
 					this.setState({events: result.data.map(d => {
@@ -272,12 +246,12 @@ class Home extends React.Component {
 						return d
 					})})
 				} else {
-					this.handleSnackbarOpen(`Во время получения данных произошла ошибка ${(result && !result.isSuccess && result.msg ? result.msg : '')}`, 'error')
+					this.props.snackbar.showError(`Во время получения данных произошла ошибка ${(result && !result.isSuccess && result.msg ? result.msg : '')}`)
 				}
 			},
 			error => {
-				this.isLoaded(true)
-				this.handleSnackbarOpen(`Во время получения данных произошла ошибка: ${error}`, 'error')
+				this.props.loadingScreen.hide()
+				this.props.snackbar.showError(`Во время получения данных произошла ошибка: ${error}`)
 			})
 		}
 	}
@@ -295,15 +269,9 @@ class Home extends React.Component {
 			complain: '',
 			iin: '',
 			documentNumber: '',
-			nameRu: '',
-			nameEn: '',
-			nameKz: '',
-			surnameRu: '',
-			surnameEn: '',
-			surnameKz: '',
-			middlenameRu: '',
-			middlenameEn: '',
-			middlenameKz: '',
+			name: '',
+			surname: '',
+			middlename: '',
 			phoneNumber: '',
 			startDate: new Date(),
 			endDate: new Date(),
@@ -356,15 +324,9 @@ class Home extends React.Component {
 			complain: '',
 			iin: '',
 			documentNumber: '',
-			nameRu: '',
-			nameEn: '',
-			nameKz: '',
-			surnameRu: '',
-			surnameEn: '',
-			surnameKz: '',
-			middlenameRu: '',
-			middlenameEn: '',
-			middlenameKz: '',
+			name: '',
+			surname: '',
+			middlename: '',
 			phoneNumber: '',
 			startDate: new Date(),
 			endDate: new Date(),
@@ -386,15 +348,9 @@ class Home extends React.Component {
 			complain: '',
 			iin: '',
 			documentNumber: '',
-			nameRu: '',
-			nameEn: '',
-			nameKz: '',
-			surnameRu: '',
-			surnameEn: '',
-			surnameKz: '',
-			middlenameRu: '',
-			middlenameEn: '',
-			middlenameKz: '',
+			name: '',
+			surname: '',
+			middlename: '',
 			phoneNumber: '',
 			startDate: new Date(),
 			endDate: new Date(),
@@ -419,15 +375,9 @@ class Home extends React.Component {
 			complain: event.complain || '',
 			iin: event.iin || '',
 			documentNumber: event.documentNumber || '',
-			nameRu: event.nameRu || '',
-			nameEn: event.nameEn || '',
-			nameKz: event.nameKz || '',
-			surnameRu: event.surnameRu || '',
-			surnameEn: event.surnameEn || '',
-			surnameKz: event.surnameKz || '',
-			middlenameRu: event.middlenameRu || '',
-			middlenameEn: event.middlenameEn || '',
-			middlenameKz: event.middlenameKz || '',
+			name: event.name || '',
+			surname: event.surname || '',
+			middlename: event.middlename || '',
 			phoneNumber: event.phoneNumber || '',
 			toEmployee: event.toEmployee,
 			selectedProcedures: event.selectedProcedures || [],
@@ -445,15 +395,9 @@ class Home extends React.Component {
 			endDate,
 			iin,
 			documentNumber,
-			nameRu,
-			nameEn,
-			nameKz,
-			surnameRu,
-			surnameEn,
-			surnameKz,
-			middlenameRu,
-			middlenameEn,
-			middlenameKz,
+			name,
+			surname,
+			middlename,
 			phoneNumber,
 		} = this.state
 		let {start, end} = this.state
@@ -477,15 +421,9 @@ class Home extends React.Component {
 					code: this.uuidv4(),
 					iin,
 					documentNumber,
-					nameRu,
-					nameEn,
-					nameKz,
-					surnameRu,
-					surnameEn,
-					surnameKz,
-					middlenameRu,
-					middlenameEn,
-					middlenameKz,
+					name,
+					surname,
+					middlename,
 					phoneNumber,
 				}
 				this.saveAppointment(newItem)
@@ -505,15 +443,9 @@ class Home extends React.Component {
 				code: this.uuidv4(),
 				iin,
 				documentNumber,
-				nameRu,
-				nameEn,
-				nameKz,
-				surnameRu,
-				surnameEn,
-				surnameKz,
-				middlenameRu,
-				middlenameEn,
-				middlenameKz,
+				name,
+				surname,
+				middlename,
 				phoneNumber,
 			}
 			this.saveAppointment(newItem)
@@ -524,67 +456,67 @@ class Home extends React.Component {
 		const {token, currentUser} = this.props
 
 		if (currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2) && !appointment.iin) {
-			this.handleSnackbarOpen('Вы не заполнили поле "ИИН"', 'error')
+			this.props.snackbar.showWarning('Вы не заполнили поле "ИИН"')
 			return
 		}
 
 		if (!appointment.toEmployee) {
-			this.handleSnackbarOpen('Вы не заполнили поле "Доктор"', 'error')
+			this.props.snackbar.showWarning('Вы не заполнили поле "Доктор"')
 			return
 		}
 
-		if (!appointment.nameRu) {
-			this.handleSnackbarOpen('Вы не заполнили поле "Имя"', 'error')
+		if (!appointment.name) {
+			this.props.snackbar.showWarning('Вы не заполнили поле "Имя"')
 			return
 		}
 
-		if (!appointment.surnameRu) {
-			this.handleSnackbarOpen('Вы не заполнили поле "Фамилия"', 'error')
+		if (!appointment.surname) {
+			this.props.snackbar.showWarning('Вы не заполнили поле "Фамилия"')
 			return
 		}
 		console.log('appointment', appointment)
 
-		this.isLoaded(false)
+		this.props.loadingScreen.show()
 
 		postRequest(`${allConstants.serverUrl}/api/Appointments/SaveAppointment`, token, appointment, result => {
-			// this.isLoaded(true)
+			// this.props.loadingScreen.hide()
 			this.handleClose()
 			if (result && !result.isSuccess) {
-				this.handleSnackbarOpen(`Во время сохранения произошла ошибка: ${result.msg}`, 'error')
+				this.props.snackbar.showError(`Во время сохранения произошла ошибка: ${result.msg}`)
 			} else if (!result) {
-				this.handleSnackbarOpen('Во время сохранения ошибка', 'error')
+				this.props.snackbar.showError('Во время сохранения ошибка')
 			}
 			this.getAppointments()
 		},
 		error => {
-			this.isLoaded(true)
+			this.props.loadingScreen.hide()
 			this.handleClose()
-			this.handleSnackbarOpen(`Во время сохранения произошла ошибка: ${error}`, 'error')
+			this.props.snackbar.showError(`Во время сохранения произошла ошибка: ${error}`)
 		})
 	}
 
 	saveAppointmentStartEnd = (id, start, end) => {
 		const {token} = this.props
 
-		this.isLoaded(false)
+		this.props.loadingScreen.show()
 
 		const newStart = new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds())
 		const newEnd = new Date(start.getFullYear(), start.getMonth(), start.getDate(), end.getHours(), end.getMinutes(), end.getSeconds())
 
 		postRequest(`${allConstants.serverUrl}/api/Appointments/SetAppointmentStartEnd`, token, {id, start: moment(newStart).format(), end: moment(newEnd).format()}, result => {
-			// this.isLoaded(true)
+			// this.props.loadingScreen.hide()
 			this.handleClose()
 			if (result && !result.isSuccess) {
-				this.handleSnackbarOpen(`Во время сохранения произошла ошибка: ${result.msg}`, 'error')
+				this.props.snackbar.showError(`Во время сохранения произошла ошибка: ${result.msg}`)
 			} else if (!result) {
-				this.handleSnackbarOpen('Во время сохранения ошибка', 'error')
+				this.props.snackbar.showError('Во время сохранения ошибка')
 			}
 			this.getAppointments()
 		},
 		error => {
-			this.isLoaded(true)
+			this.props.loadingScreen.hide()
 			this.handleClose()
-			this.handleSnackbarOpen(`Во время сохранения произошла ошибка: ${error}`, 'error')
+			this.props.snackbar.showError(`Во время сохранения произошла ошибка: ${error}`)
 		})
 	}
 
@@ -610,15 +542,9 @@ class Home extends React.Component {
 			clickedEvent,
 			iin,
 			documentNumber,
-			nameRu,
-			nameEn,
-			nameKz,
-			surnameRu,
-			surnameEn,
-			surnameKz,
-			middlenameRu,
-			middlenameEn,
-			middlenameKz,
+			name,
+			surname,
+			middlename,
 			phoneNumber,
 		} = this.state
 		console.log('updateEvent clickedEvent', clickedEvent)
@@ -637,15 +563,9 @@ class Home extends React.Component {
 		updatedEvent[index].end = end
 		updatedEvent[index].iin = iin || ''
 		updatedEvent[index].documentNumber = documentNumber || ''
-		updatedEvent[index].nameRu = nameRu || ''
-		updatedEvent[index].nameEn = nameEn || ''
-		updatedEvent[index].nameKz = nameKz || ''
-		updatedEvent[index].surnameRu = surnameRu || ''
-		updatedEvent[index].surnameEn = surnameEn || ''
-		updatedEvent[index].surnameKz = surnameKz || ''
-		updatedEvent[index].middlenameRu = middlenameRu || ''
-		updatedEvent[index].middlenameEn = middlenameEn || ''
-		updatedEvent[index].middlenameKz = middlenameKz || ''
+		updatedEvent[index].name = name || ''
+		updatedEvent[index].surname = surname || ''
+		updatedEvent[index].middlename = middlename || ''
 		updatedEvent[index].phoneNumber = phoneNumber || ''
 
 		const newStart = new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds())
@@ -662,15 +582,9 @@ class Home extends React.Component {
 			end: moment(newEnd).format(),
 			iin,
 			documentNumber,
-			nameRu,
-			nameEn,
-			nameKz,
-			surnameRu,
-			surnameEn,
-			surnameKz,
-			middlenameRu,
-			middlenameEn,
-			middlenameKz,
+			name,
+			surname,
+			middlename,
 			phoneNumber,
 		}
 		this.setState({
@@ -696,22 +610,22 @@ class Home extends React.Component {
 
 		const {token} = this.props
 
-		this.isLoaded(false)
+		this.props.loadingScreen.show()
 
 		getRequest(`${allConstants.serverUrl}/api/Appointments/DeleteAppointment?id=${(this.state.id || 0)}`, token, result => {
-			// this.isLoaded(true)
+			// this.props.loadingScreen.hide()
 			this.handleClose()
 			if (result && !result.isSuccess) {
-				this.handleSnackbarOpen(`Во время удаления произошла ошибка: ${result.msg}`, 'error')
+				this.props.snackbar.showError(`Во время удаления произошла ошибка: ${result.msg}`)
 			} else if (!result) {
-				this.handleSnackbarOpen('Во время удаления ошибка', 'error')
+				this.props.snackbar.showError('Во время удаления ошибка')
 			}
 			this.getAppointments()
 		},
 		error => {
-			this.isLoaded(true)
+			this.props.loadingScreen.hide()
 			this.handleClose()
-			this.handleSnackbarOpen(`Во время удаления произошла ошибка: ${error}`, 'error')
+			this.props.snackbar.showError(`Во время удаления произошла ошибка: ${error}`)
 		})
 	}
 
@@ -942,53 +856,47 @@ class Home extends React.Component {
 
 	getPatientByDocumentNumber = docNum => {
 		const {token} = this.props
-		this.isLoaded(false)
+		this.props.loadingScreen.show()
 
 		getRequest(`${allConstants.serverUrl}/api/Patients/GetPatientByDocumentNumber?docNum=${docNum}`, token, result => {
-			this.isLoaded(true)
+			this.props.loadingScreen.hide()
 			if (result && result.isSuccess && result.data) {
 				this.setState({
 					documentNumber: result.data.documentNumber,
-					nameRu: result.data.nameRu,
-					nameEn: result.data.nameEn,
-					nameKz: result.data.nameKz,
-					surnameRu: result.data.surnameRu,
-					surnameEn: result.data.surnameEn,
-					surnameKz: result.data.surnameKz,
-					middlenameRu: result.data.middlenameRu,
-					middlenameEn: result.data.middlenameEn,
-					middlenameKz: result.data.middlenameKz,
+					name: result.data.name,
+					surname: result.data.surname,
+					middlename: result.data.middlename,
 					phoneNumber: result.data.phoneNumber,
 				})
 			} else {
-				this.handleSnackbarOpen('Во время получения данных произошла ошибка', 'error')
+				this.props.snackbar.showError('Во время получения данных произошла ошибка')
 			}
 		},
 		error => {
-			this.isLoaded(true)
-			this.handleSnackbarOpen(`Во время получения данных произошла ошибка: ${error}`, 'error')
+			this.props.loadingScreen.hide()
+			this.props.snackbar.showError(`Во время получения данных произошла ошибка: ${error}`)
 		})
 	}
 
 	filterProceduresData = () => {
 		const {token} = this.props
 		const {proceduresSearchData} = this.state
-		this.isLoaded(false)
+		this.props.loadingScreen.show()
 
 		getRequest(`${allConstants.serverUrl}/api/Dictionaries/GetDictServicesData?searchData=${proceduresSearchData}`, token, result => {
-			this.isLoaded(true)
+			this.props.loadingScreen.hide()
 			if (result.isSuccess && Array.isArray(result.data)) {
 				this.setState({
 					proceduresOptions: [...result.data],
 				})
 			} else {
-				this.handleSnackbarOpen(`Во время получения списка произошла ошибка ${result.msg || ''}`, 'error')
+				this.props.snackbar.showError(`Во время получения списка произошла ошибка ${result.msg || ''}`)
 			}
 			window.clearTimeout(this.proceduresSearchTimeout)
 		},
 		error => {
-			this.isLoaded(true)
-			this.handleSnackbarOpen(`Во время получения списка произошла ошибка: ${error}`, 'error')
+			this.props.loadingScreen.hide()
+			this.props.snackbar.showError(`Во время получения списка произошла ошибка: ${error}`)
 			window.clearTimeout(this.proceduresSearchTimeout)
 		})
 	}
@@ -996,22 +904,22 @@ class Home extends React.Component {
 	filterUsersData = () => {
 		const {token} = this.props
 		const {searchData} = this.state
-		this.isLoaded(false)
+		this.props.loadingScreen.show()
 
 		getRequest(`${allConstants.serverUrl}/api/Users/GetUsersBySearch?searchData=${searchData}&toAppointment=true`, token, result => {
-			this.isLoaded(true)
+			this.props.loadingScreen.hide()
 			if (Array.isArray(result)) {
 				this.setState({
 					employeesOptions: [...result],
 				})
 			} else {
-				this.handleSnackbarOpen('Во время получения списка произошла ошибка', 'error')
+				this.props.snackbar.showError('Во время получения списка произошла ошибка')
 			}
 			window.clearTimeout(this.searchTimeout)
 		},
 		error => {
-			this.isLoaded(true)
-			this.handleSnackbarOpen(`Во время получения списка произошла ошибка: ${error}`, 'error')
+			this.props.loadingScreen.hide()
+			this.props.snackbar.showError(`Во время получения списка произошла ошибка: ${error}`)
 			window.clearTimeout(this.searchTimeout)
 		})
 	}
@@ -1037,21 +945,11 @@ class Home extends React.Component {
 			end,
 			startDate,
 			endDate,
-			openSnackbar,
-			snackbarMsg,
-			snackbarSeverity,
-			loading,
 			iin,
 			documentNumber,
-			nameRu,
-			nameEn,
-			nameKz,
-			surnameRu,
-			surnameEn,
-			surnameKz,
-			middlenameRu,
-			middlenameEn,
-			middlenameKz,
+			name,
+			surname,
+			middlename,
 			phoneNumber,
 		} = this.state
 
@@ -1070,7 +968,7 @@ class Home extends React.Component {
 										options={employeesOptions}
 										onChange={(e, v) => { this.handleAutocompleteChange('mainSelectedEmployee', v) }}
 										onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
-										getOptionLabel={option => option.nameRu}
+										getOptionLabel={option => option.name}
 										renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
 									/>
 								</Paper>
@@ -1151,15 +1049,6 @@ class Home extends React.Component {
 					</Grid>
 				</Grid>
 
-				<Snackbar open={openSnackbar} autoHideDuration={6000} onClose={this.handleSnackbarClose}>
-					<Alert onClose={this.handleSnackbarClose} severity={snackbarSeverity}>
-						{snackbarMsg}
-					</Alert>
-				</Snackbar>
-				<Backdrop className={classes.backdrop} open={loading}>
-					<CircularProgress color='inherit' />
-				</Backdrop>
-
 				<Dialog
 					open={openSlot || openEvent}
 					onClose={() => this.handleClose()}
@@ -1230,75 +1119,75 @@ class Home extends React.Component {
 									</React.Fragment>
 									: null
 							}
-							<MuiPickersUtilsProvider utils={DateFnsUtils} locale={ruLocale}>
-								<Grid container spacing={1}>
-									<Grid container item xs={6}>
-										{
-											currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
-												? <Grid item xs={12}>
-													<Paper className={classes.paper}>
-														<Autocomplete
-															name='toEmployee'
-															fullWidth
-															size='small'
-															value={toEmployee}
-															options={employeesOptions}
-															groupBy={option => option.positionId}
-															getOptionLabel={option => option.positionNameRu}
-															className={classes.input}
-															onChange={(e, v) => { this.handleDoctorAutocompleteChange('toEmployee', v) }}
-															onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
-															getOptionLabel={option => option.nameRu}
-															renderOption={option => <span>{option.nameRu} ({option.positionNameRu})</span>}
-															renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
-														/>
-													</Paper>
-												</Grid>
-												: null
-										}
-										<Grid item xs={12}>
-											<Paper className={classes.paper}>
-												<Autocomplete
-													name='selectedProcedures'
-													disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
-													multiple
-													fullWidth
-													filterSelectedOptions
-													size='small'
-													value={selectedProcedures}
-													options={proceduresOptions}
-													className={classes.input}
-													onChange={(e, v) => { this.handleProceduresAutocompleteChange('selectedProcedures', v) }}
-													onInputChange={(e, v) => { this.handleProceduresAutocompleteInputChange(v) }}
-													getOptionLabel={option => option.nameRu}
-													renderInput={params => <TextField {...params} autoComplete='off' value={proceduresSearchData} label='Процедуры' variant='outlined' />}
-												/>
-											</Paper>
-										</Grid>
-									</Grid>
-									<Grid item xs={6}>
+							<Grid container spacing={1}>
+								<Grid container item xs={6}>
+									{
+										currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+											? <Grid item xs={12}>
+												<Paper className={classes.paper}>
+													<Autocomplete
+														name='toEmployee'
+														fullWidth
+														size='small'
+														value={toEmployee}
+														options={employeesOptions}
+														groupBy={option => option.positionId}
+														groupOptionLabel={option => option.positionName}
+														className={classes.input}
+														onChange={(e, v) => { this.handleDoctorAutocompleteChange('toEmployee', v) }}
+														onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
+														getOptionLabel={option => option.name}
+														renderOption={option => <span>{option.name} ({option.positionName})</span>}
+														renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
+													/>
+												</Paper>
+											</Grid>
+											: null
+									}
+									<Grid item xs={12}>
 										<Paper className={classes.paper}>
-											<TextField
-												name='complain'
-												fullWidth
-												multiline
+											<Autocomplete
+												name='selectedProcedures'
 												disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
-												rows={4}
+												multiple
+												fullWidth
+												filterSelectedOptions
 												size='small'
-												autoComplete='off'
-												value={complain}
+												value={selectedProcedures}
+												options={proceduresOptions}
 												className={classes.input}
-												label='Симптомы'
-												variant='outlined'
-												inputProps={{'aria-label': 'Description'}}
-												onChange={this.handleChange}/>
+												onChange={(e, v) => { this.handleProceduresAutocompleteChange('selectedProcedures', v) }}
+												onInputChange={(e, v) => { this.handleProceduresAutocompleteInputChange(v) }}
+												getOptionLabel={option => option.name}
+												renderInput={params => <TextField {...params} autoComplete='off' value={proceduresSearchData} label='Процедуры' variant='outlined' />}
+											/>
 										</Paper>
 									</Grid>
-									{
-										(id <= 0 || !id) && currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2) && <React.Fragment>
-											<Grid item xs={6}>
-												<Paper className={classes.paper}>
-													<KeyboardDatePicker
+								</Grid>
+								<Grid item xs={6}>
+									<Paper className={classes.paper}>
+										<TextField
+											name='complain'
+											fullWidth
+											multiline
+											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
+											rows={4}
+											size='small'
+											autoComplete='off'
+											value={complain}
+											className={classes.input}
+											label='Симптомы'
+											variant='outlined'
+											inputProps={{'aria-label': 'Description'}}
+											onChange={this.handleChange}/>
+									</Paper>
+								</Grid>
+								{
+									(id <= 0 || !id) && currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2) && <React.Fragment>
+										<Grid item xs={6}>
+											<Paper className={classes.paper}>
+												<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+													<DatePicker
 														margin='normal'
 														inputVariant='outlined'
 														variant='dialog'
@@ -1315,11 +1204,13 @@ class Home extends React.Component {
 														minDateMessage={`Дата не может быть раньше ${((new Date().getDate() < 10 ? '0' + new Date().getDate() : new Date().getDate()) + '.' + (new Date().getMonth() + 1 < 10 ? '0' + (new Date().getMonth() + 1) : new Date().getMonth() + 1) + '.' + new Date().getFullYear())}`}
 														invalidDateMessage='Неверный формат даты'
 														KeyboardButtonProps={{'aria-label': 'change date'}}/>
-												</Paper>
-											</Grid>
-											<Grid item xs={6}>
-												<Paper className={classes.paper}>
-													<KeyboardDatePicker
+												</LocalizationProvider>
+											</Paper>
+										</Grid>
+										<Grid item xs={6}>
+											<Paper className={classes.paper}>
+												<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+													<DatePicker
 														margin='normal'
 														inputVariant='outlined'
 														variant='dialog'
@@ -1336,13 +1227,15 @@ class Home extends React.Component {
 														minDateMessage={`Дата не может быть раньше ${((startDate.getDate() < 10 ? '0' + startDate.getDate() : startDate.getDate()) + '.' + (startDate.getMonth() + 1 < 10 ? '0' + (startDate.getMonth() + 1) : startDate.getMonth() + 1) + '.' + startDate.getFullYear())}`}
 														invalidDateMessage='Неверный формат даты'
 														KeyboardButtonProps={{'aria-label': 'change date'}}/>
-												</Paper>
-											</Grid>
-										</React.Fragment>
-									}
-									<Grid item xs={6}>
-										<Paper className={classes.paper}>
-											<KeyboardTimePicker
+												</LocalizationProvider>
+											</Paper>
+										</Grid>
+									</React.Fragment>
+								}
+								<Grid item xs={6}>
+									<Paper className={classes.paper}>
+										<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+											<TimePicker
 												margin='normal'
 												inputVariant='outlined'
 												variant='dialog'
@@ -1360,11 +1253,13 @@ class Home extends React.Component {
 												views={['hours', 'minutes']}
 												invalidDateMessage='Неверный формат времени'
 												KeyboardButtonProps={{'aria-label': 'change date'}}/>
-										</Paper>
-									</Grid>
-									<Grid item xs={6}>
-										<Paper className={classes.paper}>
-											<KeyboardTimePicker
+										</LocalizationProvider>
+									</Paper>
+								</Grid>
+								<Grid item xs={6}>
+									<Paper className={classes.paper}>
+										<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+											<TimePicker
 												margin='normal'
 												inputVariant='outlined'
 												variant='dialog'
@@ -1382,23 +1277,23 @@ class Home extends React.Component {
 												views={['hours', 'minutes']}
 												invalidDateMessage='Неверный формат времени'
 												KeyboardButtonProps={{'aria-label': 'change date'}}/>
-										</Paper>
-									</Grid>
+										</LocalizationProvider>
+									</Paper>
 								</Grid>
-							</MuiPickersUtilsProvider>
+							</Grid>
 							<Divider className={classes.divider} />
 							<Grid container spacing={1}>
 								<Grid item xs={6}>
 									<Paper className={classes.paper}>
 										<TextField
 											required
-											error={!surnameRu}
-											name='surnameRu'
+											error={!surname}
+											name='surname'
 											fullWidth
 											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 											size='small'
 											autoComplete='off'
-											value={surnameRu}
+											value={surname}
 											label='Фамилия'
 											variant='outlined'
 											className={classes.input}
@@ -1410,13 +1305,13 @@ class Home extends React.Component {
 									<Paper className={classes.paper}>
 										<TextField
 											required
-											error={!nameRu}
-											name='nameRu'
+											error={!name}
+											name='name'
 											fullWidth
 											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 											size='small'
 											autoComplete='off'
-											value={nameRu}
+											value={name}
 											label='Имя'
 											variant='outlined'
 											className={classes.input}
@@ -1427,12 +1322,12 @@ class Home extends React.Component {
 								<Grid item xs={6}>
 									<Paper className={classes.paper}>
 										<TextField
-											name='middlenameRu'
+											name='middlename'
 											fullWidth
 											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
 											size='small'
 											autoComplete='off'
-											value={middlenameRu}
+											value={middlename}
 											label='Отчество'
 											variant='outlined'
 											className={classes.input}
@@ -1512,4 +1407,4 @@ class Home extends React.Component {
 	}
 }
 
-export default withStyles(styles, {withTheme: true})(Home)
+export default compose(withSnackbar, loading, withStyles(styles))(Home)

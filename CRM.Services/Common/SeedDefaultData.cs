@@ -66,12 +66,8 @@ namespace CRM.Services.Common
                     Email = "super_admin@CRM.kz",
                     CrmEmployee = new CrmEmployees()
                     {
-                        SurnameRu = "СуперАдмин",
-                        SurnameKz = "СуперАдмин",
-                        SurnameEn = "SuperAdmin",
-                        NameRu = "СуперАдмин",
-                        NameKz = "СуперАдмин",
-                        NameEn = "SuperAdmin",
+                        Surname = "СуперАдмин",
+                        Name = "СуперАдмин",
                         BirthDate = DateTime.Now,
                         IsActive = true,
                         CreatedDateTime = DateTime.Now
@@ -126,12 +122,8 @@ namespace CRM.Services.Common
                     Email = "admin@crm.kz",
                     CrmEmployee = new CrmEmployees()
                     {
-                        SurnameRu = "Администратор",
-                        SurnameKz = "Администратор",
-                        SurnameEn = "Administrator",
-                        NameRu = "Администратор",
-                        NameKz = "Администратор",
-                        NameEn = "Administrator",
+                        Surname = "Администратор",
+                        Name = "Администратор",
                         BirthDate = DateTime.Now,
                         IsActive = true,
                         CreatedDateTime = DateTime.Now
@@ -186,12 +178,8 @@ namespace CRM.Services.Common
                     Email = "user@crm.kz",
                     CrmEmployee = new CrmEmployees()
                     {
-                        SurnameRu = "Пользователь",
-                        SurnameKz = "Пользователь",
-                        SurnameEn = "User",
-                        NameRu = "Пользователь",
-                        NameKz = "Пользователь",
-                        NameEn = "User",
+                        Surname = "Пользователь",
+                        Name = "Пользователь",
                         BirthDate = DateTime.Now,
                         IsActive = true,
                         CreatedDateTime = DateTime.Now
@@ -246,12 +234,8 @@ namespace CRM.Services.Common
                     Email = "user_patient@crm.kz",
                     CrmPatient = new CrmPatients()
                     {
-                        SurnameRu = "Пациент2",
-                        SurnameKz = "Пациент2",
-                        SurnameEn = "Patient2",
-                        NameRu = "Пациент2",
-                        NameKz = "Пациент2",
-                        NameEn = "Patient2",
+                        Surname = "Пациент2",
+                        Name = "Пациент2",
                         BirthDate = DateTime.Now,
                         IsActive = true,
                         CreatedDateTime = DateTime.Now
@@ -295,9 +279,7 @@ namespace CRM.Services.Common
             {
                 _context.DictCountries.Add(new DictCountries()
                 {
-                    NameEn = "Kazakhstan",
-                    NameRu = "Казахстан",
-                    NameKz = "Казахстан",
+                    Name = "Kazakhstan",
                     CreatedDateTime = DateTime.Now
                 });
                 _context.SaveChanges();
@@ -307,23 +289,17 @@ namespace CRM.Services.Common
             {
                 _context.DictGenders.Add(new DictGenders()
                 {
-                    NameEn = "Male",
-                    NameRu = "Муж",
-                    NameKz = "Муж",
+                    Name = "Male",
                     CreatedDateTime = DateTime.Now
                 });
                 _context.DictGenders.Add(new DictGenders()
                 {
-                    NameEn = "Female",
-                    NameRu = "Жен",
-                    NameKz = "Жен",
+                    Name = "Female",
                     CreatedDateTime = DateTime.Now
                 });
                 _context.DictGenders.Add(new DictGenders()
                 {
-                    NameEn = "Anonim",
-                    NameRu = "Анонимно",
-                    NameKz = "Анонимно",
+                    Name = "Anonim",
                     CreatedDateTime = DateTime.Now
                 });
                 _context.SaveChanges();
@@ -333,23 +309,17 @@ namespace CRM.Services.Common
             {
                 _context.DictStatuses.Add(new DictStatuses()
                 {
-                    NameEn = "Created",
-                    NameRu = "Заполнено",
-                    NameKz = "Заполнено",
+                    Name = "Created",
                     CreatedDateTime = DateTime.Now
                 });
                 _context.DictStatuses.Add(new DictStatuses()
                 {
-                    NameEn = "Approved",
-                    NameRu = "Подтверждено",
-                    NameKz = "Подтверждено",
+                    Name = "Approved",
                     CreatedDateTime = DateTime.Now
                 });
                 _context.DictStatuses.Add(new DictStatuses()
                 {
-                    NameEn = "Rejected",
-                    NameRu = "Отклонено",
-                    NameKz = "Отклонено",
+                    Name = "Rejected",
                     CreatedDateTime = DateTime.Now
                 });
                 _context.SaveChanges();
@@ -359,9 +329,7 @@ namespace CRM.Services.Common
             {
                 var enterprise = new DictEnterprises()
                 {
-                    NameEn = "Test company",
-                    NameRu = "Тест компания",
-                    NameKz = "Тест компания",
+                    Name = "Test company",
                     Address = "Astana",
                     PhoneNumber = "87777",
                     CreatedDateTime = DateTime.Now
@@ -371,15 +339,11 @@ namespace CRM.Services.Common
 
                 _context.DictPositions.Add(new DictPositions()
                 {
-                    NameEn = "Test position",
-                    NameRu = "Тест позиция",
-                    NameKz = "Тест позиция",
+                    Name = "Test position",
                     DictEnterprisesId = enterprise.Id,
                     Code = "001",
                     Category = "1",
-                    DescriptionEn = "Descr",
-                    DescriptionRu = "Опис",
-                    DescriptionKz = "Опис",
+                    Description = "Descr",
                     CreatedDateTime = DateTime.Now
                 });
                 _context.SaveChanges();
@@ -391,9 +355,7 @@ namespace CRM.Services.Common
 
                 _context.DictDepartments.Add(new DictDepartments()
                 {
-                    NameEn = "Test department",
-                    NameRu = "Тест департамент",
-                    NameKz = "Тест департамент",
+                    Name = "Test department",
                     DictEnterprisesId = enterprise?.Id,
                     CreatedDateTime = DateTime.Now
                 });

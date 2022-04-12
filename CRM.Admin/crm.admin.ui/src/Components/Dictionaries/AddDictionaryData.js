@@ -85,16 +85,10 @@ class AddDictionaryData extends React.Component {
 		this.state = {
 			id: 0,
 			code: '',
-			nameRu: '',
-			nameKz: '',
-			nameEn: '',
-			descriptionRu: '',
-			descriptionKz: '',
-			descriptionEn: '',
+			name: '',
+			description: '',
 			parentId: null,
-			parentNameRu: '',
-			parentNameKz: '',
-			parentNameEn: '',
+			parentName: '',
 			positionCategory: '',
 			phoneNumber: '',
 			amount: '',
@@ -161,16 +155,10 @@ handleSaveClick = () => {
 	const {
 		id,
 		code,
-		nameRu,
-		nameKz,
-		nameEn,
-		descriptionRu,
-		descriptionKz,
-		descriptionEn,
+		name,
+		description,
 		parentId,
-		parentNameRu,
-		parentNameKz,
-		parentNameEn,
+		parentName,
 		positionCategory,
 		phoneNumber,
 		amount,
@@ -178,7 +166,7 @@ handleSaveClick = () => {
 	} = this.state
 	const {token, handleSnackbarOpen, isLoaded, handleEditDictionaryDialogClose, dictionaryName} = this.props
 
-	if (!nameRu) {
+	if (!name) {
 		if (handleSnackbarOpen) {
 			handleSnackbarOpen('Вы не заполнили поле "Название (рус.)"', 'error')
 		}
@@ -191,12 +179,8 @@ handleSaveClick = () => {
 
 	const dictionaryData = {
 		id,
-		nameRu,
-		nameKz,
-		nameEn,
-		descriptionRu,
-		descriptionKz,
-		descriptionEn,
+		name,
+		description,
 	}
 
 	postRequest(`${allConstants.serverUrl}/api/Dictionaries/Save${dictionaryName}`, token, dictionaryData, result => {
@@ -225,16 +209,10 @@ handleCancelClick = () => {
 	this.setState({
 		id: 0,
 		code: '',
-		nameRu: '',
-		nameKz: '',
-		nameEn: '',
-		descriptionRu: '',
-		descriptionKz: '',
-		descriptionEn: '',
+		name: '',
+		description: '',
 		parentId: null,
-		parentNameRu: '',
-		parentNameKz: '',
-		parentNameEn: '',
+		parentName: '',
 		positionCategory: '',
 		phoneNumber: '',
 		amount: '',
@@ -257,43 +235,13 @@ render() {
 							<Paper className={classes.paper}>
 								<TextField
 									required
-									name='nameRu'
-									error={(!this.state.nameRu)}
+									name='name'
+									error={(!this.state.name)}
 									fullWidth
 									size='small'
 									autoComplete='off'
-									value={this.state.nameRu}
-									label='Название (рус.)'
-									variant='outlined'
-									className={classes.input}
-									inputProps={{'aria-label': 'Description'}}
-									onChange={this.handleChange}/>
-							</Paper>
-							<Paper className={classes.paper}>
-								<TextField
-									required
-									name='nameKz'
-									error={(!this.state.nameKz)}
-									fullWidth
-									size='small'
-									autoComplete='off'
-									value={this.state.nameKz}
-									label='Название (каз.)'
-									variant='outlined'
-									className={classes.input}
-									inputProps={{'aria-label': 'Description'}}
-									onChange={this.handleChange}/>
-							</Paper>
-							<Paper className={classes.paper}>
-								<TextField
-									required
-									name='nameEn'
-									error={(!this.state.nameEn)}
-									fullWidth
-									size='small'
-									autoComplete='off'
-									value={this.state.nameEn}
-									label='Название (англ.)'
+									value={this.state.name}
+									label='Название'
 									variant='outlined'
 									className={classes.input}
 									inputProps={{'aria-label': 'Description'}}
@@ -306,49 +254,15 @@ render() {
 									<Paper className={classes.paper}>
 										<TextField
 											required
-											name='descriptionRu'
-											error={(!this.state.descriptionRu)}
+											name='description'
+											error={(!this.state.description)}
 											fullWidth
 											multiline
 											rows={3}
 											size='small'
 											autoComplete='off'
-											value={this.state.descriptionRu}
-											label='Описание (рус.)'
-											variant='outlined'
-											className={classes.input}
-											inputProps={{'aria-label': 'Description'}}
-											onChange={this.handleChange}/>
-									</Paper>
-									<Paper className={classes.paper}>
-										<TextField
-											required
-											name='descriptionKz'
-											error={(!this.state.descriptionKz)}
-											fullWidth
-											multiline
-											rows={3}
-											size='small'
-											autoComplete='off'
-											value={this.state.descriptionKz}
-											label='Описание (каз.)'
-											variant='outlined'
-											className={classes.input}
-											inputProps={{'aria-label': 'Description'}}
-											onChange={this.handleChange}/>
-									</Paper>
-									<Paper className={classes.paper}>
-										<TextField
-											required
-											name='descriptionEn'
-											error={(!this.state.descriptionEn)}
-											fullWidth
-											multiline
-											rows={3}
-											size='small'
-											autoComplete='off'
-											value={this.state.descriptionEn}
-											label='Описание (англ.)'
+											value={this.state.description}
+											label='Описание'
 											variant='outlined'
 											className={classes.input}
 											inputProps={{'aria-label': 'Description'}}

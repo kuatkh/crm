@@ -89,23 +89,13 @@ namespace CRM.Admin.Controllers
                                 CreatedDateTimeStr = u.CreatedDateTime.ToString("dd.MM.yyyy HH:mm"),
                                 Iin = u.CrmEmployee != null ? u.CrmEmployee.Iin : null,
                                 BirthDate = u.CrmEmployee != null ? u.CrmEmployee.BirthDate : null,
-                                MiddlenameKz = u.CrmEmployee != null ? u.CrmEmployee.MiddlenameKz : null,
-                                MiddlenameRu = u.CrmEmployee != null ? u.CrmEmployee.MiddlenameRu : null,
-                                MiddlenameEn = u.CrmEmployee != null ? u.CrmEmployee.MiddlenameEn : null,
-                                NameKz = u.CrmEmployee != null ? u.CrmEmployee.NameKz : null,
-                                NameRu = u.CrmEmployee != null ? u.CrmEmployee.NameRu : null,
-                                NameEn = u.CrmEmployee != null ? u.CrmEmployee.NameEn : null,
-                                SurnameKz = u.CrmEmployee != null ? u.CrmEmployee.SurnameKz : null,
-                                SurnameRu = u.CrmEmployee != null ? u.CrmEmployee.SurnameRu : null,
-                                SurnameEn = u.CrmEmployee != null ? u.CrmEmployee.SurnameEn : null,
+                                Middlename = u.CrmEmployee != null ? u.CrmEmployee.Middlename : null,
+                                Name = u.CrmEmployee != null ? u.CrmEmployee.Name : null,
+                                Surname = u.CrmEmployee != null ? u.CrmEmployee.Surname : null,
                                 DictPositionsId = u.CrmEmployee != null ? u.CrmEmployee.DictPositionsId : null,
                                 DictDepartmentsId = u.CrmEmployee != null ? u.CrmEmployee.DictDepartmentsId : null,
-                                DepartmentNameRu = u.CrmEmployee != null && u.CrmEmployee.DictDepartment != null ? u.CrmEmployee.DictDepartment.NameRu : null,
-                                DepartmentNameKz = u.CrmEmployee != null && u.CrmEmployee.DictDepartment != null ? u.CrmEmployee.DictDepartment.NameKz : null,
-                                DepartmentNameEn = u.CrmEmployee != null && u.CrmEmployee.DictDepartment != null ? u.CrmEmployee.DictDepartment.NameEn : null,
-                                PositionNameRu = u.CrmEmployee != null && u.CrmEmployee.DictPosition != null ? u.CrmEmployee.DictPosition.NameRu : null,
-                                PositionNameKz = u.CrmEmployee != null && u.CrmEmployee.DictPosition != null ? u.CrmEmployee.DictPosition.NameKz : null,
-                                PositionNameEn = u.CrmEmployee != null && u.CrmEmployee.DictPosition != null ? u.CrmEmployee.DictPosition.NameEn : null,
+                                DepartmentName = u.CrmEmployee != null && u.CrmEmployee.DictDepartment != null ? u.CrmEmployee.DictDepartment.Name : null,
+                                PositionName = u.CrmEmployee != null && u.CrmEmployee.DictPosition != null ? u.CrmEmployee.DictPosition.Name : null,
                                 Email = u.Email,
                                 UserName = u.UserName
                             })
@@ -177,13 +167,9 @@ namespace CRM.Admin.Controllers
                     .Select(d => new SelectWithParentDto()
                     {
                         Id = d.Id,
-                        NameRu = d.NameRu,
-                        NameEn = d.NameEn,
-                        NameKz = d.NameKz,
+                        Name = d.Name,
                         ParentId = d.ParentId,
-                        ParentNameEn = d.ParentEnterprise != null ? d.ParentEnterprise.NameEn : null,
-                        ParentNameKz = d.ParentEnterprise != null ? d.ParentEnterprise.NameKz : null,
-                        ParentNameRu = d.ParentEnterprise != null ? d.ParentEnterprise.NameRu : null
+                        ParentName = d.ParentEnterprise != null ? d.ParentEnterprise.Name : null
                     })
                     .OrderBy(d => d.ParentId)
                     .ToListAsync();
@@ -217,9 +203,7 @@ namespace CRM.Admin.Controllers
                     .Select(d => new SelectDto()
                     {
                         Id = d.Id,
-                        NameRu = d.NameRu,
-                        NameEn = d.NameEn,
-                        NameKz = d.NameKz
+                        Name = d.Name,
                     })
                     .ToListAsync();
                 return Ok(departments);
@@ -252,9 +236,7 @@ namespace CRM.Admin.Controllers
                     .Select(p => new SelectDto()
                     {
                         Id = p.Id,
-                        NameRu = p.NameRu,
-                        NameEn = p.NameEn,
-                        NameKz = p.NameKz
+                        Name = p.Name
                     })
                     .ToListAsync();
                 return Ok(positions);
@@ -294,7 +276,7 @@ namespace CRM.Admin.Controllers
                     {
                         Id = r.Id,
                         Code = r.Name,
-                        NameRu = r.Description != null
+                        Name = r.Description != null
                             ? r.Description
                             : isSuperAdmin
                                 ? r.Name
@@ -417,15 +399,9 @@ namespace CRM.Admin.Controllers
                             user.CrmEmployee = new CrmEmployees()
                             {
                                 Id = 0,
-                                SurnameRu = userData.SurnameRu,
-                                SurnameKz = userData.SurnameKz,
-                                SurnameEn = userData.SurnameEn,
-                                NameRu = userData.NameRu,
-                                NameKz = userData.NameKz,
-                                NameEn = userData.NameEn,
-                                MiddlenameRu = userData.MiddlenameRu,
-                                MiddlenameKz = userData.MiddlenameKz,
-                                MiddlenameEn = userData.MiddlenameEn,
+                                Surname = userData.Surname,
+                                Name = userData.Name,
+                                Middlename = userData.Middlename,
                                 DictEnterprisesId = userData.Enterprise.Id,
                                 DictDepartmentsId = userData.Department.Id,
                                 DictPositionsId = userData.Position.Id,

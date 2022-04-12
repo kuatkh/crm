@@ -8,16 +8,10 @@ namespace CRM.DataModel.Dto
     {
         public long Id { get; set; }
         public string Code { get; set; }
-        public string NameRu { get; set; }
-        public string NameKz { get; set; }
-        public string NameEn { get; set; }
-        public string DescriptionRu { get; set; }
-        public string DescriptionKz { get; set; }
-        public string DescriptionEn { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public long? ParentId { get; set; }
-        public string ParentNameRu { get; set; }
-        public string ParentNameKz { get; set; }
-        public string ParentNameEn { get; set; }
+        public string ParentName { get; set; }
         public string PositionCategory { get; set; }
         public float? Amount { get; set; }
         public string PhoneNumber { get; set; }

@@ -70,15 +70,9 @@ namespace CRM.Controllers
                             CrmPatientsId = a.CrmPatientsId,
                             //Iin = a.CrmPatient != null && currentUser.RoleId == 1 ? a.CrmPatient.Iin : null,
                             //DocumentNumber = a.CrmPatient != null && currentUser.RoleId == 1 ? a.CrmPatient.DocumentNumber : null,
-                            SurnameEn = a.CrmPatient != null ? a.CrmPatient.SurnameEn : null,
-                            SurnameRu = a.CrmPatient != null ? a.CrmPatient.SurnameRu : null,
-                            SurnameKz = a.CrmPatient != null ? a.CrmPatient.SurnameKz : null,
-                            NameEn = a.CrmPatient != null ? a.CrmPatient.NameEn : null,
-                            NameRu = a.CrmPatient != null ? a.CrmPatient.NameRu : null,
-                            NameKz = a.CrmPatient != null ? a.CrmPatient.NameKz : null,
-                            MiddlenameEn = a.CrmPatient != null ? a.CrmPatient.MiddlenameEn : null,
-                            MiddlenameRu = a.CrmPatient != null ? a.CrmPatient.MiddlenameRu : null,
-                            MiddlenameKz = a.CrmPatient != null ? a.CrmPatient.MiddlenameKz : null,
+                            Surname = a.CrmPatient != null ? a.CrmPatient.Surname : null,
+                            Name = a.CrmPatient != null ? a.CrmPatient.Name : null,
+                            Middlename = a.CrmPatient != null ? a.CrmPatient.Middlename : null,
                             //PhoneNumber = a.CrmPatient != null && currentUser.RoleId == 1 ? a.CrmPatient.PhoneNumber : null,
                             //ToEmployee = a.ToCrmEmployee != null 
                             //    ? new SelectWithPositionDto()
