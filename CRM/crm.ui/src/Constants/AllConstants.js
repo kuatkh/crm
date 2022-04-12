@@ -1,7 +1,7 @@
 export const allConstants = {
 
 	/* eslint-disable*/
-	serverUrl: process.env.NODE_ENV == 'development' ? 'https://localhost:44380' : '',
+	serverUrl: process.env.NODE_ENV == 'development' ? 'https://localhost:5001' : '',
 	/* eslint-enable*/
 	requestHeaders: {
 		'Content-Type': 'application/json',

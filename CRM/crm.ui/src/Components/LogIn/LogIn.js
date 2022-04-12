@@ -83,6 +83,7 @@ handleSubmit = e => {
 				},
 				error => {
 					console.log(error)
+					this.isLoaded(true)
 				}
 			)
 	}

@@ -1,63 +1,37 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using CRM.Auth.Auth;
+﻿using CRM.Auth.Auth;
 using CRM.Auth.AuthProvider;
 using CRM.Auth.Configuration;
 using CRM.Auth.IdentityProvider;
 using CRM.DataModel.Data;
 using CRM.DataModel.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
 using NLog.Extensions.Logging;
+using System.Security.Cryptography.X509Certificates;
 
 namespace CRM.Auth
 {
-    public class Startup
+    public static class App
     {
-        private IConfigurationRoot ConfigurationRoot { get; }
-        private readonly CrmAuthConfiguration _configuration;
-
-        public Startup(IWebHostEnvironment env)
+        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            ConfigurationRoot = builder.Build();
+            CrmAuthConfiguration _configuration = configuration.GetSection("CrmAuth").Get<CrmAuthConfiguration>();
 
-            _configuration = ConfigurationRoot.GetSection("AbAuth").Get<CrmAuthConfiguration>();
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
             var cert = new X509Certificate2(_configuration.CertPath, _configuration.CertSecret);
             var key = new X509SecurityKey(cert);
-            SigningCredentials credentials = new SigningCredentials(key, "RS256");
+            SigningCredentials credentials = new(key, "RS256");
 
             services.AddIdentityServer()
                 .AddApiResources()
                 .AddClients(_configuration)
-                .AddInMemoryApiScopes(StartupExtension.GetApiScopes())
+                .AddInMemoryApiScopes(AppExtension.GetApiScopes())
                 .AddProfileService<ProfileService>()
                 .AddExtensionGrantValidator<SilentGrantValidator>()
                 .AddExtensionGrantValidator<DbGrantValidator>()
@@ -101,12 +75,11 @@ namespace CRM.Auth
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static WebApplication Configure(this WebApplication app, IWebHostEnvironment env)
         {
             app.UseCors("CorsPolicy");
 
-            if (env.IsDevelopment())
+            if (env.EnvironmentName == Environments.Development)
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -121,6 +94,12 @@ namespace CRM.Auth
                 endpoints.MapControllers();
             });
 
+            using var serviceScope = app.Services.CreateScope();
+
+            using var context = serviceScope.ServiceProvider.GetService<CrmDbContext>();
+            context.Database.Migrate();
+
+            return app;
         }
     }
 }

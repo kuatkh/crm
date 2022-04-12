@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CRM.Auth
 {
-    public static class StartupExtension
+    public static class AppExtension
     {
         public static IIdentityServerBuilder AddClients(this IIdentityServerBuilder builder, CrmAuthConfiguration configuration)
         {

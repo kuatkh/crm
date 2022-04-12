@@ -29,7 +29,7 @@ const styles = theme => ({
 		maxHeight: '50vh',
 	},
 	button: {
-		margin: theme.spacing.unit,
+		margin: theme.spacing(1),
 	},
 	root: {
 		width: '100%',

@@ -1,56 +1,38 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using CRM.DataModel.Data;
+﻿using CRM.DataModel.Data;
 using CRM.DataModel.Models;
 using CRM.Services.Common;
 using CRM.Services.Interfaces;
-using IdentityModel.Client;
-using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using NLog.Extensions.Logging;
+using System;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
-namespace CRM
+namespace CRM.Admin
 {
-    public class Startup
+    public static class App
     {
-        private readonly CrmConfiguration _configuration;
-
-        public Startup(IWebHostEnvironment env)
+        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
+            CrmConfiguration _configuration = configuration.GetSection("AppSettings").Get<CrmConfiguration>();
 
-            Configuration = builder.Build();
+            IdentityModelEventSource.ShowPII = true;
 
-            _configuration = Configuration.GetSection("AppSettings").Get<CrmConfiguration>();
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
             services.AddDbContext<CrmDbContext>(options =>
                 options.UseNpgsql(_configuration.ConnectionString));
 
@@ -120,7 +102,7 @@ namespace CRM
 #if DEBUG
             services.AddCors(options => {
                 options.AddPolicy("CorsPolicy", builder => builder
-                .WithOrigins("http://localhost:9000", "http://localhost:5000", "https://localhost:44373")
+                .WithOrigins("http://localhost:9000", "http://localhost:5000", "https://localhost:44380")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials());
@@ -145,6 +127,11 @@ namespace CRM
 
             services.AddControllers();
 
+            services.AddHttpLogging(logging =>
+            {
+                logging.LoggingFields = HttpLoggingFields.All;
+            });
+
             services.AddLogging(logging =>
             {
                 logging.AddConsole();
@@ -153,12 +140,11 @@ namespace CRM
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static WebApplication Configure(this WebApplication app, IWebHostEnvironment env)
         {
             app.UseCors("CorsPolicy");
 
-            if (env.IsDevelopment())
+            if (env.EnvironmentName == Environments.Development)
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -167,6 +153,7 @@ namespace CRM
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
 
             NLog.LogManager.LoadConfiguration("nlog.config");
 
@@ -216,15 +203,15 @@ namespace CRM
                 }
             });
 
-            using IServiceScope serviceScope = app.ApplicationServices
-                .GetRequiredService<IServiceScopeFactory>()
-                .CreateScope();
+            using var serviceScope = app.Services.CreateScope();
 
             using var context = serviceScope.ServiceProvider.GetService<CrmDbContext>();
             context.Database.Migrate();
 
             using var seedService = serviceScope.ServiceProvider.GetService<ISeedDefaultData>();
             seedService.Seed();
+
+            return app;
         }
     }
 }

@@ -53,7 +53,7 @@ const styles = theme => ({
 		margin: 0,
 	},
 	button: {
-		margin: theme.spacing.unit,
+		margin: theme.spacing(1),
 	},
 	gapSmall: {
 		marginTop: 50,

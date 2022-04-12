@@ -70,10 +70,10 @@ const styles = theme => ({
 		minHeight: '60vh',
 	},
 	input: {
-		margin: theme.spacing.unit,
+		margin: theme.spacing(1),
 	},
 	button: {
-		margin: theme.spacing.unit,
+		margin: theme.spacing(1),
 		overflow: 'hidden',
 	},
 	paper: {
@@ -108,7 +108,7 @@ const Event = ({event}) => (
 	<span>
 		<p><b>{event.surnameRu} {event.nameRu} {event.middlenameRu}</b></p>
 		<p>{event.toEmployee ? event.toEmployee.nameRu : ''}</p>
-		<p style={{wordBreak: 'break-all', whiteSpace: 'normal'}}>Симптомы: <i>{event.complain}</i></p>
+		{event.complain && <p style={{wordBreak: 'break-all', whiteSpace: 'normal'}}>Симптомы: <i>{event.complain}</i></p>}
 	</span>
 )
 
