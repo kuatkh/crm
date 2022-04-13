@@ -385,7 +385,7 @@ render() {
 												column.id == 'photoB64' && row[column.id]
 												? (<CardMedia component='img' className={classes.media} src={`data:image/jpeg;base64,${row[column.id]}`} title='Фото пользователя' />)
 												: column.id == 'photoB64' && !row[column.id]
-												? (<CardMedia component='img' className={classes.media} src={require('../../Static/important-person.jpg')} title='Фото пользователя' />)
+												? (<CardMedia component='img' className={classes.media} image={require('static/img/important-person.jpg')} title='Фото пользователя' />)
 												:(<Typography title={row[column.id]} noWrap={!!column.noWrap}>{row[column.id]}</Typography>)
 											}
 										</TableCell>
@@ -444,7 +444,7 @@ render() {
 																					childColumn.id == 'photoB64' && childRow[childColumn.id]
 																					? (<CardMedia component='img' className={classes.media} src={`data:image/jpeg;base64,${childRow[childColumn.id]}`} title='Фото пользователя' />)
 																					: childColumn.id == 'photoB64' && !childRow[childColumn.id]
-																					? (<CardMedia component='img' className={classes.media} src={require('../../Static/important-person.jpg')} title='Фото пользователя' />)
+																					? (<CardMedia component='img' className={classes.media} image={require('static/img/important-person.jpg')} title='Фото пользователя' />)
 																					:(<Typography title={childRow[childColumn.id]} noWrap={!!childColumn.noWrap}>{childRow[childColumn.id]}</Typography>)
 																				}
 																			</TableCell>

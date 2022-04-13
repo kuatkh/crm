@@ -33,3 +33,7 @@ code {
 .react-date-picker__wrapper, .react-time-picker__wrapper {
   border: none !important;
 }
+
+.content {
+  margin-top: 80px;
+}

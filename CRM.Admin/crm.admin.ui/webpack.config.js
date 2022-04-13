@@ -3,7 +3,7 @@ const webpack = require('webpack')
 var path = require('path')
 var FileSystem = require('fs')
 const CompressionPlugin = require('compression-webpack-plugin')
-const TerserPlugin = require("terser-webpack-plugin")
+const TerserPlugin = require('terser-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
@@ -101,9 +101,9 @@ module.exports = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: ['@babel/preset-react', '@babel/preset-env']
-					}
-				}
+						presets: ['@babel/preset-react', '@babel/preset-env'],
+					},
+				},
 			},
 			{
 				test: /\.html$/,
@@ -117,25 +117,25 @@ module.exports = {
 			common: path.resolve(__dirname, 'src'),
 		},
 		fallback: {
-		  'fs': false,
-		  'tls': false,
-		  'net': false,
-		  'path': false,
-		  'zlib': false,
-		  'http': false,
-		  'https': false,
-		  'stream': false,
-		  'crypto': false,
-		  'events': false, // require.resolve('events/'); npm i events
-		  'url': false, // require.resolve('url/'); npm i url
-		  'vm': false, // require.resolve("vm-browserify"); npm i vm-browserify
-		  'tty': false, // require.resolve("tty-browserify"); npm i tty-browserify
-		  'console': require.resolve('console-browserify'),
-		  'constants': require.resolve('constants-browserify'),
-		  'assert': false, // require.resolve("assert/"); npm i assert
-		  'querystring': false, // require.resolve("querystring-es3"); npm i querystring-es3
-		  'os': require.resolve('os-browserify/browser'), // require.resolve("os-browserify/browser"); npm i os-browserify
-		  'crypto-browserify': require.resolve('crypto-browserify'), // require.resolve('crypto-browserify'); npm i rypto-browserify
+			'fs': false,
+			'tls': false,
+			'net': false,
+			'path': false,
+			'zlib': false,
+			'http': false,
+			'https': false,
+			'stream': false,
+			'crypto': false,
+			'events': false, // require.resolve('events/'); npm i events
+			'url': false, // require.resolve('url/'); npm i url
+			'vm': false, // require.resolve("vm-browserify"); npm i vm-browserify
+			'tty': false, // require.resolve("tty-browserify"); npm i tty-browserify
+			'console': require.resolve('console-browserify'),
+			'constants': require.resolve('constants-browserify'),
+			'assert': false, // require.resolve("assert/"); npm i assert
+			'querystring': false, // require.resolve("querystring-es3"); npm i querystring-es3
+			'os': require.resolve('os-browserify/browser'), // require.resolve("os-browserify/browser"); npm i os-browserify
+			'crypto-browserify': require.resolve('crypto-browserify'), // require.resolve('crypto-browserify'); npm i rypto-browserify
 		},
 	},
 }

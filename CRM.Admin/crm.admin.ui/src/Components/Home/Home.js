@@ -65,10 +65,6 @@ const styles = theme => ({
 	selectEmpty: {
 		mt: theme.spacing(2),
 	},
-	container: {
-		gridTemplateColumns: 'repeat(12, 1fr)',
-		gridGap: theme.spacing(1),
-	},
 	gridItem: {
 		height: '100%',
 		minHeight: '60vh',
@@ -76,24 +72,8 @@ const styles = theme => ({
 	input: {
 		m: theme.spacing.unit,
 	},
-	button: {
-		m: theme.spacing.unit,
-		overflow: 'hidden',
-	},
-	paper: {
-		pr: theme.spacing(1),
-		// textAlign: 'center',
-		color: theme.palette.text.secondary,
-		whiteSpace: 'nowrap',
-		mb: theme.spacing(1),
-		boxShadow: 'none',
-		height: '100%',
-	},
 	divider: {
 		m: 0,
-	},
-	modalRoot: {
-		flexGrow: 1,
 	},
 	actionButtons: {
 		mr: theme.spacing(2),
@@ -164,9 +144,9 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
-		this.getAppointments()
-		this.filterUsersData()
-		this.filterProceduresData()
+		// this.getAppointments()
+		// this.filterUsersData()
+		// this.filterProceduresData()
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -237,7 +217,7 @@ class Home extends React.Component {
 						return d
 					})})
 				} else {
-					this.props.snackbar.showError(`Во время получения данных произошла ошибка ${(result && !result.isSuccess && result.msg ? result.msg : '')}`)
+					this.props.snackbar.showError(`Во время получения данных произошла ошибка ${result && !result.isSuccess && result.msg ? result.msg : ''}`)
 				}
 			},
 			error => {
@@ -599,7 +579,7 @@ class Home extends React.Component {
 
 		this.props.loadingScreen.show()
 
-		getRequest(`${appConstants.serverUrl}/api/Appointments/DeleteAppointment?id=${(this.state.id || 0)}`, result => {
+		getRequest(`${appConstants.serverUrl}/api/Appointments/DeleteAppointment?id=${this.state.id || 0}`, result => {
 			// this.props.loadingScreen.hide()
 			this.handleClose()
 			if (result && !result.isSuccess) {
@@ -909,7 +889,8 @@ class Home extends React.Component {
 	}
 
 	render() {
-		const currentUser = userServices.getCurrentUser()
+		const userData = userServices.getCurrentUser()
+		const currentUser = userData || {roleId: 1}
 		const {classes} = this.props
 		const {
 			id,
@@ -939,97 +920,92 @@ class Home extends React.Component {
 		} = this.state
 
 		return (
-			<div>
-				<Grid container spacing={1} className={classes.container}>
+			<div className='content'>
+				<Grid container spacing={1}>
 					{
 						currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
 							? <Grid item xs={6}>
-								<Paper className={classes.paper}>
-									<Autocomplete
-										name='mainSelectedEmployee'
-										fullWidth
-										size='small'
-										value={mainSelectedEmployee}
-										options={employeesOptions}
-										onChange={(e, v) => { this.handleAutocompleteChange('mainSelectedEmployee', v) }}
-										onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
-										getOptionLabel={option => option.name}
-										renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
-									/>
-								</Paper>
+								<Autocomplete
+									name='mainSelectedEmployee'
+									fullWidth
+									size='small'
+									value={mainSelectedEmployee}
+									options={employeesOptions}
+									onChange={(e, v) => { this.handleAutocompleteChange('mainSelectedEmployee', v) }}
+									onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
+									getOptionLabel={option => option.name}
+									renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
+								/>
 							</Grid>
 							: null
 					}
 					<Grid item container xs={12} className={classes.gridItem}>
 						<Grid item xs={12}>
-							<Paper className={classes.paper}>
-								{
-									currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
-										? <DnDCalendar
-											localizer={localizer}
-											onEventDrop={this.onEventDrop}
-											onEventResize={this.onEventResize}
-											onView={this.onCurrentViewChange}
-											resizable={isCalendarResizable}
-											events={events}
-											views={['month', 'week', 'day']}
-											timeslots={2}
-											step={15}
-											defaultView='week'
-											defaultDate={new Date()}
-											selectable={isCalendarResizable}
-											onRangeChange={this.onCalendarRangeChange}
-											// onNavigate={this.onCalendarNavigate}
-											onSelectEvent={event => this.handleEventSelected(event)}
-											onSelectSlot={slotInfo => this.handleSlotSelected(slotInfo)}
-											culture='ru-RU'
-											min={minTime}
-											max={maxTime}
-											components={{event: Event}}
-											messages={{
-												allDay: 'Весь день',
-												previous: 'Пред.',
-												next: 'След.',
-												today: 'Сегодня',
-												month: 'Месяц',
-												week: 'Неделя',
-												day: 'День',
-												date: 'Дата',
-												time: 'Время',
-											}}
-										/>
-										: <Calendar
-											localizer={localizer}
-											onView={this.onCurrentViewChange}
-											resizable={false}
-											selectable={false}
-											events={events}
-											views={['month', 'week', 'day']}
-											timeslots={2}
-											step={15}
-											defaultView='week'
-											defaultDate={new Date()}
-											min={minTime}
-											max={maxTime}
-											onRangeChange={this.onCalendarRangeChange}
-											onSelectEvent={event => this.handleEventSelected(event)}
-											culture='ru-RU'
-											components={{event: Event}}
-											messages={{
-												allDay: 'Весь день',
-												previous: 'Пред.',
-												next: 'След.',
-												today: 'Сегодня',
-												month: 'Месяц',
-												week: 'Неделя',
-												day: 'День',
-												date: 'Дата',
-												time: 'Время',
-											}}
-										/>
-								}
-
-							</Paper>
+							{
+								currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+									? <DnDCalendar
+										localizer={localizer}
+										onEventDrop={this.onEventDrop}
+										onEventResize={this.onEventResize}
+										onView={this.onCurrentViewChange}
+										resizable={isCalendarResizable}
+										events={events}
+										views={['month', 'week', 'day']}
+										timeslots={2}
+										step={15}
+										defaultView='week'
+										defaultDate={new Date()}
+										selectable={isCalendarResizable}
+										onRangeChange={this.onCalendarRangeChange}
+										// onNavigate={this.onCalendarNavigate}
+										onSelectEvent={event => this.handleEventSelected(event)}
+										onSelectSlot={slotInfo => this.handleSlotSelected(slotInfo)}
+										culture='ru-RU'
+										min={minTime}
+										max={maxTime}
+										components={{event: Event}}
+										messages={{
+											allDay: 'Весь день',
+											previous: 'Пред.',
+											next: 'След.',
+											today: 'Сегодня',
+											month: 'Месяц',
+											week: 'Неделя',
+											day: 'День',
+											date: 'Дата',
+											time: 'Время',
+										}}
+									/>
+									: <Calendar
+										localizer={localizer}
+										onView={this.onCurrentViewChange}
+										resizable={false}
+										selectable={false}
+										events={events}
+										views={['month', 'week', 'day']}
+										timeslots={2}
+										step={15}
+										defaultView='week'
+										defaultDate={new Date()}
+										min={minTime}
+										max={maxTime}
+										onRangeChange={this.onCalendarRangeChange}
+										onSelectEvent={event => this.handleEventSelected(event)}
+										culture='ru-RU'
+										components={{event: Event}}
+										messages={{
+											allDay: 'Весь день',
+											previous: 'Пред.',
+											next: 'След.',
+											today: 'Сегодня',
+											month: 'Месяц',
+											week: 'Неделя',
+											day: 'День',
+											date: 'Дата',
+											time: 'Время',
+										}}
+									/>
+							}
 						</Grid>
 					</Grid>
 				</Grid>
@@ -1045,33 +1021,33 @@ class Home extends React.Component {
 				>
 					<DialogTitle className={classes.headerStyle} id='add-event-dialog-title'>{openEvent ? 'Редактирование' : openSlot ? 'Добавление' : ''}</DialogTitle>
 					<DialogContent dividers={true}>
-						<div className={classes.modalRoot}>
+						<div>
 							{
 								currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
 									? <React.Fragment>
-										<Grid container spacing={1}>
+										<Grid container spacing={1} sx={{flexGrow: 1, minWidth: '30vw', mt: 1, mb: 0.5}}>
 											<Grid item xs={6}>
-												<Paper className={classes.paper}>
-													<TextField
-														name='iin'
-														error={(iin && iin.length < 12 || !iin && !documentNumber)}
-														fullWidth={true}
-														size='small'
-														autoComplete='off'
-														value={iin}
-														label='ИИН'
-														variant='outlined'
-														className={classes.input}
-														inputProps={{'aria-label': 'Description', maxLength: 12, onKeyDown: this.handleIinKeydown}}
-														onChange={this.handleChange}/>
-												</Paper>
+												<TextField
+													name='iin'
+													margin='dense'
+													error={(iin && iin.length < 12 || !iin && !documentNumber)}
+													fullWidth={true}
+													size='small'
+													autoComplete='off'
+													value={iin}
+													label='ИИН'
+													variant='outlined'
+													className={classes.input}
+													inputProps={{'aria-label': 'Description', maxLength: 12, onKeyDown: this.handleIinKeydown}}
+													onChange={this.handleChange}/>
 											</Grid>
-											<Grid container item xs={6}>
-												<Grid item xs={8}>
-													<Paper className={classes.paper}>
+											<Grid item xs={6}>
+												<Grid container spacing={1}>
+													<Grid item xs={8}>
 														<TextField
 															error={(documentNumber && documentNumber.length < 4 || !iin && !documentNumber || iin && iin.length < 12)}
 															name='documentNumber'
+															margin='dense'
 															fullWidth={true}
 															size='small'
 															autoComplete='off'
@@ -1081,22 +1057,20 @@ class Home extends React.Component {
 															className={classes.input}
 															inputProps={{'aria-label': 'Description', onKeyDown: this.handleDocumentNumberKeydown}}
 															onChange={this.handleChange}/>
-													</Paper>
-												</Grid>
-												<Grid item xs={4}>
-													<Paper className={classes.paper}>
+													</Grid>
+													<Grid item xs={4}>
 														<Tooltip title='Поиск по номеру документа'>
 															<Button
 																fullWidth
 																variant='outlined'
+																sx={{mt: 1, mb: 0.5}}
 																color='primary'
 																disabled={(!documentNumber)}
-																className={classes.button}
 																onClick={() => this.getPatientByDocumentNumber(documentNumber)} >
 																Найти
 															</Button>
 														</Tooltip>
-													</Paper>
+													</Grid>
 												</Grid>
 											</Grid>
 										</Grid>
@@ -1104,240 +1078,229 @@ class Home extends React.Component {
 									</React.Fragment>
 									: null
 							}
-							<Grid container spacing={1}>
+							<Grid container spacing={1} sx={{flexGrow: 1, minWidth: '30vw', mt: 1, mb: 0.5}}>
 								<Grid container item xs={6}>
 									{
 										currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
 											? <Grid item xs={12}>
-												<Paper className={classes.paper}>
-													<Autocomplete
-														name='toEmployee'
-														fullWidth
-														size='small'
-														value={toEmployee}
-														options={employeesOptions}
-														groupBy={option => option.positionId}
-														groupOptionLabel={option => option.positionName}
-														className={classes.input}
-														onChange={(e, v) => { this.handleDoctorAutocompleteChange('toEmployee', v) }}
-														onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
-														getOptionLabel={option => option.name}
-														renderOption={option => <span>{option.name} ({option.positionName})</span>}
-														renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
-													/>
-												</Paper>
+												<Autocomplete
+													name='toEmployee'
+													margin='dense'
+													fullWidth
+													size='small'
+													value={toEmployee}
+													options={employeesOptions}
+													groupBy={option => option.positionId}
+													groupOptionLabel={option => option.positionName}
+													className={classes.input}
+													onChange={(e, v) => { this.handleDoctorAutocompleteChange('toEmployee', v) }}
+													onInputChange={(e, v) => { this.handleAutocompleteInputChange(v) }}
+													getOptionLabel={option => option.name}
+													renderOption={option => <span>{option.name} ({option.positionName})</span>}
+													renderInput={params => <TextField {...params} autoComplete='off' value={searchData} label='Доктор' variant='outlined' />}
+												/>
 											</Grid>
 											: null
 									}
 									<Grid item xs={12}>
-										<Paper className={classes.paper}>
-											<Autocomplete
-												name='selectedProcedures'
-												disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
-												multiple
-												fullWidth
-												filterSelectedOptions
-												size='small'
-												value={selectedProcedures}
-												options={proceduresOptions}
-												className={classes.input}
-												onChange={(e, v) => { this.handleProceduresAutocompleteChange('selectedProcedures', v) }}
-												onInputChange={(e, v) => { this.handleProceduresAutocompleteInputChange(v) }}
-												getOptionLabel={option => option.name}
-												renderInput={params => <TextField {...params} autoComplete='off' value={proceduresSearchData} label='Процедуры' variant='outlined' />}
-											/>
-										</Paper>
+										<Autocomplete
+											name='selectedProcedures'
+											margin='dense'
+											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
+											multiple
+											fullWidth
+											filterSelectedOptions
+											size='small'
+											value={selectedProcedures}
+											options={proceduresOptions}
+											className={classes.input}
+											onChange={(e, v) => { this.handleProceduresAutocompleteChange('selectedProcedures', v) }}
+											onInputChange={(e, v) => { this.handleProceduresAutocompleteInputChange(v) }}
+											getOptionLabel={option => option.name}
+											renderInput={params => <TextField {...params} autoComplete='off' value={proceduresSearchData} label='Процедуры' variant='outlined' />}
+										/>
 									</Grid>
 								</Grid>
 								<Grid item xs={6}>
-									<Paper className={classes.paper}>
-										<TextField
-											name='complain'
-											fullWidth
-											multiline
-											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
-											rows={4}
-											size='small'
-											autoComplete='off'
-											value={complain}
-											className={classes.input}
-											label='Симптомы'
-											variant='outlined'
-											inputProps={{'aria-label': 'Description'}}
-											onChange={this.handleChange}/>
-									</Paper>
+									<TextField
+										name='complain'
+										margin='dense'
+										fullWidth
+										multiline
+										disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
+										rows={3}
+										size='small'
+										autoComplete='off'
+										value={complain}
+										className={classes.input}
+										label='Симптомы'
+										variant='outlined'
+										inputProps={{'aria-label': 'Description'}}
+										onChange={this.handleChange}/>
 								</Grid>
 								{
 									(id <= 0 || !id) && currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2) && <React.Fragment>
 										<Grid item xs={6}>
-											<Paper className={classes.paper}>
-												<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
-													<DatePicker
-														margin='normal'
-														inputVariant='outlined'
-														variant='dialog'
-														cancelLabel='Отменить'
-														okLabel='Выбрать'
-														fullWidth
-														size='small'
-														className={classes.input}
-														label='Дата начала'
-														format='dd.MM.yyyy'
-														value={startDate}
-														minDate={new Date()}
-														onChange={this.handleStartDateChange}
-														minDateMessage={`Дата не может быть раньше ${((new Date().getDate() < 10 ? '0' + new Date().getDate() : new Date().getDate()) + '.' + (new Date().getMonth() + 1 < 10 ? '0' + (new Date().getMonth() + 1) : new Date().getMonth() + 1) + '.' + new Date().getFullYear())}`}
-														invalidDateMessage='Неверный формат даты'
-														KeyboardButtonProps={{'aria-label': 'change date'}}/>
-												</LocalizationProvider>
-											</Paper>
+											<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+												<DatePicker
+													margin='dense'
+													inputVariant='outlined'
+													variant='dialog'
+													cancelLabel='Отменить'
+													okLabel='Выбрать'
+													fullWidth
+													size='small'
+													className={classes.input}
+													label='Дата начала'
+													format='dd.MM.yyyy'
+													value={startDate}
+													minDate={new Date()}
+													onChange={this.handleStartDateChange}
+													minDateMessage={`Дата не может быть раньше ${(new Date().getDate() < 10 ? '0' + new Date().getDate() : new Date().getDate()) + '.' + (new Date().getMonth() + 1 < 10 ? '0' + (new Date().getMonth() + 1) : new Date().getMonth() + 1) + '.' + new Date().getFullYear()}`}
+													invalidDateMessage='Неверный формат даты'
+													renderInput={params => <TextField sx={{mt: 1}} fullWidth {...params} />}
+													KeyboardButtonProps={{'aria-label': 'change date'}}/>
+											</LocalizationProvider>
 										</Grid>
 										<Grid item xs={6}>
-											<Paper className={classes.paper}>
-												<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
-													<DatePicker
-														margin='normal'
-														inputVariant='outlined'
-														variant='dialog'
-														cancelLabel='Отменить'
-														okLabel='Выбрать'
-														fullWidth
-														size='small'
-														className={classes.input}
-														label='Дата окончания'
-														format='dd.MM.yyyy'
-														value={endDate}
-														minDate={startDate}
-														onChange={this.handleEndDateChange}
-														minDateMessage={`Дата не может быть раньше ${((startDate.getDate() < 10 ? '0' + startDate.getDate() : startDate.getDate()) + '.' + (startDate.getMonth() + 1 < 10 ? '0' + (startDate.getMonth() + 1) : startDate.getMonth() + 1) + '.' + startDate.getFullYear())}`}
-														invalidDateMessage='Неверный формат даты'
-														KeyboardButtonProps={{'aria-label': 'change date'}}/>
-												</LocalizationProvider>
-											</Paper>
+											<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+												<DatePicker
+													margin='dense'
+													inputVariant='outlined'
+													variant='dialog'
+													cancelLabel='Отменить'
+													okLabel='Выбрать'
+													fullWidth
+													size='small'
+													className={classes.input}
+													label='Дата окончания'
+													format='dd.MM.yyyy'
+													value={endDate}
+													minDate={startDate}
+													onChange={this.handleEndDateChange}
+													minDateMessage={`Дата не может быть раньше ${(startDate.getDate() < 10 ? '0' + startDate.getDate() : startDate.getDate()) + '.' + (startDate.getMonth() + 1 < 10 ? '0' + (startDate.getMonth() + 1) : startDate.getMonth() + 1) + '.' + startDate.getFullYear()}`}
+													invalidDateMessage='Неверный формат даты'
+													renderInput={params => <TextField sx={{mt: 1}} fullWidth {...params} />}
+													KeyboardButtonProps={{'aria-label': 'change date'}}/>
+											</LocalizationProvider>
 										</Grid>
 									</React.Fragment>
 								}
 								<Grid item xs={6}>
-									<Paper className={classes.paper}>
-										<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
-											<TimePicker
-												margin='normal'
-												inputVariant='outlined'
-												variant='dialog'
-												cancelLabel='Отменить'
-												okLabel='Выбрать'
-												fullWidth
-												disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
-												size='small'
-												className={classes.input}
-												ampm={false}
-												label='Время начала'
-												value={start}
-												onChange={this.handleStartTime}
-												keyboardIcon={<AccessTimeIcon />}
-												views={['hours', 'minutes']}
-												invalidDateMessage='Неверный формат времени'
-												KeyboardButtonProps={{'aria-label': 'change date'}}/>
-										</LocalizationProvider>
-									</Paper>
+									<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+										<TimePicker
+											margin='dense'
+											inputVariant='outlined'
+											variant='dialog'
+											cancelLabel='Отменить'
+											okLabel='Выбрать'
+											fullWidth
+											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
+											size='small'
+											className={classes.input}
+											ampm={false}
+											label='Время начала'
+											value={start}
+											onChange={this.handleStartTime}
+											keyboardIcon={<AccessTimeIcon />}
+											views={['hours', 'minutes']}
+											invalidDateMessage='Неверный формат времени'
+											renderInput={params => <TextField sx={{mt: 1}} fullWidth {...params} />}
+											KeyboardButtonProps={{'aria-label': 'change date'}}/>
+									</LocalizationProvider>
 								</Grid>
 								<Grid item xs={6}>
-									<Paper className={classes.paper}>
-										<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
-											<TimePicker
-												margin='normal'
-												inputVariant='outlined'
-												variant='dialog'
-												cancelLabel='Отменить'
-												okLabel='Выбрать'
-												fullWidth
-												disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
-												size='small'
-												className={classes.input}
-												ampm={false}
-												label='Время окончания'
-												value={end}
-												onChange={this.handleEndTime}
-												keyboardIcon={<AccessTimeIcon />}
-												views={['hours', 'minutes']}
-												invalidDateMessage='Неверный формат времени'
-												KeyboardButtonProps={{'aria-label': 'change date'}}/>
-										</LocalizationProvider>
-									</Paper>
+									<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+										<TimePicker
+											margin='dense'
+											inputVariant='outlined'
+											variant='dialog'
+											cancelLabel='Отменить'
+											okLabel='Выбрать'
+											fullWidth
+											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
+											size='small'
+											className={classes.input}
+											ampm={false}
+											label='Время окончания'
+											value={end}
+											onChange={this.handleEndTime}
+											keyboardIcon={<AccessTimeIcon />}
+											views={['hours', 'minutes']}
+											invalidDateMessage='Неверный формат времени'
+											renderInput={params => <TextField sx={{mt: 1}} fullWidth {...params} />}
+											KeyboardButtonProps={{'aria-label': 'change date'}}/>
+									</LocalizationProvider>
 								</Grid>
 							</Grid>
 							<Divider className={classes.divider} />
-							<Grid container spacing={1}>
+							<Grid container spacing={1} sx={{flexGrow: 1, minWidth: '30vw', mt: 1, mb: 0.5}}>
 								<Grid item xs={6}>
-									<Paper className={classes.paper}>
-										<TextField
-											required
-											error={!surname}
-											name='surname'
-											fullWidth
-											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
-											size='small'
-											autoComplete='off'
-											value={surname}
-											label='Фамилия'
-											variant='outlined'
-											className={classes.input}
-											inputProps={{'aria-label': 'Description'}}
-											onChange={this.handleChange}/>
-									</Paper>
+									<TextField
+										required
+										error={!surname}
+										margin='dense'
+										name='surname'
+										fullWidth
+										disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
+										size='small'
+										autoComplete='off'
+										value={surname}
+										label='Фамилия'
+										variant='outlined'
+										className={classes.input}
+										inputProps={{'aria-label': 'Description'}}
+										onChange={this.handleChange}/>
 								</Grid>
 								<Grid item xs={6}>
-									<Paper className={classes.paper}>
-										<TextField
-											required
-											error={!name}
-											name='name'
-											fullWidth
-											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
-											size='small'
-											autoComplete='off'
-											value={name}
-											label='Имя'
-											variant='outlined'
-											className={classes.input}
-											inputProps={{'aria-label': 'Description'}}
-											onChange={this.handleChange}/>
-									</Paper>
+									<TextField
+										required
+										error={!name}
+										margin='dense'
+										name='name'
+										fullWidth
+										disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
+										size='small'
+										autoComplete='off'
+										value={name}
+										label='Имя'
+										variant='outlined'
+										className={classes.input}
+										inputProps={{'aria-label': 'Description'}}
+										onChange={this.handleChange}/>
 								</Grid>
 								<Grid item xs={6}>
-									<Paper className={classes.paper}>
-										<TextField
-											name='middlename'
-											fullWidth
-											disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
-											size='small'
-											autoComplete='off'
-											value={middlename}
-											label='Отчество'
-											variant='outlined'
-											className={classes.input}
-											inputProps={{'aria-label': 'Description'}}
-											onChange={this.handleChange}/>
-									</Paper>
+									<TextField
+										name='middlename'
+										margin='dense'
+										fullWidth
+										disabled={!(currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2))}
+										size='small'
+										autoComplete='off'
+										value={middlename}
+										label='Отчество'
+										variant='outlined'
+										className={classes.input}
+										inputProps={{'aria-label': 'Description'}}
+										onChange={this.handleChange}/>
 								</Grid>
 								{
 									currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
 										? <React.Fragment>
 											<Divider className={classes.divider} />
 											<Grid item xs={6}>
-												<Paper className={classes.paper}>
-													<TextField
-														name='phoneNumber'
-														fullWidth
-														size='small'
-														autoComplete='off'
-														value={phoneNumber}
-														label='Номер телефона'
-														variant='outlined'
-														className={classes.input}
-														inputProps={{'aria-label': 'Description'}}
-														onChange={this.handleChange}/>
-												</Paper>
+												<TextField
+													name='phoneNumber'
+													margin='dense'
+													fullWidth
+													size='small'
+													autoComplete='off'
+													value={phoneNumber}
+													label='Номер телефона'
+													variant='outlined'
+													className={classes.input}
+													inputProps={{'aria-label': 'Description'}}
+													onChange={this.handleChange}/>
 											</Grid>
 										</React.Fragment>
 										: null

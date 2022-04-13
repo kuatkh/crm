@@ -38,7 +38,7 @@ module.exports = {
 				use: ['style-loader', 'css-loader'],
 			},
 			{
-				test: /\.(jpe?g|png|gif|svg)$/i,
+				test: /\.(jpe?g|jpg|png|gif|svg)$/i,
 				use: [
 					'url-loader?limit=10000',
 					'img-loader',
@@ -52,25 +52,25 @@ module.exports = {
 			common: path.resolve(__dirname, 'src'),
 		},
 		fallback: {
-		  'fs': false,
-		  'tls': false,
-		  'net': false,
-		  'path': false,
-		  'zlib': false,
-		  'http': false,
-		  'https': false,
-		  'stream': false,
-		  'crypto': false,
-		  'events': false, // require.resolve('events/'); npm i events
-		  'url': false, // require.resolve('url/'); npm i url
-		  'vm': false, // require.resolve("vm-browserify"); npm i vm-browserify
-		  'tty': false, // require.resolve("tty-browserify"); npm i tty-browserify
-		  'console': require.resolve('console-browserify'),
-		  'constants': require.resolve('constants-browserify'),
-		  'assert': false, // require.resolve("assert/"); npm i assert
-		  'querystring': false, // require.resolve("querystring-es3"); npm i querystring-es3
-		  'os': require.resolve('os-browserify/browser'), // require.resolve("os-browserify/browser"); npm i os-browserify
-		  'crypto-browserify': require.resolve('crypto-browserify'), // require.resolve('crypto-browserify'); npm i rypto-browserify
+			'fs': false,
+			'tls': false,
+			'net': false,
+			'path': false,
+			'zlib': false,
+			'http': false,
+			'https': false,
+			'stream': false,
+			'crypto': false,
+			'events': false, // require.resolve('events/'); npm i events
+			'url': false, // require.resolve('url/'); npm i url
+			'vm': false, // require.resolve("vm-browserify"); npm i vm-browserify
+			'tty': false, // require.resolve("tty-browserify"); npm i tty-browserify
+			'console': require.resolve('console-browserify'),
+			'constants': require.resolve('constants-browserify'),
+			'assert': false, // require.resolve("assert/"); npm i assert
+			'querystring': false, // require.resolve("querystring-es3"); npm i querystring-es3
+			'os': require.resolve('os-browserify/browser'), // require.resolve("os-browserify/browser"); npm i os-browserify
+			'crypto-browserify': require.resolve('crypto-browserify'), // require.resolve('crypto-browserify'); npm i rypto-browserify
 		},
-	}
+	},
 }

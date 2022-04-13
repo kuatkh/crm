@@ -1,11 +1,12 @@
 import React, {Component, useState} from 'react'
 import {withStyles} from '@mui/styles'
-import {connect} from 'react-redux'
+import {
+	Container,
+} from '@mui/material'
 import {
 	BrowserRouter,
 	Routes,
 	Route,
-	Navigate,
 } from 'react-router-dom'
 import {createBrowserHistory} from 'history'
 import MenuBar from 'components/MenuBar'
@@ -37,48 +38,44 @@ const styles = theme => ({
 
 const App = props => {
 	const [isAuthorized, setIsAuthorized] = useState(true) //tokenServices.getToken() ? true : false
-	const currentUser = userServices.getCurrentUser()
+	const userData = userServices.getCurrentUser()
+	const currentUser = userData || {roleId: 1}
 
 	return (
-		<div className='App'>
-			<MenuBar isAuthorized={isAuthorized} setIsAuthorized={setIsAuthorized} />
-			<main className={props.classes.content}>
-				<div className={props.classes.toolbar} />
-				<BrowserRouter>
+		<Container component='main' sx={{minHeight: '90vh', minWidth: '80vw'}}>
+			<BrowserRouter>
+				<MenuBar isAuthorized={isAuthorized} setIsAuthorized={setIsAuthorized} />
 				{isAuthorized
 					? <Routes>
-						<Route exact path='/'
-							component={() => <Home />} />
+						<Route exact path='/' element={<Home />} />
 						{
 							currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
 								? <React.Fragment>
-									<Route path='/users-list'
-										component={Users} />
-									<Route path='/profile'
-										component={Profile} />
+									<Route path='/users-list' element={<Users />} />
+									<Route path='/profile' element={<Profile />} />
 									<Route path='/dictionary-services'
-										component={() => <Dictionaries dictionaryName='DictServices' pageTitle='Спарвочник предоставляемых услуг' />} />
+										element={<Dictionaries dictionaryName='DictServices' pageTitle='Спарвочник предоставляемых услуг' />} />
 									<Route path='/dictionary-intolerances'
-										component={() => <Dictionaries dictionaryName='DictIntolerances' pageTitle='Справочник аллергический заболеваний' />} />
+										element={<Dictionaries dictionaryName='DictIntolerances' pageTitle='Справочник аллергический заболеваний' />} />
 									<Route path='/dictionary-genders'
-										component={() => <Dictionaries dictionaryName='DictGenders' pageTitle='Справочник пола человека' />} />
+										element={<Dictionaries dictionaryName='DictGenders' pageTitle='Справочник пола человека' />} />
 									<Route path='/dictionary-loyalty-programs'
-										component={() => <Dictionaries dictionaryName='DictLoyaltyPrograms' pageTitle='Справочник бонусных программ' />} />
+										element={<Dictionaries dictionaryName='DictLoyaltyPrograms' pageTitle='Справочник бонусных программ' />} />
 									{
 										currentUser && currentUser.roleId == 1 && (
 											<React.Fragment>
 												<Route path='/dictionary-contries'
-													component={() => <Dictionaries dictionaryName='DictCountries' pageTitle='Справочник стран' />} />
+													element={<Dictionaries dictionaryName='DictCountries' pageTitle='Справочник стран' />} />
 												<Route path='/dictionary-cities'
-													component={() => <Dictionaries dictionaryName='DictCities' pageTitle='Справочник городов' />} />
+													element={<Dictionaries dictionaryName='DictCities' pageTitle='Справочник городов' />} />
 												<Route path='/dictionary-departments'
-													component={() => <Dictionaries dictionaryName='DictDepartments' pageTitle='Справочник структурных подразделений' />} />
+													element={<Dictionaries dictionaryName='DictDepartments' pageTitle='Справочник структурных подразделений' />} />
 												<Route path='/dictionary-positions'
-													component={() => <Dictionaries dictionaryName='DictPositions' pageTitle='Справочник должностей' />} />
+													element={<Dictionaries dictionaryName='DictPositions' pageTitle='Справочник должностей' />} />
 												<Route path='/dictionary-enterprises'
-													component={() => <Dictionaries dictionaryName='DictEnterprises' pageTitle='Справочник компаний/филиалов' />} />
+													element={<Dictionaries dictionaryName='DictEnterprises' pageTitle='Справочник компаний/филиалов' />} />
 												<Route path='/dictionary-statuses'
-													component={() => <Dictionaries dictionaryName='DictStatuses' pageTitle='Справочник статусов' />} />
+													element={<Dictionaries dictionaryName='DictStatuses' pageTitle='Справочник статусов' />} />
 											</React.Fragment>
 										)
 									}
@@ -88,9 +85,11 @@ const App = props => {
 					</Routes>
 					: <LogIn logInSuccess={setIsAuthorized}/>
 				}
-				</BrowserRouter>
-			</main>
-		</div>
+			</BrowserRouter>
+			{/* <main className={props.classes.content}>
+				<div className={props.classes.toolbar} />
+			</main> */}
+		</Container>
 	)
 }
 

@@ -10,7 +10,6 @@ import {
 	Button,
 	Autocomplete,
 	Divider,
-	Paper,
 	Tooltip,
 } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
@@ -22,6 +21,7 @@ import {withSnackbar} from 'components/SnackbarWrapper'
 import {loading} from 'components/LoadingWrapper'
 import {appConstants} from 'constants/app.constants.js'
 import {getRequest, postRequest} from 'services/requests.services.js'
+import importantPerson from 'static/img/important-person.jpg'
 
 const styles = theme => ({
 	formControl: {
@@ -57,14 +57,6 @@ const styles = theme => ({
 	},
 	gapSmall: {
 		marginTop: 50,
-	},
-	paper: {
-		paddingRight: theme.spacing(1),
-		// textAlign: 'center',
-		color: theme.palette.text.secondary,
-		whiteSpace: 'nowrap',
-		marginBottom: theme.spacing(1),
-		boxShadow: 'none',
 	},
 	divider: {
 		margin: 0,
@@ -212,7 +204,6 @@ handleSaveClick = () => {
 		phoneNumber,
 		aboutMe,
 	} = this.state
-	const {token} = this.props
 
 	if (!surname) {
 		this.props.snackbar.showWarning('Вы не заполнили поле "Фамилия"')
@@ -222,8 +213,6 @@ handleSaveClick = () => {
 		this.props.snackbar.showWarning('Вы не заполнили поле "Имя"')
 		return
 	}
-
-	this.isLoaded(false)
 
 	const userData = {
 		id,
@@ -238,8 +227,6 @@ handleSaveClick = () => {
 	}
 
 	postRequest(`${appConstants.serverUrl}/api/Users/SaveProfile`, userData, result => {
-		this.isLoaded(true)
-
 		if (result && result.isSuccess) {
 			this.props.snackbar.showSuccess('Профиль успешно сохранен!')
 		} else if (result && !result.isSuccess && result.msg == 'empty_current_user_or_profile_data') {
@@ -266,8 +253,7 @@ handleSaveClick = () => {
 		}
 	},
 	error => {
-		this.isLoaded(true)
-		this.props.snackbar.showError(`Во время сохранения профиля произошла ошибка: ${error}`, 'error')
+		this.props.snackbar.showError(`Во время сохранения профиля произошла ошибка: ${error}`)
 	})
 }
 
@@ -370,7 +356,6 @@ render() {
 		openSnackbar,
 		snackbarMsg,
 		snackbarSeverity,
-		loading,
 		isEditProfile,
 		photoB64,
 		surname,
@@ -384,102 +369,92 @@ render() {
 	} = this.state
 
 	return (
-		<div>
+		<div className='content'>
 			<Grid container className={classes.container}>
 				<Grid item xs={12}>
-					<Paper className={classes.paper}>
-						<Typography variant='h4' display='block'>Профиль</Typography>
-					</Paper>
+					<Typography variant='h4' display='block'>Профиль</Typography>
 				</Grid>
 			</Grid>
 			<Divider className={classes.divider} />
 			<Grid container className={classes.container}>
 				<Grid container item xs={4} className={classes.photoGrid}>
 					<Grid item xs={12}>
-						<Paper className={classes.paper}>
-							{
-								photoB64
-									? <CardMedia component='img' className={classes.media} src={`data:image/jpeg;base64,${photoB64}`} title='Фото пользователя' />
-									: <CardMedia component='img' className={classes.media} src={require('../../Static/important-person.jpg')} title='Фото пользователя' />
-							}
-							{
-								isEditProfile
-									? (
-										<React.Fragment>
-											<input
-												accept='image/x-png,image/jpeg'
-												className={classes.input}
-												style={{display: 'none'}}
-												id='profile-photo-file'
-												ref={ref => this._fileInput = ref}
-												type='file'
-												onChange={this.handleImageChange}
-											/>
-											<label htmlFor='profile-photo-file'>
-												<IconButton color='secondary' aria-label='upload-photo' onClick={() => { if (this._fileInput) this._fileInput.click() }} className={classes.iconButton}>
-													<CloudUploadIcon />
-												</IconButton>
-											</label>
-										</React.Fragment>
-									)
-									: null
-							}
-						</Paper>
+						{
+							photoB64
+								? <CardMedia component='img' className={classes.media} src={`data:image/jpeg;base64,${photoB64}`} title='Фото пользователя' />
+								: <CardMedia component='img' className={classes.media} image={importantPerson} title='Фото пользователя' />
+						}
+						{
+							isEditProfile
+								? (
+									<React.Fragment>
+										<input
+											accept='image/x-png,image/jpeg'
+											className={classes.input}
+											style={{display: 'none'}}
+											id='profile-photo-file'
+											ref={ref => this._fileInput = ref}
+											type='file'
+											onChange={this.handleImageChange}
+										/>
+										<label htmlFor='profile-photo-file'>
+											<IconButton color='secondary' aria-label='upload-photo' onClick={() => { if (this._fileInput) this._fileInput.click() }} className={classes.iconButton}>
+												<CloudUploadIcon />
+											</IconButton>
+										</label>
+									</React.Fragment>
+								)
+								: null
+						}
 					</Grid>
 					{
 						isEditProfile
 							? (
 								<React.Fragment>
 									<Grid item xs={6}>
-										<Paper className={classes.paper}>
-											<Button
-												startIcon={<SaveIcon />}
-												variant='outlined'
-												color='secondary'
-												size='medium'
-												fullWidth
-												className={classes.button}
-												onClick={this.handleSaveClick}>
-												<Tooltip title='Сохранить изменения'>
-													<Typography noWrap>Сохранить изменения</Typography>
-												</Tooltip>
-											</Button>
-										</Paper>
-									</Grid>
-									<Grid item xs={6}>
-										<Paper className={classes.paper}>
-											<Button
-												startIcon={<CancelIcon />}
-												variant='outlined'
-												color='primary'
-												size='medium'
-												fullWidth
-												className={classes.button}
-												onClick={this.handleCancelClick}>
-												<Tooltip title='Отменить'>
-													<Typography noWrap>Отменить</Typography>
-												</Tooltip>
-											</Button>
-										</Paper>
-									</Grid>
-								</React.Fragment>
-							)
-							: (
-								<Grid item xs={12}>
-									<Paper className={classes.paper}>
 										<Button
-											startIcon={<EditIcon />}
+											startIcon={<SaveIcon />}
 											variant='outlined'
 											color='secondary'
 											size='medium'
 											fullWidth
 											className={classes.button}
-											onClick={this.handleEditClick}>
-											<Tooltip title='Редактировать профиль'>
-												<Typography noWrap>Редактировать профиль</Typography>
+											onClick={this.handleSaveClick}>
+											<Tooltip title='Сохранить изменения'>
+												<Typography noWrap>Сохранить изменения</Typography>
 											</Tooltip>
 										</Button>
-									</Paper>
+									</Grid>
+									<Grid item xs={6}>
+										<Button
+											startIcon={<CancelIcon />}
+											variant='outlined'
+											color='primary'
+											size='medium'
+											fullWidth
+											className={classes.button}
+											onClick={this.handleCancelClick}>
+											<Tooltip title='Отменить'>
+												<Typography noWrap>Отменить</Typography>
+											</Tooltip>
+										</Button>
+									</Grid>
+								</React.Fragment>
+							)
+							: (
+								<Grid item xs={12}>
+									<Button
+										startIcon={<EditIcon />}
+										variant='outlined'
+										color='secondary'
+										size='medium'
+										fullWidth
+										className={classes.button}
+										onClick={this.handleEditClick}>
+										<Tooltip title='Редактировать профиль'>
+											<Typography noWrap>Редактировать профиль</Typography>
+										</Tooltip>
+									</Button>
 								</Grid>
 							)
 					}
@@ -487,140 +462,124 @@ render() {
 				<Grid item xs={7}>
 					<Grid container className={classes.container} item>
 						<Grid item xs={6}>
-							<Paper className={classes.paper}>
-								<TextField
-									required
-									error={(isEditProfile && !surname)}
-									name='surname'
-									fullWidth
-									disabled={!isEditProfile}
-									size='small'
-									autoComplete='off'
-									value={surname}
-									label='Фамилия'
-									variant='outlined'
-									className={classes.input}
-									inputProps={{'aria-label': 'Description'}}
-									onChange={this.handleChange}/>
-							</Paper>
+							<TextField
+								required
+								error={(isEditProfile && !surname)}
+								name='surname'
+								fullWidth
+								disabled={!isEditProfile}
+								size='small'
+								autoComplete='off'
+								value={surname}
+								label='Фамилия'
+								variant='outlined'
+								className={classes.input}
+								inputProps={{'aria-label': 'Description'}}
+								onChange={this.handleChange}/>
 						</Grid>
 						<Grid item xs={6}>
-							<Paper className={classes.paper}>
-								<TextField
-									required
-									error={(isEditProfile && !name)}
-									name='name'
-									fullWidth
-									disabled={!isEditProfile}
-									size='small'
-									autoComplete='off'
-									value={name}
-									label='Имя'
-									variant='outlined'
-									className={classes.input}
-									inputProps={{'aria-label': 'Description'}}
-									onChange={this.handleChange}/>
-							</Paper>
+							<TextField
+								required
+								error={(isEditProfile && !name)}
+								name='name'
+								fullWidth
+								disabled={!isEditProfile}
+								size='small'
+								autoComplete='off'
+								value={name}
+								label='Имя'
+								variant='outlined'
+								className={classes.input}
+								inputProps={{'aria-label': 'Description'}}
+								onChange={this.handleChange}/>
 						</Grid>
 						<Grid item xs={6}>
-							<Paper className={classes.paper}>
-								<TextField
-									name='middlename'
-									fullWidth
-									disabled={!isEditProfile}
-									size='small'
-									autoComplete='off'
-									value={middlename}
-									label='Отчество'
-									variant='outlined'
-									className={classes.middlename}
-									inputProps={{'aria-label': 'Description'}}
-									onChange={this.handleChange}/>
-							</Paper>
+							<TextField
+								name='middlename'
+								fullWidth
+								disabled={!isEditProfile}
+								size='small'
+								autoComplete='off'
+								value={middlename}
+								label='Отчество'
+								variant='outlined'
+								className={classes.middlename}
+								inputProps={{'aria-label': 'Description'}}
+								onChange={this.handleChange}/>
 						</Grid>
 					</Grid>
 					<Divider className={classes.divider} />
 					<Grid container className={classes.container} item xs={12}>
 						<Grid item xs={6}>
-							<Paper className={classes.paper}>
-								<Autocomplete
-									name='department'
-									size='small'
-									value={department}
-									options={department ? [{...department}] : []}
-									fullWidth
-									disabled
-									getOptionLabel={option => option.name}
-									renderInput={params => <TextField {...params} label='Структурное подразделение' variant='outlined' />}
-								/>
-							</Paper>
+							<Autocomplete
+								name='department'
+								size='small'
+								value={department}
+								options={department ? [{...department}] : []}
+								fullWidth
+								disabled
+								getOptionLabel={option => option.name}
+								renderInput={params => <TextField {...params} label='Структурное подразделение' variant='outlined' />}
+							/>
 						</Grid>
 						<Grid item xs={6}>
-							<Paper className={classes.paper}>
-								<Autocomplete
-									name='position'
-									size='small'
-									value={position}
-									options={position ? [{...position}] : []}
-									fullWidth
-									disabled
-									getOptionLabel={option => option.name}
-									renderInput={params => <TextField {...params} label='Должность' variant='outlined' />}
-								/>
-							</Paper>
+							<Autocomplete
+								name='position'
+								size='small'
+								value={position}
+								options={position ? [{...position}] : []}
+								fullWidth
+								disabled
+								getOptionLabel={option => option.name}
+								renderInput={params => <TextField {...params} label='Должность' variant='outlined' />}
+							/>
 						</Grid>
 					</Grid>
 					<Divider className={classes.divider} />
 					<Grid container className={classes.container} item xs={12}>
 						<Grid item xs={6}>
-							<Paper className={classes.paper}>
-								<TextField
-									name='address'
-									fullWidth
-									disabled={!isEditProfile}
-									size='small'
-									autoComplete='off'
-									value={address}
-									label='Адрес'
-									variant='outlined'
-									className={classes.input}
-									inputProps={{'aria-label': 'Description'}}
-									onChange={this.handleChange}/>
-							</Paper>
+							<TextField
+								name='address'
+								fullWidth
+								disabled={!isEditProfile}
+								size='small'
+								autoComplete='off'
+								value={address}
+								label='Адрес'
+								variant='outlined'
+								className={classes.input}
+								inputProps={{'aria-label': 'Description'}}
+								onChange={this.handleChange}/>
 						</Grid>
 						<Grid item xs={6}>
-							<Paper className={classes.paper}>
-								<TextField
-									name='phoneNumber'
-									fullWidth
-									disabled={!isEditProfile}
-									size='small'
-									autoComplete='off'
-									value={phoneNumber}
-									label='Номер телефона'
-									variant='outlined'
-									className={classes.input}
-									inputProps={{'aria-label': 'Description'}}
-									onChange={this.handleChange}/>
-							</Paper>
+							<TextField
+								name='phoneNumber'
+								fullWidth
+								disabled={!isEditProfile}
+								size='small'
+								autoComplete='off'
+								value={phoneNumber}
+								label='Номер телефона'
+								variant='outlined'
+								className={classes.input}
+								inputProps={{'aria-label': 'Description'}}
+								onChange={this.handleChange}/>
 						</Grid>
 						<Grid item xs={6}>
-							<Paper className={classes.paper}>
-								<TextField
-									name='aboutMe'
-									fullWidth
-									multiline
-									disabled={!isEditProfile}
-									rows={3}
-									size='small'
-									autoComplete='off'
-									value={aboutMe}
-									label='Био'
-									variant='outlined'
-									className={classes.aboutMe}
-									inputProps={{'aria-label': 'Description'}}
-									onChange={this.handleChange}/>
-							</Paper>
+							<TextField
+								name='aboutMe'
+								fullWidth
+								multiline
+								disabled={!isEditProfile}
+								rows={3}
+								size='small'
+								autoComplete='off'
+								value={aboutMe}
+								label='Био'
+								variant='outlined'
+								className={classes.aboutMe}
+								inputProps={{'aria-label': 'Description'}}
+								onChange={this.handleChange}/>
 						</Grid>
 					</Grid>
 				</Grid>
