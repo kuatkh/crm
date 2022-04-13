@@ -18,11 +18,10 @@ import SaveIcon from '@mui/icons-material/Save'
 import CancelIcon from '@mui/icons-material/Cancel'
 import EditIcon from '@mui/icons-material/Edit'
 import {red} from '@mui/material/colors'
-import {connect} from 'react-redux'
-import {withSnackbar} from 'Components/SnackbarWrapper'
-import {loading} from 'Components/LoadingWrapper'
-import {allConstants} from 'Constants/AllConstants.js'
-import {getRequest, postRequest} from 'Services/RequestsServices.js'
+import {withSnackbar} from 'components/SnackbarWrapper'
+import {loading} from 'components/LoadingWrapper'
+import {appConstants} from 'constants/app.constants.js'
+import {getRequest, postRequest} from 'services/requests.services.js'
 
 const styles = theme => ({
 	formControl: {
@@ -143,9 +142,7 @@ class Profile extends Component {
 	}
 
 	getUserProfile = () => {
-		const {token} = this.props
-
-		getRequest(`${allConstants.serverUrl}/api/Users/GetProfile`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Users/GetProfile`, result => {
 			if (result && result.isSuccess && result.data) {
 				this.setState({...result.data})
 			} else {
@@ -159,9 +156,7 @@ class Profile extends Component {
 	}
 
 	getCurrentUserPhoto = () => {
-		const {token} = this.props
-
-		getRequest(`${allConstants.serverUrl}/api/Users/GetCurrentUserPhoto`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Users/GetCurrentUserPhoto`, result => {
 			if (result && result.isSuccess) {
 				this.setState({
 					photoB64: result.data,
@@ -242,7 +237,7 @@ handleSaveClick = () => {
 		aboutMe,
 	}
 
-	postRequest(`${allConstants.serverUrl}/api/Users/SaveProfile`, token, userData, result => {
+	postRequest(`${appConstants.serverUrl}/api/Users/SaveProfile`, userData, result => {
 		this.isLoaded(true)
 
 		if (result && result.isSuccess) {
@@ -277,7 +272,6 @@ handleSaveClick = () => {
 }
 
 handleSavePhoto = () => {
-	const {token} = this.props
 	const {
 		id,
 		crmEmployeesId,
@@ -293,7 +287,7 @@ handleSavePhoto = () => {
 		crmPatientsId,
 		photoB64,
 	}
-	postRequest(`${allConstants.serverUrl}/api/Users/SaveProfilePhoto`, token, photoData, photoResult => {
+	postRequest(`${appConstants.serverUrl}/api/Users/SaveProfilePhoto`, photoData, photoResult => {
 		this.isLoaded(true)
 		if (photoResult && photoResult.isSuccess) {
 			this.props.snackbar.showSuccess('Фото профиля успешно сохранено!')
@@ -636,12 +630,4 @@ render() {
 }
 }
 
-function mapStateToProps(state) {
-	const {currentUser, token} = state
-	return {
-		currentUser,
-		token,
-	}
-}
-
-export default connect(mapStateToProps)(compose(withSnackbar, loading, withStyles(styles))(Profile))
+export default compose(withSnackbar, loading, withStyles(styles))(Profile)

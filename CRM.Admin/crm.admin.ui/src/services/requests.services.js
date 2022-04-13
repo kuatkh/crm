@@ -1,16 +1,18 @@
-import {allConstants} from '../Constants/AllConstants.js'
+import {appConstants} from 'constants/app.constants.js'
+import {tokenServices} from 'services/token.services'
 
-const getRequest = (url, token, successCallback, errorCallback) => {
+const getRequest = (url, successCallback, errorCallback) => {
 	fetch(url, {
 		method: 'GET',
 		headers: {
-			...allConstants.requestHeaders,
-			Authorization: `Bearer ${(token || localStorage.getItem('crmToken'))}`,
+			...appConstants.requestHeaders,
+			Authorization: `Bearer ${(tokenServices.getToken() || '')}`,
 		},
 	})
 		.then(res => {
 			if (res.status === 401 || res.status === 403 || res.status === 302) {
 				localStorage.clear()
+				sessionStorage.clear()
 				location.reload()
 			} else {
 				return res.json()
@@ -31,22 +33,19 @@ const getRequest = (url, token, successCallback, errorCallback) => {
 		)
 }
 
-const postRequest = (url, token, body, successCallback, errorCallback) => {
-	let requestHeaders = {
-		...allConstants.requestHeaders,
-		Authorization: `Bearer ${(token || localStorage.getItem('crmToken'))}`,
-	}
-	if (token == 'init') {
-		delete requestHeaders.Authorization
-	}
+const postRequest = (url, body, successCallback, errorCallback) => {
 	fetch(url, {
 		method: 'POST',
-		headers: {...requestHeaders},
+		headers: {
+			...appConstants.requestHeaders,
+			Authorization: `Bearer ${(tokenServices.getToken() || '')}`,
+		},
 		body: JSON.stringify(body),
 	})
 		.then(res => {
 			if (res.status === 401 || res.status === 403 || res.status === 302) {
 				localStorage.clear()
+				sessionStorage.clear()
 				location.reload()
 			} else {
 				return res.json()

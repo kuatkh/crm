@@ -10,9 +10,9 @@ import {
 } from '@mui/material'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import AddDictionaryData from './AddDictionaryData'
-import AbTable from 'Components/AbTable'
-import {allConstants} from 'Constants/AllConstants.js'
-import {dictionariesColumns} from 'Constants/TableColumns.js'
+import AbTable from 'components/AbTable'
+import {appConstants} from 'constants/app.constants.js'
+import {dictionariesColumns} from 'constants/columns.constants.js'
 
 const styles = theme => ({
 	container: {
@@ -149,7 +149,7 @@ render() {
 				<Grid item xs={12}>
 					<Paper className={classes.paper}>
 						<AbTable
-							url={`${allConstants.serverUrl}/api/Dictionaries/GetDictionaryData`}
+							url={`${appConstants.serverUrl}/api/Dictionaries/GetDictionaryData`}
 							filterData={{
 								dictionaryName,
 							}}

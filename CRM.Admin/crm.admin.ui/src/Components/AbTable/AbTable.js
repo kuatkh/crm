@@ -21,7 +21,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import {connect} from 'react-redux'
 import _ from 'lodash'
-import {postRequest} from 'Services/RequestsServices.js'
+import {postRequest} from 'services/requests.services.js'
 
 const styles = theme => ({
 	container: {

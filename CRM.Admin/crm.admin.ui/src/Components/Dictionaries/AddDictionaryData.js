@@ -12,8 +12,8 @@ import {
 } from '@mui/material'
 import SaveIcon from '@mui/icons-material/Save'
 import CancelIcon from '@mui/icons-material/Cancel'
-import {allConstants} from 'Constants/AllConstants.js'
-import {postRequest} from 'Services/RequestsServices.js'
+import {appConstants} from 'constants/app.constants.js'
+import {postRequest} from 'services/requests.services.js'
 
 const styles = theme => ({
 	formControl: {
@@ -101,12 +101,12 @@ class AddDictionaryData extends React.Component {
 	}
 
 	// getDepartments = () => {
-	// 	const {token, isLoaded, handleSnackbarOpen} = this.props
+	// 	const {isLoaded, handleSnackbarOpen} = this.props
 	// 	if (isLoaded) {
 	// 		isLoaded(false)
 	// 	}
 
-	// 	getRequest(`${allConstants.serverUrl}/api/Admin/GetDepartments`, token, result => {
+	// 	getRequest(`${appConstants.serverUrl}/api/Admin/GetDepartments`, result => {
 	// 		if (isLoaded) {
 	// 			isLoaded(true)
 	// 		}
@@ -158,11 +158,11 @@ handleSaveClick = () => {
 		amount,
 		address,
 	} = this.state
-	const {token, handleSnackbarOpen, isLoaded, handleEditDictionaryDialogClose, dictionaryName} = this.props
+	const {handleSnackbarOpen, isLoaded, handleEditDictionaryDialogClose, dictionaryName} = this.props
 
 	if (!name) {
 		if (handleSnackbarOpen) {
-			handleSnackbarOpen('Вы не заполнили поле "Название (рус.)"', 'error')
+			handleSnackbarOpen('Вы не заполнили поле "Название"', 'error')
 		}
 		return
 	}
@@ -177,7 +177,7 @@ handleSaveClick = () => {
 		description,
 	}
 
-	postRequest(`${allConstants.serverUrl}/api/Dictionaries/Save${dictionaryName}`, token, dictionaryData, result => {
+	postRequest(`${appConstants.serverUrl}/api/Dictionaries/Save${dictionaryName}`, dictionaryData, result => {
 		if (isLoaded) {
 			isLoaded(true)
 		}

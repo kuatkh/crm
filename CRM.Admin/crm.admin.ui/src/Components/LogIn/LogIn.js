@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import {allConstants} from 'Constants/AllConstants.js'
+import {appConstants} from 'constants/app.constants.js'
 
 const styles = theme => ({
 	toolbar: {
@@ -65,10 +65,10 @@ handleSubmit = e => {
 	const {logInSuccess} = this.props
 	if (userName && userSecret) {
 		this.isLoaded(false)
-		fetch(`${allConstants.serverUrl}/api/Auth/LogIn`, {
+		fetch(`${appConstants.serverUrl}/api/Auth/LogIn`, {
 			method: 'POST',
 			headers: {
-				...allConstants.requestHeaders,
+				...appConstants.requestHeaders,
 			},
 			body: JSON.stringify({userName, userSecret}),
 		})

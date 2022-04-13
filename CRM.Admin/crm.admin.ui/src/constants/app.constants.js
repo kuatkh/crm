@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const allConstants = {
+export const appConstants = {
 
 	/* eslint-disable*/
 	serverUrl: process.env.NODE_ENV == 'development' ? 'https://localhost:5021' : '',
@@ -11,14 +11,6 @@ export const allConstants = {
 		'Pragma': 'no-cache',
 		'Expires': 0,
 	},
-
-	ADD_CURRENT_USER_REQUEST: 'ADD_CURRENT_USER_REQUEST',
-	ADD_CURRENT_USER_SUCCESS: 'ADD_CURRENT_USER_SUCCESS',
-	ADD_CURRENT_USER_FAILURE: 'ADD_CURRENT_USER_FAILURE',
-
-	ADD_TOKEN_SUCCESS: 'ADD_TOKEN_SUCCESS',
-	ADD_TOKEN_FAILURE: 'ADD_TOKEN_FAILURE',
-
 }
 
 export const treeData = [

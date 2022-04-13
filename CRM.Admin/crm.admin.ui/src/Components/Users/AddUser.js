@@ -24,8 +24,8 @@ import ruLocale from 'date-fns/locale/ru'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import DatePicker from '@mui/lab/DatePicker'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
-import {allConstants} from 'Constants/AllConstants.js'
-import {getRequest, postRequest} from 'Services/RequestsServices.js'
+import {appConstants} from 'constants/app.constants.js'
+import {getRequest, postRequest} from 'services/requests.services.js'
 
 const styles = theme => ({
 	formControl: {
@@ -134,12 +134,12 @@ class AddUser extends React.Component {
 	}
 
 	getEnterprises = () => {
-		const {token, isLoaded, handleSnackbarOpen} = this.props
+		const {isLoaded, handleSnackbarOpen} = this.props
 		if (isLoaded) {
 			isLoaded(false)
 		}
 
-		getRequest(`${allConstants.serverUrl}/api/Admin/GetEnterprises`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Admin/GetEnterprises`, result => {
 			if (isLoaded) {
 				isLoaded(true)
 			}
@@ -169,12 +169,12 @@ class AddUser extends React.Component {
 	}
 
 	getDepartments = () => {
-		const {token, isLoaded, handleSnackbarOpen} = this.props
+		const {isLoaded, handleSnackbarOpen} = this.props
 		if (isLoaded) {
 			isLoaded(false)
 		}
 
-		getRequest(`${allConstants.serverUrl}/api/Admin/GetDepartments`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Admin/GetDepartments`, result => {
 			if (isLoaded) {
 				isLoaded(true)
 			}
@@ -204,13 +204,13 @@ class AddUser extends React.Component {
 	}
 
 	getPositions = () => {
-		const {token, isLoaded, handleSnackbarOpen} = this.props
+		const {isLoaded, handleSnackbarOpen} = this.props
 
 		if (isLoaded) {
 			isLoaded(false)
 		}
 
-		getRequest(`${allConstants.serverUrl}/api/Admin/GetPositions`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Admin/GetPositions`, result => {
 			if (isLoaded) {
 				isLoaded(true)
 			}
@@ -240,13 +240,13 @@ class AddUser extends React.Component {
 	}
 
 	getRoles = () => {
-		const {token, isLoaded, handleSnackbarOpen} = this.props
+		const {isLoaded, handleSnackbarOpen} = this.props
 
 		if (isLoaded) {
 			isLoaded(false)
 		}
 
-		getRequest(`${allConstants.serverUrl}/api/Admin/GetRoles`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Admin/GetRoles`, result => {
 			if (isLoaded) {
 				isLoaded(true)
 			}

@@ -1,17 +1,21 @@
-import React, {Component} from 'react'
+import React, {Component, useState} from 'react'
 import {withStyles} from '@mui/styles'
 import {connect} from 'react-redux'
-import {Router, Route} from 'react-router-dom'
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+	Navigate,
+} from 'react-router-dom'
 import {createBrowserHistory} from 'history'
-import MenuBar from 'Components/MenuBar'
-import LogIn from 'Components/LogIn'
-import Home from 'Components/Home'
-import Users from 'Components/Users'
-import Profile from 'Components/Profile'
-import Dictionaries from 'Components/Dictionaries'
-import {allActions} from 'Actions/AllActions'
-import {allConstants} from 'Constants/AllConstants.js'
-import {getRequest} from 'Services/RequestsServices.js'
+import MenuBar from 'components/MenuBar'
+import LogIn from 'components/LogIn'
+import Home from 'components/Home'
+import Users from 'components/Users'
+import Profile from 'components/Profile'
+import Dictionaries from 'components/Dictionaries'
+import {tokenServices} from 'services/token.services'
+import {userServices} from 'services/user.services'
 require('./App.css')
 
 const history = createBrowserHistory({basename: 'ab-app'})
@@ -31,115 +35,63 @@ const styles = theme => ({
 	},
 })
 
-class App extends Component {
+const App = props => {
+	const [isAuthorized, setIsAuthorized] = useState(true) //tokenServices.getToken() ? true : false
+	const currentUser = userServices.getCurrentUser()
 
-	constructor(props) {
-		super(props)
-		this.state = {
-			isAuthorized: false,
-		}
-	}
-
-	componentDidMount() {
-		if (!localStorage.getItem('crmToken')) {
-			localStorage.clear()
-		} else {
-			this.logInSuccess()
-		}
-	}
-
-	logInSuccess = () => {
-		this.setState({
-			isAuthorized: true,
-		})
-		const {dispatch, currentUser, token} = this.props
-
-		if (!token && localStorage.getItem('crmToken')) {
-			dispatch(allActions.addToken(localStorage.getItem('crmToken')))
-		}
-
-		if ((!currentUser || !currentUser.Id) && !localStorage.getItem('currentUser')) {
-			this.getCurrentUser()
-		} else if ((!currentUser || !currentUser.Id) && localStorage.getItem('currentUser')) {
-			dispatch(allActions.addCurrentUser(JSON.parse(localStorage.getItem('currentUser'))))
-		}
-	}
-
-	getCurrentUser = () => {
-		const {dispatch, token} = this.props
-
-		getRequest(`${allConstants.serverUrl}/api/Users/GetCurrentUserData`, token, result => {
-			dispatch(allActions.addCurrentUser(result))
-		},
-		error => {
-			console.log(error)
-		})
-	}
-
-	render() {
-		const {classes, currentUser, token} = this.props
-		let {isAuthorized} = this.state
-		// isAuthorized = true
-		return (
-			<div className='App'>
-				<MenuBar isAuthorized={isAuthorized} currentUser={currentUser}/>
-				<main className={classes.content}>
-					<div className={classes.toolbar} />
-					{isAuthorized
-						? <Router history={history}>
-							<Route exact path='/'
-								component={() => <Home currentUser={currentUser} token={token} />} />
-							{
-								currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
-									? <React.Fragment>
-										<Route path='/users-list'
-											component={Users} />
-										<Route path='/profile'
-											component={Profile} />
-										<Route path='/dictionary-services'
-											component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictServices' pageTitle='Спарвочник предоставляемых услуг' />} />
-										<Route path='/dictionary-intolerances'
-											component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictIntolerances' pageTitle='Справочник аллергический заболеваний' />} />
-										<Route path='/dictionary-genders'
-											component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictGenders' pageTitle='Справочник пола человека' />} />
-										<Route path='/dictionary-loyalty-programs'
-											component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictLoyaltyPrograms' pageTitle='Справочник бонусных программ' />} />
-										{
-											currentUser && currentUser.roleId == 1 && (
-												<React.Fragment>
-													<Route path='/dictionary-contries'
-														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictCountries' pageTitle='Справочник стран' />} />
-													<Route path='/dictionary-cities'
-														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictCities' pageTitle='Справочник городов' />} />
-													<Route path='/dictionary-departments'
-														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictDepartments' pageTitle='Справочник структурных подразделений' />} />
-													<Route path='/dictionary-positions'
-														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictPositions' pageTitle='Справочник должностей' />} />
-													<Route path='/dictionary-enterprises'
-														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictEnterprises' pageTitle='Справочник компаний/филиалов' />} />
-													<Route path='/dictionary-statuses'
-														component={() => <Dictionaries currentUser={currentUser} token={token} dictionaryName='DictStatuses' pageTitle='Справочник статусов' />} />
-												</React.Fragment>
-											)
-										}
-									</React.Fragment>
-									: null
-							}
-						</Router>
-						: <LogIn logInSuccess={this.logInSuccess}/>
-					}
-				</main>
-			</div>
-		)
-	}
+	return (
+		<div className='App'>
+			<MenuBar isAuthorized={isAuthorized} setIsAuthorized={setIsAuthorized} />
+			<main className={props.classes.content}>
+				<div className={props.classes.toolbar} />
+				<BrowserRouter>
+				{isAuthorized
+					? <Routes>
+						<Route exact path='/'
+							component={() => <Home />} />
+						{
+							currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2)
+								? <React.Fragment>
+									<Route path='/users-list'
+										component={Users} />
+									<Route path='/profile'
+										component={Profile} />
+									<Route path='/dictionary-services'
+										component={() => <Dictionaries dictionaryName='DictServices' pageTitle='Спарвочник предоставляемых услуг' />} />
+									<Route path='/dictionary-intolerances'
+										component={() => <Dictionaries dictionaryName='DictIntolerances' pageTitle='Справочник аллергический заболеваний' />} />
+									<Route path='/dictionary-genders'
+										component={() => <Dictionaries dictionaryName='DictGenders' pageTitle='Справочник пола человека' />} />
+									<Route path='/dictionary-loyalty-programs'
+										component={() => <Dictionaries dictionaryName='DictLoyaltyPrograms' pageTitle='Справочник бонусных программ' />} />
+									{
+										currentUser && currentUser.roleId == 1 && (
+											<React.Fragment>
+												<Route path='/dictionary-contries'
+													component={() => <Dictionaries dictionaryName='DictCountries' pageTitle='Справочник стран' />} />
+												<Route path='/dictionary-cities'
+													component={() => <Dictionaries dictionaryName='DictCities' pageTitle='Справочник городов' />} />
+												<Route path='/dictionary-departments'
+													component={() => <Dictionaries dictionaryName='DictDepartments' pageTitle='Справочник структурных подразделений' />} />
+												<Route path='/dictionary-positions'
+													component={() => <Dictionaries dictionaryName='DictPositions' pageTitle='Справочник должностей' />} />
+												<Route path='/dictionary-enterprises'
+													component={() => <Dictionaries dictionaryName='DictEnterprises' pageTitle='Справочник компаний/филиалов' />} />
+												<Route path='/dictionary-statuses'
+													component={() => <Dictionaries dictionaryName='DictStatuses' pageTitle='Справочник статусов' />} />
+											</React.Fragment>
+										)
+									}
+								</React.Fragment>
+								: null
+						}
+					</Routes>
+					: <LogIn logInSuccess={setIsAuthorized}/>
+				}
+				</BrowserRouter>
+			</main>
+		</div>
+	)
 }
 
-function mapStateToProps(state) {
-	const {currentUser, token} = state
-	return {
-		currentUser,
-		token,
-	}
-}
-
-export default connect(mapStateToProps)(withStyles(styles, {withTheme: true})(App))
+export default withStyles(styles, {withTheme: true})(App)

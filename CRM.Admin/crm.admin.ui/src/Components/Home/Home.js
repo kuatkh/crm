@@ -27,10 +27,11 @@ import TimePicker from '@mui/lab/TimePicker'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import ruLocale from 'date-fns/locale/ru'
 import _ from 'lodash'
-import {allConstants} from 'Constants/AllConstants.js'
-import {getRequest, postRequest} from 'Services/RequestsServices.js'
-import {withSnackbar} from 'Components/SnackbarWrapper'
-import {loading} from 'Components/LoadingWrapper'
+import {appConstants} from 'constants/app.constants.js'
+import {getRequest, postRequest} from 'services/requests.services'
+import {userServices} from 'services/user.services'
+import {withSnackbar} from 'components/SnackbarWrapper'
+import {loading} from 'components/LoadingWrapper'
 import 'moment/locale/ru'
 require('react-big-calendar/lib/addons/dragAndDrop/styles.css')
 require('react-big-calendar/lib/css/react-big-calendar.css')
@@ -169,9 +170,6 @@ class Home extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		if (!_.isEqual(prevProps.currentUser, this.props.currentUser)) {
-			this.getAppointments()
-		}
 		if (prevState.searchData != this.state.searchData) {
 			window.clearTimeout(this.searchTimeout)
 			this.searchTimeout = window.setTimeout(() => {
@@ -210,7 +208,7 @@ class Home extends React.Component {
 	}
 
 	getAppointments = () => {
-		const {token, currentUser} = this.props
+		const currentUser = userServices.getCurrentUser()
 		const {mainSelectedEmployee, dateRange} = this.state
 
 		console.log('dateRange', dateRange)
@@ -229,7 +227,7 @@ class Home extends React.Component {
 				filter.toEmployee = {id: currentUser.crmEmployeesId}
 			}
 
-			postRequest(`${allConstants.serverUrl}/api/Appointments/GetAppointments`, token, filter, result => {
+			postRequest(`${appConstants.serverUrl}/api/Appointments/GetAppointments`, filter, result => {
 				this.props.loadingScreen.hide()
 				console.log('result.data', result)
 				if (result && result.isSuccess && Array.isArray(result.data)) {
@@ -446,7 +444,7 @@ class Home extends React.Component {
 	}
 
 	saveAppointment = appointment => {
-		const {token, currentUser} = this.props
+		const currentUser = userServices.getCurrentUser()
 
 		if (currentUser && (currentUser.roleId == 1 || currentUser.roleId == 2) && !appointment.iin) {
 			this.props.snackbar.showWarning('Вы не заполнили поле "ИИН"')
@@ -471,7 +469,7 @@ class Home extends React.Component {
 
 		this.props.loadingScreen.show()
 
-		postRequest(`${allConstants.serverUrl}/api/Appointments/SaveAppointment`, token, appointment, result => {
+		postRequest(`${appConstants.serverUrl}/api/Appointments/SaveAppointment`, appointment, result => {
 			// this.props.loadingScreen.hide()
 			this.handleClose()
 			if (result && !result.isSuccess) {
@@ -489,14 +487,12 @@ class Home extends React.Component {
 	}
 
 	saveAppointmentStartEnd = (id, start, end) => {
-		const {token} = this.props
-
 		this.props.loadingScreen.show()
 
 		const newStart = new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds())
 		const newEnd = new Date(start.getFullYear(), start.getMonth(), start.getDate(), end.getHours(), end.getMinutes(), end.getSeconds())
 
-		postRequest(`${allConstants.serverUrl}/api/Appointments/SetAppointmentStartEnd`, token, {id, start: moment(newStart).format(), end: moment(newEnd).format()}, result => {
+		postRequest(`${appConstants.serverUrl}/api/Appointments/SetAppointmentStartEnd`, {id, start: moment(newStart).format(), end: moment(newEnd).format()}, result => {
 			// this.props.loadingScreen.hide()
 			this.handleClose()
 			if (result && !result.isSuccess) {
@@ -601,11 +597,9 @@ class Home extends React.Component {
 		// 	complain: '',
 		// })
 
-		const {token} = this.props
-
 		this.props.loadingScreen.show()
 
-		getRequest(`${allConstants.serverUrl}/api/Appointments/DeleteAppointment?id=${(this.state.id || 0)}`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Appointments/DeleteAppointment?id=${(this.state.id || 0)}`, result => {
 			// this.props.loadingScreen.hide()
 			this.handleClose()
 			if (result && !result.isSuccess) {
@@ -848,10 +842,9 @@ class Home extends React.Component {
 	}
 
 	getPatientByDocumentNumber = docNum => {
-		const {token} = this.props
 		this.props.loadingScreen.show()
 
-		getRequest(`${allConstants.serverUrl}/api/Patients/GetPatientByDocumentNumber?docNum=${docNum}`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Patients/GetPatientByDocumentNumber?docNum=${docNum}`, result => {
 			this.props.loadingScreen.hide()
 			if (result && result.isSuccess && result.data) {
 				this.setState({
@@ -872,11 +865,10 @@ class Home extends React.Component {
 	}
 
 	filterProceduresData = () => {
-		const {token} = this.props
 		const {proceduresSearchData} = this.state
 		this.props.loadingScreen.show()
 
-		getRequest(`${allConstants.serverUrl}/api/Dictionaries/GetDictServicesData?searchData=${proceduresSearchData}`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Dictionaries/GetDictServicesData?searchData=${proceduresSearchData}`, result => {
 			this.props.loadingScreen.hide()
 			if (result.isSuccess && Array.isArray(result.data)) {
 				this.setState({
@@ -895,11 +887,10 @@ class Home extends React.Component {
 	}
 
 	filterUsersData = () => {
-		const {token} = this.props
 		const {searchData} = this.state
 		this.props.loadingScreen.show()
 
-		getRequest(`${allConstants.serverUrl}/api/Users/GetUsersBySearch?searchData=${searchData}&toAppointment=true`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Users/GetUsersBySearch?searchData=${searchData}&toAppointment=true`, result => {
 			this.props.loadingScreen.hide()
 			if (Array.isArray(result)) {
 				this.setState({
@@ -918,7 +909,8 @@ class Home extends React.Component {
 	}
 
 	render() {
-		const {classes, currentUser} = this.props
+		const currentUser = userServices.getCurrentUser()
+		const {classes} = this.props
 		const {
 			id,
 			isCalendarResizable,

@@ -22,10 +22,10 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import DatePicker from '@mui/lab/DatePicker'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import AddUser from './AddUser'
-import AbTable from 'Components/AbTable'
-import {allConstants} from 'Constants/AllConstants.js'
-import {usersColumns} from 'Constants/TableColumns.js'
-import {getRequest} from 'Services/RequestsServices.js'
+import AbTable from 'components/AbTable'
+import {appConstants} from 'constants/app.constants.js'
+import {usersColumns} from 'constants/columns.constants.js'
+import {getRequest} from 'services/requests.services.js'
 
 const styles = theme => ({
 	formControl: {
@@ -118,10 +118,9 @@ class Users extends React.Component {
 	}
 
 	getDepartments = () => {
-		const {token} = this.props
 		this.isLoaded(false)
 
-		getRequest(`${allConstants.serverUrl}/api/Admin/GetDepartments`, token, result => {
+		getRequest(`${appConstants.serverUrl}/api/Admin/GetDepartments`, result => {
 			this.isLoaded(true)
 			if (Array.isArray(result)) {
 				this.setState({
@@ -339,7 +338,7 @@ render() {
 				<Grid item xs={12}>
 					<Paper className={classes.paper}>
 						<AbTable
-							url={`${allConstants.serverUrl}/api/Admin/GetUsers`}
+							url={`${appConstants.serverUrl}/api/Admin/GetUsers`}
 							filterData={{
 								departmentId: selectedDepartment ? selectedDepartment.id : 0,
 								filterByCreatedDate,
