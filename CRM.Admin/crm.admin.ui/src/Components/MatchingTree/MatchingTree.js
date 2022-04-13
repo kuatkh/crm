@@ -15,8 +15,8 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import {connect} from 'react-redux'
 import AbTable from '../AbTable'
 import AddMatchingTree from './AddMatchingTree'
-import {allConstants} from '../../Constants/AllConstants.js'
-import {usersColumns} from '../../Constants/TableColumns.js'
+import {allConstants} from '../../constants/app.constants.js'
+import {usersColumns} from '../../constants/columns.constants.js'
 
 const styles = theme => ({
 	formControl: {

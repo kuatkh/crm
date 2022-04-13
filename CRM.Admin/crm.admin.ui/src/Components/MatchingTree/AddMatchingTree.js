@@ -23,8 +23,8 @@ import {green, purple} from '@material-ui/core/colors'
 import AssignmentReturnedOutlinedIcon from '@material-ui/icons/AssignmentReturnedOutlined'
 import AssignmentReturnedRoundedIcon from '@material-ui/icons/AssignmentReturnedRounded'
 import SortableTree, {toggleExpandedForAll, getNodeAtPath, addNodeUnderParent, removeNodeAtPath, walk} from 'react-sortable-tree'
-import {allConstants, treeData} from '../../Constants/AllConstants.js'
-import {getRequest} from '../../Services/RequestsServices.js'
+import {allConstants, treeData} from '../../constants/app.constants.js'
+import {getRequest} from '../../services/requests.services.js'
 require('react-sortable-tree/style.css')
 require('./treeStyle.css')
 
