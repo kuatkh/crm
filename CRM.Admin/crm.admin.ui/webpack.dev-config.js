@@ -1,36 +1,28 @@
 ﻿/* global __dirname */
-const webpack = require('webpack')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-	entry: [
-		'babel-polyfill',
-		'whatwg-fetch',
-		'react-hot-loader/patch',
-		'./src/index.js',
-	],
+	mode: 'development',
+	context: __dirname,
+	entry: './src/index.js',
+	devtool: 'inline-source-map',
 	output: {
-		filename: './build-dev/bundle.js',
+		publicPath: '/',
+		path: path.resolve(__dirname, 'dist'),
+		filename: 'bundle.js',
+		clean: true,
 	},
 	devServer: {
-		contentBase: path.join(__dirname, 'build-dev'),
-		port: 9000,
 		historyApiFallback: true,
 	},
 	plugins: [
-		new webpack.optimize.OccurrenceOrderPlugin(),
-		new webpack.optimize.AggressiveMergingPlugin(),
 		//new BundleAnalyzerPlugin(),
-
 		new HtmlWebpackPlugin({
-			hash: true,
-			filename: './build-dev/index.html',
-		}),
-		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: JSON.stringify('development'),
-			},
+			title: 'CRM. Admin. Development',
+			filename: 'index.html',
+			template: './index.html',
+			xhtml: true,
 		}),
 	],
 	module: {
@@ -38,16 +30,12 @@ module.exports = {
 			{
 				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
-				loader: 'babel-loader',
+				use: ['babel-loader'],
 			},
 			{
 				// include: /style/,
 				test: /\.css$/,
-				loader: 'style-loader!css-loader',
-			},
-			{
-				test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
-				loader: 'url-loader?limit=20000&name=[name]-[hash].[ext]',
+				use: ['style-loader', 'css-loader'],
 			},
 			{
 				test: /\.(jpe?g|png|gif|svg)$/i,
@@ -56,17 +44,33 @@ module.exports = {
 					'img-loader',
 				],
 			},
-			{
-				exclude: /node_modules/,
-				loader: 'eslint-loader',
-				test: /\.js$/,
-			},
 		],
 	},
 	resolve: {
-		modules: ['src', 'node_modules'],
+		modules: [path.resolve(__dirname, 'src'), 'node_modules'],
 		alias: {
 			common: path.resolve(__dirname, 'src'),
 		},
-	},
+		fallback: {
+		  'fs': false,
+		  'tls': false,
+		  'net': false,
+		  'path': false,
+		  'zlib': false,
+		  'http': false,
+		  'https': false,
+		  'stream': false,
+		  'crypto': false,
+		  'events': false, // require.resolve('events/'); npm i events
+		  'url': false, // require.resolve('url/'); npm i url
+		  'vm': false, // require.resolve("vm-browserify"); npm i vm-browserify
+		  'tty': false, // require.resolve("tty-browserify"); npm i tty-browserify
+		  'console': require.resolve('console-browserify'),
+		  'constants': require.resolve('constants-browserify'),
+		  'assert': false, // require.resolve("assert/"); npm i assert
+		  'querystring': false, // require.resolve("querystring-es3"); npm i querystring-es3
+		  'os': require.resolve('os-browserify/browser'), // require.resolve("os-browserify/browser"); npm i os-browserify
+		  'crypto-browserify': require.resolve('crypto-browserify'), // require.resolve('crypto-browserify'); npm i rypto-browserify
+		},
+	}
 }

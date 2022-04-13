@@ -1,4 +1,4 @@
-import {allConstants} from '../Constants/AllConstants'
+import {allConstants} from 'Constants/AllConstants'
 
 const initialState = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null
 

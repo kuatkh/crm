@@ -1,20 +1,18 @@
 import React from 'react'
-import {withStyles} from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import Snackbar from '@material-ui/core/Snackbar'
-import Alert from '@material-ui/lab/Alert'
-import Paper from '@material-ui/core/Paper'
-import Divider from '@material-ui/core/Divider'
-import Grid from '@material-ui/core/Grid'
-import Backdrop from '@material-ui/core/Backdrop'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import PersonAddIcon from '@material-ui/icons/PersonAdd'
+import {withStyles} from '@mui/styles'
+import {
+	Grid,
+	Typography,
+	Dialog,
+	Button,
+	Divider,
+	Paper,
+} from '@mui/material'
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import AddDictionaryData from './AddDictionaryData'
-import AbTable from '../AbTable'
-import {allConstants} from '../../Constants/AllConstants.js'
-import {dictionariesColumns} from '../../Constants/TableColumns.js'
+import AbTable from 'Components/AbTable'
+import {allConstants} from 'Constants/AllConstants.js'
+import {dictionariesColumns} from 'Constants/TableColumns.js'
 
 const styles = theme => ({
 	container: {

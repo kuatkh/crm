@@ -1,31 +1,31 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {withStyles} from '@material-ui/core/styles'
-import TextField from '@material-ui/core/TextField'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import Snackbar from '@material-ui/core/Snackbar'
-import Alert from '@material-ui/lab/Alert'
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import Paper from '@material-ui/core/Paper'
-import Divider from '@material-ui/core/Divider'
-import Grid from '@material-ui/core/Grid'
-import Backdrop from '@material-ui/core/Backdrop'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import PersonAddIcon from '@material-ui/icons/PersonAdd'
+import {withStyles} from '@mui/styles'
+import {
+	Grid,
+	Typography,
+	FormGroup,
+	FormControlLabel,
+	TextField,
+	Dialog,
+	DialogActions,
+	Button,
+	Autocomplete,
+	Divider,
+	Paper,
+	Switch,
+} from '@mui/material'
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import {connect} from 'react-redux'
-import DateFnsUtils from '@date-io/date-fns'
 import ruLocale from 'date-fns/locale/ru'
-import {MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers'
-import Switch from '@material-ui/core/Switch'
-import FormGroup from '@material-ui/core/FormGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
+import AdapterDateFns from '@mui/lab/AdapterDateFns'
+import DatePicker from '@mui/lab/DatePicker'
+import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import AddUser from './AddUser'
-import AbTable from '../AbTable'
-import {allConstants} from '../../Constants/AllConstants.js'
-import {usersColumns} from '../../Constants/TableColumns.js'
-import {getRequest} from '../../Services/RequestsServices.js'
+import AbTable from 'Components/AbTable'
+import {allConstants} from 'Constants/AllConstants.js'
+import {usersColumns} from 'Constants/TableColumns.js'
+import {getRequest} from 'Services/RequestsServices.js'
 
 const styles = theme => ({
 	formControl: {
@@ -276,10 +276,10 @@ render() {
 							{
 								filterByCreatedDate && (
 									<Grid item container xs={12}>
-										<MuiPickersUtilsProvider utils={DateFnsUtils} locale={ruLocale}>
 											<Grid item xs={6}>
 												<Paper className={classes.paper}>
-													<KeyboardDatePicker
+												<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+													<DatePicker
 														margin='normal'
 														inputVariant='outlined'
 														variant='dialog'
@@ -292,11 +292,13 @@ render() {
 														onChange={this.handleBeginDateChange}
 														invalidDateMessage='Неверный формат даты'
 														KeyboardButtonProps={{'aria-label': 'change date'}}/>
+												</LocalizationProvider>
 												</Paper>
 											</Grid>
 											<Grid item xs={6}>
 												<Paper className={classes.paper}>
-													<KeyboardDatePicker
+												<LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+													<DatePicker
 														margin='normal'
 														inputVariant='outlined'
 														variant='dialog'
@@ -311,9 +313,9 @@ render() {
 														invalidDateMessage='Неверный формат даты'
 														minDateMessage={`Дата не может быть раньше ${((beginDate.getDate() < 10 ? '0' + beginDate.getDate() : beginDate.getDate()) + '.' + (beginDate.getMonth() + 1 < 10 ? '0' + (beginDate.getMonth() + 1) : beginDate.getMonth() + 1) + '.' + beginDate.getFullYear())}`}
 														KeyboardButtonProps={{'aria-label': 'change date'}}/>
+												</LocalizationProvider>
 												</Paper>
 											</Grid>
-										</MuiPickersUtilsProvider>
 									</Grid>
 								)
 							}
@@ -355,14 +357,6 @@ render() {
 					</Paper>
 				</Grid>
 			</Grid>
-			<Snackbar open={openSnackbar} autoHideDuration={6000} onClose={this.handleSnackbarClose}>
-				<Alert onClose={this.handleSnackbarClose} severity={snackbarSeverity}>
-					{snackbarMsg}
-				</Alert>
-			</Snackbar>
-			<Backdrop className={classes.backdrop} open={loading}>
-				<CircularProgress color='inherit' />
-			</Backdrop>
 			<div>
 				<Dialog
 					open={openEditUserDialog}

@@ -1,51 +1,52 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {withStyles} from '@material-ui/core/styles'
 import clsx from 'clsx'
-import Drawer from '@material-ui/core/Drawer'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
-import MenuItem from '@material-ui/core/MenuItem'
-import Menu from '@material-ui/core/Menu'
-import MenuList from '@material-ui/core/MenuList'
-import Collapse from '@material-ui/core/Collapse'
-import Avatar from '@material-ui/core/Avatar'
-import Badge from '@material-ui/core/Badge'
-import BallotIcon from '@material-ui/icons/Ballot'
-import LoupeIcon from '@material-ui/icons/Loupe'
-import NotificationsIcon from '@material-ui/icons/Notifications'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks'
-import ExpandLess from '@material-ui/icons/ExpandLess'
-import ExpandMore from '@material-ui/icons/ExpandMore'
-import ViewListIcon from '@material-ui/icons/ViewList'
-import PublicIcon from '@material-ui/icons/Public'
-import LocationCityIcon from '@material-ui/icons/LocationCity'
-import AccountTreeIcon from '@material-ui/icons/AccountTree'
-import PortraitIcon from '@material-ui/icons/Portrait'
-import InsertLinkIcon from '@material-ui/icons/InsertLink'
-import BlockIcon from '@material-ui/icons/Block'
-import WcIcon from '@material-ui/icons/Wc'
-import LoyaltyIcon from '@material-ui/icons/Loyalty'
-import BusinessIcon from '@material-ui/icons/Business'
-import Typography from '@material-ui/core/Typography'
-import Divider from '@material-ui/core/Divider'
-import List from '@material-ui/core/List'
-import MenuIcon from '@material-ui/icons/Menu'
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import ChevronRightIcon from '@material-ui/icons/ChevronRight'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import Tooltip from '@material-ui/core/Tooltip'
-import HomeIcon from '@material-ui/icons/Home'
-import AddBoxIcon from '@material-ui/icons/AddBox'
-import AllInboxIcon from '@material-ui/icons/AllInbox'
-import PeopleIcon from '@material-ui/icons/People'
-import {deepOrange} from '@material-ui/core/colors'
-import {allConstants} from '../../Constants/AllConstants.js'
-import {getRequest} from '../../Services/RequestsServices.js'
+import {withStyles} from '@mui/styles'
+import {
+	Drawer,
+	AppBar,
+	Toolbar,
+	Typography,
+	IconButton,
+	MenuItem,
+	Menu,
+	Collapse,
+	Avatar,
+	Divider,
+	Badge,
+	Tooltip,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+} from '@mui/material'
+import BallotIcon from '@mui/icons-material/Ballot'
+import LoupeIcon from '@mui/icons-material/Loupe'
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ExpandMore from '@mui/icons-material/ExpandMore'
+import ViewListIcon from '@mui/icons-material/ViewList'
+import PublicIcon from '@mui/icons-material/Public'
+import LocationCityIcon from '@mui/icons-material/LocationCity'
+import AccountTreeIcon from '@mui/icons-material/AccountTree'
+import PortraitIcon from '@mui/icons-material/Portrait'
+import InsertLinkIcon from '@mui/icons-material/InsertLink'
+import BlockIcon from '@mui/icons-material/Block'
+import WcIcon from '@mui/icons-material/Wc'
+import LoyaltyIcon from '@mui/icons-material/Loyalty'
+import BusinessIcon from '@mui/icons-material/Business'
+import MenuIcon from '@mui/icons-material/Menu'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import HomeIcon from '@mui/icons-material/Home'
+import AddBoxIcon from '@mui/icons-material/AddBox'
+import AllInboxIcon from '@mui/icons-material/AllInbox'
+import PeopleIcon from '@mui/icons-material/People'
+import {deepOrange} from '@mui/material/colors'
+import {allConstants} from 'Constants/AllConstants.js'
+import {getRequest} from 'Services/RequestsServices.js'
 
 const drawerWidth = 240
 

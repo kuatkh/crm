@@ -1,12 +1,13 @@
-import 'babel-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {createTheme, ThemeProvider} from '@mui/material/styles'
 import App from 'Components/App'
-import store from 'Helpers/Store'
 import {Provider} from 'react-redux'
-import LoadingWrapper from 'components/LoadingWrapper'
-import SnackbarWrapper from 'components/SnackbarWrapper'
+import {applyMiddleware, createStore} from 'redux'
+import thunk from 'redux-thunk'
+import * as allReducers from 'Reducers'
+import LoadingWrapper from 'Components/LoadingWrapper'
+import SnackbarWrapper from 'Components/SnackbarWrapper'
 require('./index.css')
 
 const theme = createTheme({
@@ -25,6 +26,11 @@ const theme = createTheme({
 		tooltip: 1500,
 	},
 })
+
+const store = createStore(
+	allReducers,
+	applyMiddleware(thunk),
+)
 
 ReactDOM.render(
 	<Provider store={store}>

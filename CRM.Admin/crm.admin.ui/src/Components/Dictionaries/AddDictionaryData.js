@@ -1,25 +1,19 @@
 import React from 'react'
-import {withStyles} from '@material-ui/core/styles'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import TextField from '@material-ui/core/TextField'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import IconButton from '@material-ui/core/IconButton'
-import Visibility from '@material-ui/icons/Visibility'
-import VisibilityOff from '@material-ui/icons/VisibilityOff'
-import Button from '@material-ui/core/Button'
-import SaveIcon from '@material-ui/icons/Save'
-import CancelIcon from '@material-ui/icons/Cancel'
-import Paper from '@material-ui/core/Paper'
-import Divider from '@material-ui/core/Divider'
-import Grid from '@material-ui/core/Grid'
-import DateFnsUtils from '@date-io/date-fns'
-import ruLocale from 'date-fns/locale/ru'
-import {MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers'
-import {allConstants} from '../../Constants/AllConstants.js'
-import {getRequest, postRequest} from '../../Services/RequestsServices.js'
+import {withStyles} from '@mui/styles'
+import {
+	Grid,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Button,
+	TextField,
+	Divider,
+	Paper,
+} from '@mui/material'
+import SaveIcon from '@mui/icons-material/Save'
+import CancelIcon from '@mui/icons-material/Cancel'
+import {allConstants} from 'Constants/AllConstants.js'
+import {postRequest} from 'Services/RequestsServices.js'
 
 const styles = theme => ({
 	formControl: {

@@ -1,25 +1,27 @@
 import React from 'react'
-import {withStyles, makeStyles} from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableSortLabel from '@material-ui/core/TableSortLabel'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TablePagination from '@material-ui/core/TablePagination'
-import TableRow from '@material-ui/core/TableRow'
-import Paper from '@material-ui/core/Paper'
-import EditIcon from '@material-ui/icons/Edit'
-import DeleteIcon from '@material-ui/icons/Delete'
-import LaunchIcon from '@material-ui/icons/Launch'
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
-import CardMedia from '@material-ui/core/CardMedia'
-import Typography from '@material-ui/core/Typography'
+import {withStyles} from '@mui/styles'
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableSortLabel,
+	TableContainer,
+	TableHead,
+	TablePagination,
+	TableRow,
+	Typography,
+	CardMedia,
+	Button,
+	Paper,
+} from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
+import LaunchIcon from '@mui/icons-material/Launch'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import {connect} from 'react-redux'
 import _ from 'lodash'
-import {postRequest} from '../../Services/RequestsServices.js'
+import {postRequest} from 'Services/RequestsServices.js'
 
 const styles = theme => ({
 	container: {

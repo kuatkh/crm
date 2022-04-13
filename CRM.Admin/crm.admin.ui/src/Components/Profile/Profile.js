@@ -1,21 +1,23 @@
 import React, {Component} from 'react'
-import {compose} from 'recompose'
-import {withStyles} from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import Tooltip from '@material-ui/core/Tooltip'
-import IconButton from '@material-ui/core/IconButton'
-import TextField from '@material-ui/core/TextField'
-import Paper from '@material-ui/core/Paper'
-import Divider from '@material-ui/core/Divider'
-import Grid from '@material-ui/core/Grid'
-import CardMedia from '@material-ui/core/CardMedia'
-import CloudUploadIcon from '@material-ui/icons/CloudUpload'
-import SaveIcon from '@material-ui/icons/Save'
-import CancelIcon from '@material-ui/icons/Cancel'
-import EditIcon from '@material-ui/icons/Edit'
-import red from '@material-ui/core/colors/red'
+import {compose} from 'react-recompose'
+import {withStyles} from '@mui/styles'
+import {
+	Grid,
+	Typography,
+	IconButton,
+	CardMedia,
+	TextField,
+	Button,
+	Autocomplete,
+	Divider,
+	Paper,
+	Tooltip,
+} from '@mui/material'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import SaveIcon from '@mui/icons-material/Save'
+import CancelIcon from '@mui/icons-material/Cancel'
+import EditIcon from '@mui/icons-material/Edit'
+import {red} from '@mui/material/colors'
 import {connect} from 'react-redux'
 import {withSnackbar} from 'Components/SnackbarWrapper'
 import {loading} from 'Components/LoadingWrapper'

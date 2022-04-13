@@ -1,25 +1,18 @@
 import React from 'react'
-import {compose} from 'recompose'
+import {compose} from 'react-recompose'
 import {withStyles} from '@mui/styles'
 import {Calendar, momentLocalizer} from 'react-big-calendar'
 import moment from 'moment'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import {
 	Grid,
-	Box,
-	CssBaseline,
-	Container,
 	Dialog,
 	DialogTitle,
 	DialogContent,
 	TextField,
 	DialogActions,
 	Button,
-	Select,
-	MenuItem,
-	FormControl,
-	InputLabel,
-	Typography,
+	Autocomplete,
 	Divider,
 	Paper,
 	Tooltip,
@@ -27,7 +20,6 @@ import {
 import SaveIcon from '@mui/icons-material/Save'
 import CancelIcon from '@mui/icons-material/Cancel'
 import DeleteIcon from '@mui/icons-material/Delete'
-import Autocomplete from '@material-ui/lab/Autocomplete'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import DatePicker from '@mui/lab/DatePicker'
@@ -40,7 +32,6 @@ import {getRequest, postRequest} from 'Services/RequestsServices.js'
 import {withSnackbar} from 'Components/SnackbarWrapper'
 import {loading} from 'Components/LoadingWrapper'
 import 'moment/locale/ru'
-import 'globalize/lib/cultures/globalize.culture.ru-RU'
 require('react-big-calendar/lib/addons/dragAndDrop/styles.css')
 require('react-big-calendar/lib/css/react-big-calendar.css')
 
@@ -56,7 +47,7 @@ const maxPickerTime = moment('22:01', 'HH:mm')
 
 const styles = theme => ({
 	formControl: {
-		margin: theme.spacing(1),
+		m: theme.spacing(1),
 		minWidth: 120,
 		maxWidth: 300,
 	},
@@ -65,13 +56,13 @@ const styles = theme => ({
 		flexWrap: 'wrap',
 	},
 	chip: {
-		margin: 2,
+		m: 2,
 	},
 	noLabel: {
-		marginTop: theme.spacing(3),
+		mt: theme.spacing(3),
 	},
 	selectEmpty: {
-		marginTop: theme.spacing(2),
+		mt: theme.spacing(2),
 	},
 	container: {
 		gridTemplateColumns: 'repeat(12, 1fr)',
@@ -82,29 +73,29 @@ const styles = theme => ({
 		minHeight: '60vh',
 	},
 	input: {
-		margin: theme.spacing.unit,
+		m: theme.spacing.unit,
 	},
 	button: {
-		margin: theme.spacing.unit,
+		m: theme.spacing.unit,
 		overflow: 'hidden',
 	},
 	paper: {
-		paddingRight: theme.spacing(1),
+		pr: theme.spacing(1),
 		// textAlign: 'center',
 		color: theme.palette.text.secondary,
 		whiteSpace: 'nowrap',
-		marginBottom: theme.spacing(1),
+		mb: theme.spacing(1),
 		boxShadow: 'none',
 		height: '100%',
 	},
 	divider: {
-		margin: 0,
+		m: 0,
 	},
 	modalRoot: {
 		flexGrow: 1,
 	},
 	actionButtons: {
-		marginRight: theme.spacing(2),
+		mr: theme.spacing(2),
 	},
 	headerStyle: {
 		color: '#fff !important',
@@ -182,12 +173,14 @@ class Home extends React.Component {
 			this.getAppointments()
 		}
 		if (prevState.searchData != this.state.searchData) {
-			this.searchTimeout = setTimeout(() => {
+			window.clearTimeout(this.searchTimeout)
+			this.searchTimeout = window.setTimeout(() => {
 				this.filterUsersData()
 			}, 800)
 		}
 		if (prevState.proceduresSearchData != this.state.proceduresSearchData) {
-			this.proceduresSearchTimeout = setTimeout(() => {
+			window.clearTimeout(this.proceduresSearchTimeout)
+			this.proceduresSearchTimeout = window.setTimeout(() => {
 				this.filterProceduresData()
 			}, 800)
 		}

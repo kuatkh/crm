@@ -1,12 +1,19 @@
 import React, {Component} from 'react'
-import {withStyles} from '@material-ui/core/styles'
-import Alert from '@material-ui/lab/Alert'
-import {Button, TextField, Grid, Paper, Typography, Link, CircularProgress, Snackbar, Backdrop} from '@material-ui/core'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import IconButton from '@material-ui/core/IconButton'
-import Visibility from '@material-ui/icons/Visibility'
-import VisibilityOff from '@material-ui/icons/VisibilityOff'
-import {allConstants} from '../../Constants/AllConstants.js'
+import {withStyles} from '@mui/styles'
+import {
+	Alert,
+	Button,
+	TextField,
+	Grid,
+	Paper,
+	Typography,
+	Link,
+	InputAdornment,
+	IconButton,
+} from '@mui/material'
+import Visibility from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import {allConstants} from 'Constants/AllConstants.js'
 
 const styles = theme => ({
 	toolbar: {
